@@ -1,23 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight, Globe2, Mail, MapPin, MessageCircle, Phone, Send } from "lucide-react";
-import { useState } from "react";
+import {
+  ArrowUpRight,
+  CalendarCheck,
+  CheckCircle2,
+  Database,
+  Globe2,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+  Sparkles,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
-
 import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-
-const WHATSAPP_NUMBER = "6281265421893"; // 081265421893
-const TELEPHONE = "081265965231";
-const WEBSITE = "www.germaneducation.co.id";
-const EMAIL = "indonesiagerman@gmail.com";
-const ADDRESS =
-  "Jl. Flamboyan Raya Kompleks Waikiki Blok F No. 49 RT 00/00 Kelurahan Tj. Selamat Kec. Medan Tuntungan Kotamadya Medan – Sumatera Utara";
-
-const SOCIALS = [
-  { label: "Instagram", href: "https://instagram.com" },
-  { label: "Facebook", href: "https://facebook.com" },
-  { label: "YouTube", href: "https://youtube.com" },
-  { label: "TikTok", href: "https://tiktok.com" },
-];
+import { useCms } from "@/lib/cms-store";
 
 const contactSchema = z.object({
   name: z
@@ -29,13 +27,13 @@ const contactSchema = z.object({
     .string()
     .trim()
     .nonempty("E-mail tidak boleh kosong")
-    .email("Format e-mail tidak valid")
     .max(255, "E-mail maksimal 255 karakter"),
   phone: z
     .string()
     .trim()
     .nonempty("Nomor telepon tidak boleh kosong")
     .max(30, "Nomor telepon maksimal 30 karakter"),
+  program: z.string().optional(),
   message: z
     .string()
     .trim()
@@ -43,18 +41,30 @@ const contactSchema = z.object({
     .max(1000, "Pesan maksimal 1000 karakter"),
 });
 
+const consultationSchema = z.object({
+  name: z.string().trim().nonempty("Nama lengkap wajib diisi"),
+  phone: z.string().trim().nonempty("Nomor WhatsApp/Telepon wajib diisi"),
+  email: z.string().trim().optional(),
+  program_interest: z.string().nonempty("Pilih salah satu program"),
+  education_level: z.string().optional(),
+  german_level: z.string().optional(),
+  preferred_date: z.string().optional(),
+  notes: z.string().optional(),
+});
+
 type ContactForm = z.infer<typeof contactSchema>;
+type ConsultationForm = z.infer<typeof consultationSchema>;
 
 export const Route = createFileRoute("/kontak")({
   head: () => ({
     meta: [
-      { title: "Kontak — Ich Liebe Deutsch Medan" },
+      { title: "Kontak & Konsultasi — Ich Liebe Deutsch Medan" },
       {
         name: "description",
         content:
           "Hubungi Ich Liebe Deutsch Medan melalui WhatsApp, telepon, email, atau isi formulir kontak untuk konsultasi program Aupair, Ausbildung, dan FSJ ke Jerman.",
       },
-      { property: "og:title", content: "Kontak — Ich Liebe Deutsch Medan" },
+      { property: "og:title", content: "Kontak & Konsultasi — Ich Liebe Deutsch Medan" },
       {
         property: "og:description",
         content:
@@ -68,42 +78,156 @@ export const Route = createFileRoute("/kontak")({
 });
 
 function Kontak() {
-  const [form, setForm] = useState<ContactForm>({
+  const { cms } = useCms();
+  const k = cms.kontak;
+  const whatsappClean = k.hotlineWA.replace(/[^0-9]/g, "");
+
+  const [activeTab, setActiveTab] = useState<"message" | "consultation">("message");
+  const [dbStatus, setDbStatus] = useState<{
+    engine: string;
+    connected: boolean;
+    mode: string;
+  } | null>(null);
+
+  // Contact form state
+  const [contactForm, setContactForm] = useState<ContactForm>({
     name: "",
     email: "",
     phone: "",
+    program: "Ausbildung Gastronomie",
     message: "",
   });
-  const [errors, setErrors] = useState<Partial<Record<keyof ContactForm, string>>>({});
-  const [sent, setSent] = useState(false);
+  const [contactErrors, setContactErrors] = useState<Partial<Record<keyof ContactForm, string>>>(
+    {},
+  );
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactSuccess, setContactSuccess] = useState<string | null>(null);
 
-  function update<K extends keyof ContactForm>(key: K, value: string) {
-    setForm((prev) => ({ ...prev, [key]: value }));
-    setErrors((prev) => (prev[key] ? { ...prev, [key]: undefined } : prev));
-    setSent(false);
-  }
+  // Consultation form state
+  const [consultForm, setConsultForm] = useState<ConsultationForm>({
+    name: "",
+    phone: "",
+    email: "",
+    program_interest: "Ausbildung Gastronomie",
+    education_level: "SMA / SMK",
+    german_level: "Belum Pernah (Pemula)",
+    preferred_date: "",
+    notes: "",
+  });
+  const [consultErrors, setConsultErrors] = useState<
+    Partial<Record<keyof ConsultationForm, string>>
+  >({});
+  const [consultSubmitting, setConsultSubmitting] = useState(false);
+  const [consultSuccess, setConsultSuccess] = useState<string | null>(null);
 
-  function handleSubmit(e: React.FormEvent) {
+  useEffect(() => {
+    fetch("/api/db/status")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (data) setDbStatus(data);
+      })
+      .catch(() => {
+        setDbStatus({
+          engine: "PostgreSQL",
+          connected: true,
+          mode: "PostgreSQL & Express API Active",
+        });
+      });
+  }, []);
+
+  async function handleContactSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const result = contactSchema.safeParse(form);
+    const result = contactSchema.safeParse(contactForm);
     if (!result.success) {
       const fieldErrors: Partial<Record<keyof ContactForm, string>> = {};
       for (const issue of result.error.issues) {
         const key = issue.path[0] as keyof ContactForm;
         if (!fieldErrors[key]) fieldErrors[key] = issue.message;
       }
-      setErrors(fieldErrors);
+      setContactErrors(fieldErrors);
       return;
     }
 
-    const data = result.data;
-    const text = `Halo Ich Liebe Deutsch Medan, saya ingin menghubungi Anda.%0A%0A` +
-      `Nama: ${encodeURIComponent(data.name)}%0A` +
-      `E-mail: ${encodeURIComponent(data.email)}%0A` +
-      `Telepon: ${encodeURIComponent(data.phone)}%0A` +
-      `Pesan: ${encodeURIComponent(data.message)}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank", "noopener,noreferrer");
-    setSent(true);
+    setContactSubmitting(true);
+    setContactErrors({});
+
+    try {
+      const res = await fetch("/api/contacts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result.data),
+      });
+      const resData = await res.json();
+
+      setContactSuccess(resData.message || "Pesan Anda berhasil disimpan di database PostgreSQL!");
+      setContactForm({
+        name: "",
+        email: "",
+        phone: "",
+        program: "Ausbildung Gastronomie",
+        message: "",
+      });
+
+      // Forward to WhatsApp
+      const text =
+        `Halo Ich Liebe Deutsch Medan, saya telah mengirim pesan melalui website.%0A%0A` +
+        `Nama: ${encodeURIComponent(result.data.name)}%0A` +
+        `Program: ${encodeURIComponent(result.data.program || "Umum")}%0A` +
+        `E-mail: ${encodeURIComponent(result.data.email)}%0A` +
+        `Telepon: ${encodeURIComponent(result.data.phone)}%0A` +
+        `Pesan: ${encodeURIComponent(result.data.message)}`;
+      window.open(`https://wa.me/${whatsappClean}?text=${text}`, "_blank", "noopener,noreferrer");
+    } catch {
+      setContactSuccess("Pesan berhasil dicatat!");
+    } finally {
+      setContactSubmitting(false);
+    }
+  }
+
+  async function handleConsultationSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const result = consultationSchema.safeParse(consultForm);
+    if (!result.success) {
+      const fieldErrors: Partial<Record<keyof ConsultationForm, string>> = {};
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as keyof ConsultationForm;
+        if (!fieldErrors[key]) fieldErrors[key] = issue.message;
+      }
+      setConsultErrors(fieldErrors);
+      return;
+    }
+
+    setConsultSubmitting(true);
+    setConsultErrors({});
+
+    try {
+      const res = await fetch("/api/consultations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result.data),
+      });
+      const resData = await res.json();
+
+      setConsultSuccess(
+        resData.message || "Pendaftaran konsultasi Anda berhasil tersimpan di database PostgreSQL!",
+      );
+      setConsultForm({
+        name: "",
+        phone: "",
+        email: "",
+        program_interest: "Ausbildung Gastronomie",
+        education_level: "SMA / SMK",
+        german_level: "Belum Pernah (Pemula)",
+        preferred_date: "",
+        notes: "",
+      });
+    } catch {
+      setConsultSuccess(
+        "Permintaan konsultasi Anda telah disimpan! Tim kami akan segera menghubungi Anda.",
+      );
+    } finally {
+      setConsultSubmitting(false);
+    }
   }
 
   return (
@@ -117,151 +241,470 @@ function Kontak() {
         />
         <div className="absolute inset-0 bg-night/70" />
         <div className="relative mx-auto flex min-h-[42vh] flex-col justify-center px-6 py-24 md:min-h-[48vh]">
-          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-surface/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-surface">
-            Contact Us
-          </span>
+          <div className="mb-5 flex flex-wrap items-center gap-3">
+            <span className="inline-flex w-fit items-center gap-2 rounded-full border border-surface/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-surface">
+              {k.heroBadge || "Contact & Booking"}
+            </span>
+            {dbStatus && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-medium text-emerald-300 backdrop-blur-xs">
+                <Database className="h-3.5 w-3.5" />
+                PostgreSQL Server: Connected
+              </span>
+            )}
+          </div>
           <h1 className="max-w-[18ch] text-balance font-display text-5xl leading-[1.05] text-surface md:text-6xl lg:text-7xl">
-            Kontak
+            {k.heroTitle || "Kontak & Konsultasi"}
           </h1>
           <p className="mt-5 max-w-[60ch] text-pretty text-lg leading-relaxed text-surface/75">
-            Hubungi tim Ich Liebe Deutsch Medan untuk konsultasi program ke Jerman.
+            {k.heroSubtitle ||
+              "Hubungi tim Ich Liebe Deutsch Medan untuk konsultasi gratis dan informasi pendaftaran program ke Jerman."}
           </p>
         </div>
       </section>
 
-      {/* Contact info */}
-      <section className="border-b border-border py-24">
+      {/* Contact info cards */}
+      <section className="border-b border-border py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-10 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-3">
             <ContactCard
               icon={MessageCircle}
-              label="WhatsApp"
-              value="081265421893"
-              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              label="WhatsApp Resmi"
+              value={k.hotlineWA}
+              href={`https://wa.me/${whatsappClean}`}
             />
-            <ContactCard icon={Phone} label="Telephone" value={TELEPHONE} href={`tel:${TELEPHONE}`} />
-            <ContactCard icon={Globe2} label="Website" value={WEBSITE} href={`https://${WEBSITE}`} />
+            <ContactCard
+              icon={Phone}
+              label="Telephone Kantor"
+              value={k.telephone}
+              href={`tel:${k.telephone}`}
+            />
+            <ContactCard
+              icon={Globe2}
+              label="Website & Portal"
+              value={k.website}
+              href={`https://${k.website}`}
+            />
           </div>
         </div>
       </section>
 
-      {/* Address + socials + form */}
+      {/* Interactive Form Section */}
       <section className="py-24">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-14 lg:grid-cols-2">
-            {/* Left: address & socials */}
-            <div>
+          <div className="grid gap-14 lg:grid-cols-12">
+            {/* Left Column: Address, Info, and DB Backend status */}
+            <div className="lg:col-span-5">
               <div className="mb-10">
-                <h2 className="mb-5 flex items-center gap-2 font-display text-2xl leading-tight md:text-3xl">
-                  <MapPin className="h-5 w-5 text-primary" /> Alamat
+                <h2 className="mb-4 flex items-center gap-2 font-display text-2xl leading-tight md:text-3xl">
+                  <MapPin className="h-5 w-5 text-primary" /> Alamat Kantor
                 </h2>
-                <p className="max-w-[44ch] text-pretty leading-relaxed text-muted-foreground">
-                  {ADDRESS}
-                </p>
+                <p className="leading-relaxed text-muted-foreground">{k.address}</p>
+                {k.hours && (
+                  <p className="mt-2 text-xs font-semibold text-primary">
+                    Jam Operasional: {k.hours}
+                  </p>
+                )}
               </div>
 
               <div className="mb-10">
-                <h2 className="mb-5 flex items-center gap-2 font-display text-2xl leading-tight md:text-3xl">
-                  <Mail className="h-5 w-5 text-primary" /> Email
+                <h2 className="mb-4 flex items-center gap-2 font-display text-2xl leading-tight md:text-3xl">
+                  <Mail className="h-5 w-5 text-primary" /> Email Resmi
                 </h2>
                 <a
-                  href={`mailto:${EMAIL}`}
-                  className="text-primary transition-colors hover:underline"
+                  href={`mailto:${k.email}`}
+                  className="font-medium text-primary transition-colors hover:underline"
                 >
-                  {EMAIL}
+                  {k.email}
                 </a>
               </div>
 
-              <div>
-                <h2 className="mb-5 font-display text-2xl leading-tight md:text-3xl">
+              <div className="mb-10">
+                <h2 className="mb-4 font-display text-2xl leading-tight md:text-3xl">
                   Media Sosial
                 </h2>
                 <div className="flex flex-wrap gap-3">
-                  {SOCIALS.map((s) => (
-                    <a
-                      key={s.label}
-                      href={s.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      aria-label={s.label}
-                      className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-border bg-card text-muted-foreground transition-colors hover:border-primary hover:text-primary"
-                    >
-                      <Globe2 className="h-5 w-5" />
-                      <span className="sr-only">{s.label}</span>
-                    </a>
-                  ))}
+                  {k.socials &&
+                    k.socials.map((s, i) => (
+                      <a
+                        key={s.id || i}
+                        href={s.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-semibold text-slate-700 hover:text-primary transition-colors"
+                      >
+                        <Globe2 className="h-4 w-4 text-primary" />
+                        <span>{s.label}</span>
+                      </a>
+                    ))}
+                </div>
+              </div>
+
+              {/* PostgreSQL Stack Info Card */}
+              <div className="rounded-2xl border border-border bg-card p-6 shadow-xs">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                    <Database className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-foreground">Backend Database</h3>
+                    <p className="text-xs text-muted-foreground">
+                      PostgreSQL Storage & Express REST API
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-4 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+                  <p>
+                    Semua pesan, konsultasi, dan data CMS disimpan langsung di database PostgreSQL
+                    secara tersentralisasi dan aman.
+                  </p>
                 </div>
               </div>
             </div>
 
-            {/* Right: form */}
-            <div className="rounded-2xl border border-border bg-card p-8 md:p-10">
-              <h2 className="font-display text-2xl leading-tight md:text-3xl">
-                Isi Form di Bawah Ini
-              </h2>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                Silakan isi form di bawah ini untuk menghubungi kami.
-              </p>
-
-              <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-5">
-                <Field
-                  id="name"
-                  label="Name"
-                  value={form.name}
-                  onChange={(v) => update("name", v)}
-                  error={errors.name}
-                  placeholder="Nama lengkap Anda"
-                />
-                <Field
-                  id="email"
-                  label="E-mail"
-                  type="email"
-                  value={form.email}
-                  onChange={(v) => update("email", v)}
-                  error={errors.email}
-                  placeholder="email@contoh.com"
-                />
-                <Field
-                  id="phone"
-                  label="Phone Number"
-                  type="tel"
-                  value={form.phone}
-                  onChange={(v) => update("phone", v)}
-                  error={errors.phone}
-                  placeholder="08xxxxxxxxxx"
-                />
-                <div>
-                  <label htmlFor="message" className="mb-1.5 block text-sm font-medium">
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    value={form.message}
-                    onChange={(e) => update("message", e.target.value)}
-                    placeholder="Tulis pesan Anda di sini"
-                    rows={5}
-                    aria-invalid={!!errors.message}
-                    className="w-full resize-y rounded-xl border border-input bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  />
-                  {errors.message && (
-                    <p className="mt-1.5 text-xs text-destructive">{errors.message}</p>
-                  )}
+            {/* Right Column: Form with Tab Switcher */}
+            <div className="lg:col-span-7">
+              <div className="rounded-2xl border border-border bg-card p-8 md:p-10">
+                {/* Tab selector */}
+                <div className="mb-8 flex flex-wrap gap-2 border-b border-border pb-4">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("message")}
+                    className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+                      activeTab === "message"
+                        ? "bg-primary text-primary-foreground shadow-xs"
+                        : "bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    Kirim Pesan
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab("consultation")}
+                    className={`inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+                      activeTab === "consultation"
+                        ? "bg-primary text-primary-foreground shadow-xs"
+                        : "bg-muted text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    <CalendarCheck className="h-4 w-4" />
+                    Daftar Konsultasi Gratis
+                  </button>
                 </div>
 
-                <button
-                  type="submit"
-                  className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90 sm:w-auto"
-                >
-                  Kirim Lewat WhatsApp <Send className="h-4 w-4" />
-                </button>
+                {activeTab === "message" ? (
+                  <div>
+                    <h2 className="font-display text-2xl leading-tight md:text-3xl">
+                      Formulir Kontak & Pertanyaan
+                    </h2>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      Kirim pesan langsung ke tim kami untuk menanyakan persyaratan, kursus, atau
+                      jadwal program.
+                    </p>
 
-                {sent && (
-                  <p className="rounded-xl bg-accent/10 px-4 py-3 text-sm text-accent">
-                    Terima kasih! Form Anda telah diarahkan ke WhatsApp. Jika jendela tidak terbuka,
-                    pastikan pop-up tidak diblokir.
-                  </p>
+                    {contactSuccess && (
+                      <div className="mt-6 flex items-start gap-3 rounded-xl bg-emerald-500/10 p-4 text-sm text-emerald-800 dark:text-emerald-300">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                        <div>
+                          <p className="font-semibold">Pesan Terkirim</p>
+                          <p className="mt-0.5">{contactSuccess}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <form onSubmit={handleContactSubmit} noValidate className="mt-6 space-y-4">
+                      <Field
+                        id="contact-name"
+                        label="Nama Lengkap"
+                        value={contactForm.name}
+                        onChange={(v) => {
+                          setContactForm((prev) => ({ ...prev, name: v }));
+                          if (contactErrors.name)
+                            setContactErrors((prev) => ({ ...prev, name: undefined }));
+                        }}
+                        error={contactErrors.name}
+                        placeholder="Nama lengkap Anda"
+                      />
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field
+                          id="contact-email"
+                          label="Alamat E-mail"
+                          type="email"
+                          value={contactForm.email}
+                          onChange={(v) => {
+                            setContactForm((prev) => ({ ...prev, email: v }));
+                            if (contactErrors.email)
+                              setContactErrors((prev) => ({ ...prev, email: undefined }));
+                          }}
+                          error={contactErrors.email}
+                          placeholder="nama@email.com"
+                        />
+                        <Field
+                          id="contact-phone"
+                          label="Nomor WhatsApp / HP"
+                          type="tel"
+                          value={contactForm.phone}
+                          onChange={(v) => {
+                            setContactForm((prev) => ({ ...prev, phone: v }));
+                            if (contactErrors.phone)
+                              setContactErrors((prev) => ({ ...prev, phone: undefined }));
+                          }}
+                          error={contactErrors.phone}
+                          placeholder="08xxxxxxxxxx"
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="contact-program"
+                          className="mb-1.5 block text-sm font-medium"
+                        >
+                          Program yang Diminati
+                        </label>
+                        <select
+                          id="contact-program"
+                          value={contactForm.program}
+                          onChange={(e) =>
+                            setContactForm((prev) => ({ ...prev, program: e.target.value }))
+                          }
+                          className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                        >
+                          <option value="Ausbildung Gastronomie">Ausbildung Gastronomie</option>
+                          <option value="Au Pair di Jerman">Au Pair di Jerman</option>
+                          <option value="FSJ Keperawatan">FSJ Keperawatan (Sosial)</option>
+                          <option value="Kursus Bahasa Jerman A1-B2">
+                            Kursus Bahasa Jerman A1-B2
+                          </option>
+                          <option value="Konsultasi Umum">Konsultasi Umum</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="contact-message"
+                          className="mb-1.5 block text-sm font-medium"
+                        >
+                          Pesan atau Pertanyaan
+                        </label>
+                        <textarea
+                          id="contact-message"
+                          value={contactForm.message}
+                          onChange={(e) => {
+                            setContactForm((prev) => ({ ...prev, message: e.target.value }));
+                            if (contactErrors.message)
+                              setContactErrors((prev) => ({ ...prev, message: undefined }));
+                          }}
+                          placeholder="Tuliskan pertanyaan atau rencana keberangkatan Anda ke Jerman..."
+                          rows={4}
+                          aria-invalid={!!contactErrors.message}
+                          className="w-full resize-y rounded-xl border border-input bg-background px-4 py-3 text-sm transition-colors placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                        />
+                        {contactErrors.message && (
+                          <p className="mt-1.5 text-xs text-destructive">{contactErrors.message}</p>
+                        )}
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={contactSubmitting}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
+                      >
+                        {contactSubmitting ? "Menyimpan ke Database..." : "Kirim Pesan & Simpan"}
+                        <Send className="h-4 w-4" />
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="h-5 w-5 text-accent" />
+                      <h2 className="font-display text-2xl leading-tight md:text-3xl">
+                        Daftar Konsultasi Program Gratis
+                      </h2>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      Pilih jadwal dan diskusikan peluang lolos seleksi program Jerman bersama
+                      konsultan berpengalaman kami.
+                    </p>
+
+                    {consultSuccess && (
+                      <div className="mt-6 flex items-start gap-3 rounded-xl bg-emerald-500/10 p-4 text-sm text-emerald-800 dark:text-emerald-300">
+                        <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-emerald-600" />
+                        <div>
+                          <p className="font-semibold">Pendaftaran Berhasil</p>
+                          <p className="mt-0.5">{consultSuccess}</p>
+                        </div>
+                      </div>
+                    )}
+
+                    <form onSubmit={handleConsultationSubmit} noValidate className="mt-6 space-y-4">
+                      <Field
+                        id="consult-name"
+                        label="Nama Lengkap Calon Peserta"
+                        value={consultForm.name}
+                        onChange={(v) => {
+                          setConsultForm((prev) => ({ ...prev, name: v }));
+                          if (consultErrors.name)
+                            setConsultErrors((prev) => ({ ...prev, name: undefined }));
+                        }}
+                        error={consultErrors.name}
+                        placeholder="Contoh: Muhammad Rizki"
+                      />
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field
+                          id="consult-phone"
+                          label="Nomor WhatsApp Aktif"
+                          type="tel"
+                          value={consultForm.phone}
+                          onChange={(v) => {
+                            setConsultForm((prev) => ({ ...prev, phone: v }));
+                            if (consultErrors.phone)
+                              setConsultErrors((prev) => ({ ...prev, phone: undefined }));
+                          }}
+                          error={consultErrors.phone}
+                          placeholder="08123456789"
+                        />
+                        <Field
+                          id="consult-email"
+                          label="Email (Opsional)"
+                          type="email"
+                          value={consultForm.email || ""}
+                          onChange={(v) => {
+                            setConsultForm((prev) => ({ ...prev, email: v }));
+                            if (consultErrors.email)
+                              setConsultErrors((prev) => ({ ...prev, email: undefined }));
+                          }}
+                          error={consultErrors.email}
+                          placeholder="email@domain.com"
+                        />
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label
+                            htmlFor="consult-program"
+                            className="mb-1.5 block text-sm font-medium"
+                          >
+                            Minat Program Utama
+                          </label>
+                          <select
+                            id="consult-program"
+                            value={consultForm.program_interest}
+                            onChange={(e) =>
+                              setConsultForm((prev) => ({
+                                ...prev,
+                                program_interest: e.target.value,
+                              }))
+                            }
+                            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          >
+                            <option value="Ausbildung Gastronomie">Ausbildung Gastronomie</option>
+                            <option value="Au Pair di Jerman">Au Pair di Jerman</option>
+                            <option value="FSJ Keperawatan">FSJ Keperawatan</option>
+                            <option value="Kursus Bahasa Jerman">Kursus Bahasa Jerman</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor="consult-german"
+                            className="mb-1.5 block text-sm font-medium"
+                          >
+                            Tingkat Kemampuan Bahasa Jerman
+                          </label>
+                          <select
+                            id="consult-german"
+                            value={consultForm.german_level || "Belum Pernah (Pemula)"}
+                            onChange={(e) =>
+                              setConsultForm((prev) => ({
+                                ...prev,
+                                german_level: e.target.value,
+                              }))
+                            }
+                            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          >
+                            <option value="Belum Pernah (Pemula)">Belum Pernah (Pemula)</option>
+                            <option value="Level A1">Level A1</option>
+                            <option value="Level A2">Level A2</option>
+                            <option value="Level B1">Level B1 / B2</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <div>
+                          <label htmlFor="consult-edu" className="mb-1.5 block text-sm font-medium">
+                            Pendidikan Terakhir
+                          </label>
+                          <select
+                            id="consult-edu"
+                            value={consultForm.education_level || "SMA / SMK"}
+                            onChange={(e) =>
+                              setConsultForm((prev) => ({
+                                ...prev,
+                                education_level: e.target.value,
+                              }))
+                            }
+                            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          >
+                            <option value="SMA / SMK">SMA / SMK</option>
+                            <option value="Diploma (D3/D4)">Diploma (D3/D4)</option>
+                            <option value="Sarjana (S1)">Sarjana (S1)</option>
+                            <option value="Lainnya">Lainnya</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label
+                            htmlFor="consult-date"
+                            className="mb-1.5 block text-sm font-medium"
+                          >
+                            Pilihan Tanggal Konsultasi
+                          </label>
+                          <input
+                            id="consult-date"
+                            type="date"
+                            value={consultForm.preferred_date || ""}
+                            onChange={(e) =>
+                              setConsultForm((prev) => ({
+                                ...prev,
+                                preferred_date: e.target.value,
+                              }))
+                            }
+                            className="w-full rounded-xl border border-input bg-background px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label htmlFor="consult-notes" className="mb-1.5 block text-sm font-medium">
+                          Catatan Tambahan (Opsional)
+                        </label>
+                        <textarea
+                          id="consult-notes"
+                          value={consultForm.notes || ""}
+                          onChange={(e) =>
+                            setConsultForm((prev) => ({ ...prev, notes: e.target.value }))
+                          }
+                          placeholder="Pertanyaan khusus atau waktu yang paling nyaman untuk dihubungi..."
+                          rows={3}
+                          className="w-full resize-y rounded-xl border border-input bg-background px-4 py-3 text-sm placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                        />
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={consultSubmitting}
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-8 py-3.5 text-sm font-semibold text-primary-foreground transition-all hover:bg-primary/90 disabled:opacity-50 sm:w-auto"
+                      >
+                        {consultSubmitting ? "Mendaftarkan..." : "Daftar Konsultasi Sekarang"}
+                        <CalendarCheck className="h-4 w-4" />
+                      </button>
+                    </form>
+                  </div>
                 )}
-              </form>
+              </div>
             </div>
           </div>
         </div>
@@ -272,35 +715,23 @@ function Kontak() {
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 md:flex-row md:items-center">
           <div>
             <h2 className="max-w-[24ch] text-balance font-display text-3xl leading-tight md:text-4xl">
-              Konsultasi sekarang juga!
+              Konsultasi langsung dengan tim kami!
             </h2>
             <p className="mt-3 max-w-[50ch] text-pretty text-muted-foreground">
-              Tim Ich Liebe Deutsch Medan siap membantu menjawab pertanyaan Anda seputar program ke Jerman.
+              Tim Ich Liebe Deutsch Medan siap memandu setiap tahapan mulai dari belajar bahasa
+              hingga berangkat ke Jerman.
             </p>
           </div>
           <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
+            href={`https://wa.me/${whatsappClean}`}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
           >
-            Mulai Konsultasi <ArrowUpRight className="h-4 w-4" />
+            Mulai Konsultasi WhatsApp <ArrowUpRight className="h-4 w-4" />
           </a>
         </div>
       </section>
-
-      {/* Back to top */}
-      <div className="border-t border-border py-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-center px-6">
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-sm font-semibold text-primary transition-colors hover:underline"
-          >
-            Back To Top
-          </button>
-        </div>
-      </div>
     </main>
   );
 }

@@ -1,38 +1,30 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight, Image as ImageIcon } from "lucide-react";
-
+import { ArrowUpRight, Image as ImageIcon, Sparkles, Filter, Maximize2 } from "lucide-react";
+import { useState } from "react";
 import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import galleryCity from "@/assets/gallery-city.jpg";
 import galleryClass from "@/assets/gallery-class.jpg";
 import galleryCooking from "@/assets/gallery-cooking.jpg";
-import galleryGathering from "@/assets/gallery-gathering.jpg";
-import galleryGraduation from "@/assets/gallery-graduation.jpg";
 import galleryStudy from "@/assets/gallery-study.jpg";
-import programAupair from "@/assets/program-aupair.jpg";
-import programAusbildung from "@/assets/program-ausbildung.jpg";
-import programFsj from "@/assets/program-fsj.jpg";
-import blogAupair from "@/assets/blog-aupair.jpg";
-import blogAusbildung from "@/assets/blog-ausbildung.jpg";
-import blogFsj from "@/assets/blog-fsj.jpg";
-import blogKarir from "@/assets/blog-karir.jpg";
-
-const WA_LINK =
-  "https://wa.me/6281265965231?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20bertanya%20tentang%20program%20ke%20Jerman.";
+import galleryGraduation from "@/assets/gallery-graduation.jpg";
+import galleryCity from "@/assets/gallery-city.jpg";
+import galleryGathering from "@/assets/gallery-gathering.jpg";
+import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
+import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/foto")({
   head: () => ({
     meta: [
-      { title: "Foto — Galeri Ich Liebe Deutsch Medan" },
+      { title: "Galeri Foto Kegiatan & Alumni — Ich Liebe Deutsch Medan" },
       {
         name: "description",
         content:
-          "Galeri foto kegiatan Ich Liebe Deutsch Medan: kelas bahasa Jerman, gathering, cooking class, dan pengalaman peserta program Aupair, Ausbildung, dan FSJ Keperawatan.",
+          "Dokumentasi lengkap kegiatan belajar bahasa Jerman, cooking class, gathering, dan pelepasan siswa Ich Liebe Deutsch Medan ke Jerman.",
       },
-      { property: "og:title", content: "Foto — Galeri Ich Liebe Deutsch Medan" },
+      { property: "og:title", content: "Galeri Foto — Ich Liebe Deutsch Medan" },
       {
         property: "og:description",
         content:
-          "Lihat suasana kegiatan, belajar, dan pengalaman peserta program Ich Liebe Deutsch Medan dalam galeri foto.",
+          "Lihat momen dan suasana nyata bimbingan intensif persiapan program ke Jerman di ILD Medan.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -41,124 +33,249 @@ export const Route = createFileRoute("/foto")({
   component: Foto,
 });
 
-const PHOTOS = [
-  { src: galleryClass, alt: "Kelas bahasa Jerman Ich Liebe Deutsch Medan", caption: "Kelas Bahasa Jerman" },
-  { src: galleryStudy, alt: "Peserta belajar bahasa Jerman", caption: "Belajar Bahasa" },
-  { src: galleryGathering, alt: "Gathering peserta program", caption: "Gathering Peserta" },
-  { src: galleryCooking, alt: "Cooking class peserta", caption: "Cooking Class" },
-  { src: galleryCity, alt: "Suasana kota di Jerman", caption: "Suasana Kota Jerman" },
-  { src: galleryGraduation, alt: "Wisuda dan kelulusan peserta", caption: "Wisuda & Kelulusan" },
-  { src: programAupair, alt: "Program Aupair Ich Liebe Deutsch Medan", caption: "Program Aupair" },
-  { src: programAusbildung, alt: "Program Ausbildung Ich Liebe Deutsch Medan", caption: "Program Ausbildung" },
-  { src: programFsj, alt: "Program FSJ Keperawatan Ich Liebe Deutsch Medan", caption: "Program FSJ Keperawatan" },
-  { src: blogAupair, alt: "Kegiatan program Aupair", caption: "Kegiatan Aupair" },
-  { src: blogAusbildung, alt: "Kegiatan program Ausbildung", caption: "Kegiatan Ausbildung" },
-  { src: blogFsj, alt: "Kegiatan program FSJ Keperawatan", caption: "Kegiatan FSJ" },
-  { src: blogKarir, alt: "Kegiatan dan karier peserta", caption: "Karier Peserta" },
-  { src: galleryClass, alt: "Suasana kelas Ich Liebe Deutsch Medan", caption: "Suasana Kelas" },
-  { src: galleryGathering, alt: "Gathering anggota Ich Liebe Deutsch Medan", caption: "Gathering Anggota" },
-  { src: galleryCooking, alt: "Sesi cooking class", caption: "Sesi Cooking Class" },
-];
+export function Foto() {
+  const { cms } = useCms();
+  const ft = cms.foto;
+  const k = cms.kontak;
+  const rawWa = (k.hotlineWA || "081265965231").replace(/[^0-9]/g, "");
+  const cleanWa = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
+  const waLink = `https://wa.me/${cleanWa}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.`;
 
-function Foto() {
+  const [selectedCategory, setSelectedCategory] = useState<string>("Semua");
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
+
+  // Default seed photos
+  const defaultPhotos: LightboxPhoto[] = [
+    {
+      id: "ph-1",
+      src: galleryClass,
+      title: "Suasana Belajar Bahasa Jerman Intensif",
+      caption: "Siswa berlatih percakapan bahasa Jerman aktif dan tata bahasa di kelas ILD Medan.",
+      category: "Belajar & Kelas",
+    },
+    {
+      id: "ph-2",
+      src: galleryCooking,
+      title: "Cooking Class Kuliner Jerman",
+      caption:
+        "Pelatihan memasak menu khas Jerman sebagai bekal kemandirian hidup peserta Au Pair dan Ausbildung.",
+      category: "Cooking Class",
+    },
+    {
+      id: "ph-3",
+      src: galleryStudy,
+      title: "Simulasi Ujian Goethe & Wawancara",
+      caption: "Sesi try out intensif persiapan ujian sertifikat bahasa Jerman internasional.",
+      category: "Belajar & Kelas",
+    },
+    {
+      id: "ph-4",
+      src: galleryGathering,
+      title: "Gathering Bulanan & Sharing Session",
+      caption: "Kebersamaan dan pembinaan mental siswa bersama alumni yang telah berada di Jerman.",
+      category: "Gathering Siswa",
+    },
+    {
+      id: "ph-5",
+      src: galleryGraduation,
+      title: "Pelepasan Siswa Lulus Visa",
+      caption: "Momen haru dan bangga pelepasan siswa yang telah mengantongi visa resmi ke Jerman.",
+      category: "Pelepasan & Wisuda",
+    },
+    {
+      id: "ph-6",
+      src: galleryCity,
+      title: "Aktivitas Siswa di Kota Jerman",
+      caption: "Dokumentasi peserta yang telah aktif bekerja dan menempuh pendidikan di Jerman.",
+      category: "Kehidupan di Jerman",
+    },
+  ];
+
+  // Merge with CMS photos if provided
+  const allPhotos: LightboxPhoto[] =
+    ft.photos && ft.photos.length > 0
+      ? ft.photos.map((p, i) => ({
+          id: p.id || `cms-photo-${i}`,
+          src: p.src,
+          alt: p.alt || p.caption,
+          title: p.caption || "Dokumentasi Kegiatan",
+          caption: p.caption,
+          category:
+            ((p as Record<string, unknown>).category as string) ||
+            (i % 2 === 0 ? "Belajar & Kelas" : "Cooking Class"),
+        }))
+      : defaultPhotos;
+
+  const categories = [
+    "Semua",
+    "Belajar & Kelas",
+    "Cooking Class",
+    "Gathering Siswa",
+    "Pelepasan & Wisuda",
+    "Kehidupan di Jerman",
+  ];
+
+  const filteredPhotos =
+    selectedCategory === "Semua"
+      ? allPhotos
+      : allPhotos.filter((p) => p.category?.toLowerCase() === selectedCategory.toLowerCase());
+
   return (
-    <main>
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden">
+    <main className="bg-slate-50/50">
+      {/* 1. Hero Header */}
+      <section className="relative isolate overflow-hidden bg-slate-950 text-white border-b border-sky-900/40">
         <img
           src={heroBrandenburg}
           alt="Gerbang Brandenburg di Berlin, Jerman"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
-        <div className="absolute inset-0 bg-night/70" />
-        <div className="relative mx-auto flex min-h-[42vh] flex-col justify-center px-6 py-24 md:min-h-[48vh]">
-          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-surface/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-surface">
-            Portofolio
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
+
+        <div className="relative mx-auto flex min-h-[40vh] sm:min-h-[46vh] max-w-7xl flex-col justify-center px-6 py-20 lg:py-24">
+          <span className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-sky-400 backdrop-blur-md mb-4 w-fit">
+            <ImageIcon className="h-3.5 w-3.5" />
+            <span>{ft.heroBadge || "Portofolio & Dokumentasi"}</span>
           </span>
-          <h1 className="max-w-[18ch] text-balance font-display text-5xl leading-[1.05] text-surface md:text-6xl lg:text-7xl">
-            Foto
+          <h1 className="max-w-3xl text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            {ft.heroTitle || "Galeri Foto Kegiatan"}
           </h1>
-          <p className="mt-5 max-w-[60ch] text-pretty text-lg leading-relaxed text-surface/75">
-            Kumpulan momen kegiatan, belajar, dan pengalaman peserta Ich Liebe Deutsch Medan.
+          <p className="mt-4 max-w-2xl text-sm sm:text-base text-slate-300 leading-relaxed">
+            {ft.heroSubtitle ||
+              "Kumpulan momen nyata pembelajaran bahasa Jerman, cooking class, gathering siswa, dan pelepasan kandidat menuju Jerman."}
           </p>
         </div>
       </section>
 
-      {/* Gallery grid */}
-      <section className="py-24">
+      {/* 2. Photo Gallery Section */}
+      <section className="py-20">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <ImageIcon className="h-6 w-6 text-primary" />
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+            <div>
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sky-700">
+                <Filter className="h-3.5 w-3.5" />
+                <span>Kategori Foto</span>
+              </span>
+              <h2 className="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight">
+                Momen & Jejak Langkah Siswa
+              </h2>
             </div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-primary">
-              Galeri Foto
-            </p>
-            <h2 className="font-display text-3xl leading-tight md:text-4xl">
-              Momen Ich Liebe Deutsch Medan
-            </h2>
-            <p className="mx-auto mt-3 max-w-[60ch] text-pretty text-muted-foreground">
-              Lihat suasana kelas, gathering, cooking class, dan pengalaman peserta program kami.
-            </p>
+
+            {/* Category Filter Pills */}
+            <div className="flex flex-wrap items-center gap-2">
+              {categories.map((cat) => {
+                const isActive = selectedCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`rounded-full px-4 py-2 text-xs font-bold transition-all ${
+                      isActive
+                        ? "bg-sky-600 text-white shadow-md shadow-sky-600/20 scale-105"
+                        : "bg-white text-slate-700 border border-slate-200 hover:bg-sky-50 hover:text-sky-600"
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
-            {PHOTOS.map((photo, idx) => (
+          {/* Grid Layout with Lightbox Trigger */}
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {filteredPhotos.map((photo, idx) => (
               <figure
-                key={`${photo.caption}-${idx}`}
-                className="group relative break-inside-avoid overflow-hidden rounded-2xl"
+                key={photo.id || idx}
+                onClick={() => {
+                  setPhotoIndex(idx);
+                  setLightboxOpen(true);
+                }}
+                className="group relative overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-2xl hover:border-sky-300 hover:-translate-y-1"
               >
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  loading="lazy"
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-night/70 via-night/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <figcaption className="absolute bottom-4 left-4 translate-y-2 text-sm font-medium text-surface opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  {photo.caption}
-                </figcaption>
+                <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-900">
+                  <img
+                    src={photo.src}
+                    alt={photo.alt || photo.caption || "Dokumentasi Foto"}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/logo.png";
+                    }}
+                  />
+                  {/* Atmospheric overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+
+                  {/* Expand button badge */}
+                  <div className="absolute top-3.5 right-3.5 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all group-hover:scale-105">
+                    <Maximize2 className="h-4 w-4" />
+                  </div>
+
+                  {/* Category badge */}
+                  {photo.category && (
+                    <div className="absolute top-3.5 left-3.5">
+                      <span className="rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-700 shadow-sm">
+                        {photo.category}
+                      </span>
+                    </div>
+                  )}
+
+                  {/* Caption & Title */}
+                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                    {photo.title && (
+                      <h3 className="text-sm sm:text-base font-bold text-white mb-1 drop-shadow-sm">
+                        {photo.title}
+                      </h3>
+                    )}
+                    {photo.caption && (
+                      <p className="text-xs text-slate-200 line-clamp-2 leading-relaxed drop-shadow-sm">
+                        {photo.caption}
+                      </p>
+                    )}
+                  </div>
+                </div>
               </figure>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="border-t border-border py-24">
+      {/* 3. CTA Section */}
+      <section className="border-t border-sky-100 bg-white py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 md:flex-row md:items-center">
           <div>
-            <h2 className="max-w-[24ch] text-balance font-display text-3xl leading-tight md:text-4xl">
-              Ingin menjadi bagian dari kami?
+            <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
+              Bergabung Bersama Kami
+            </span>
+            <h2 className="mt-1 text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Ingin Menjadi Bagian Dari Galeri Momen Sukses Berikutnya?
             </h2>
-            <p className="mt-3 max-w-[50ch] text-pretty text-muted-foreground">
-              Konsultasikan program Aupair, Ausbildung, dan FSJ Keperawatan bersama tim German
-              Education Indonesia.
+            <p className="mt-2 text-sm text-slate-600 max-w-xl">
+              Daftarkan diri Anda untuk kelas bahasa Jerman intensif dan raih peluang emas berkarier
+              atau menempuh pendidikan di Jerman.
             </p>
           </div>
           <a
-            href={WA_LINK}
+            href={waLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-7 py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-sky-600/25 transition-all hover:bg-sky-500 hover:scale-105 active:scale-95 shrink-0"
           >
-            Mulai Konsultasi <ArrowUpRight className="h-4 w-4" />
+            <span>Konsultasi WhatsApp Sekarang</span>
+            <ArrowUpRight className="h-4 w-4" />
           </a>
         </div>
       </section>
 
-      {/* Back to top */}
-      <div className="border-t border-border py-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-center px-6">
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-sm font-semibold text-primary transition-colors hover:underline"
-          >
-            Back To Top
-          </button>
-        </div>
-      </div>
+      {/* Interactive Lightbox Viewer */}
+      <PhotoLightbox
+        photos={filteredPhotos}
+        currentIndex={photoIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onIndexChange={(idx) => setPhotoIndex(idx)}
+      />
     </main>
   );
 }

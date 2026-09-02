@@ -4,6 +4,7 @@ import blogFsj from "@/assets/blog-fsj.jpg";
 import blogKarir from "@/assets/blog-karir.jpg";
 
 export type BlogPost = {
+  id?: string;
   slug: string;
   title: string;
   tag: string;
@@ -16,6 +17,7 @@ export type BlogPost = {
 
 export const BLOG_POSTS: BlogPost[] = [
   {
+    id: "post-1",
     slug: "peluang-karir-kerja-di-jerman",
     title: "Peluang Karir Kerja di Jerman",
     tag: "Karier",
@@ -32,6 +34,7 @@ export const BLOG_POSTS: BlogPost[] = [
     ],
   },
   {
+    id: "post-2",
     slug: "program-ausbildung-jerman",
     title: "Program Ausbildung Jerman",
     tag: "Ausbildung",
@@ -48,6 +51,7 @@ export const BLOG_POSTS: BlogPost[] = [
     ],
   },
   {
+    id: "post-3",
     slug: "program-aupair-di-jerman",
     title: "Program Aupair di Jerman",
     tag: "Aupair",
@@ -64,6 +68,7 @@ export const BLOG_POSTS: BlogPost[] = [
     ],
   },
   {
+    id: "post-4",
     slug: "program-fsj-di-jerman",
     title: "Program FSJ di Jerman",
     tag: "FSJ",
@@ -81,6 +86,24 @@ export const BLOG_POSTS: BlogPost[] = [
   },
 ];
 
+export function getAllPosts(): BlogPost[] {
+  if (typeof window !== "undefined") {
+    try {
+      const saved = localStorage.getItem("ild_cms_data_v2");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.blog?.posts && Array.isArray(parsed.blog.posts)) {
+          return parsed.blog.posts;
+        }
+      }
+    } catch {
+      // fallback
+    }
+  }
+  return BLOG_POSTS;
+}
+
 export function getPostBySlug(slug: string): BlogPost | undefined {
-  return BLOG_POSTS.find((p) => p.slug === slug);
+  const posts = getAllPosts();
+  return posts.find((p) => p.slug === slug);
 }

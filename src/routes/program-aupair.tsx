@@ -4,36 +4,36 @@ import {
   BookOpen,
   CalendarDays,
   CheckCircle2,
-  CreditCard,
+  Heart,
+  Home,
+  MessageSquare,
   Plane,
-  Star,
-  Users,
+  Sparkles,
+  Utensils,
+  Wallet,
+  Clock,
+  Euro,
+  Users2,
+  GraduationCap,
 } from "lucide-react";
-
 import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
 import programAupair from "@/assets/program-aupair.jpg";
-import galleryClass from "@/assets/gallery-class.jpg";
-import galleryStudy from "@/assets/gallery-study.jpg";
-import galleryCity from "@/assets/gallery-city.jpg";
-import galleryGraduation from "@/assets/gallery-graduation.jpg";
-
-const WA_LINK =
-  "https://wa.me/6281265965231?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20konsultasi%20program%20Aupair%20ke%20Jerman.";
+import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/program-aupair")({
   head: () => ({
     meta: [
-      { title: "Program Aupair — Ich Liebe Deutsch Medan" },
+      { title: "Program Au Pair di Jerman — Ich Liebe Deutsch Medan" },
       {
         name: "description",
         content:
-          "Program Aupair Ich Liebe Deutsch Medan: kursus bahasa Jerman A1, prosedur, persyaratan, dan rincian biaya menuju Jerman.",
+          "Program Au Pair ke Jerman: Tinggal bersama Host Family, kamar pribadi & makan gratis, uang saku bulanan, subsidi kursus bahasa, dan batu loncatan Ausbildung.",
       },
-      { property: "og:title", content: "Program Aupair — Ich Liebe Deutsch Medan" },
+      { property: "og:title", content: "Program Au Pair — Ich Liebe Deutsch Medan" },
       {
         property: "og:description",
         content:
-          "Daftar program Aupair ke Jerman bersama Ich Liebe Deutsch Medan. Pelajari persyaratan, prosedur, dan biaya lengkapnya.",
+          "Wujudkan pengalaman hidup di Jerman sebagai Au Pair bersama Ich Liebe Deutsch Medan. Bimbingan bahasa level A1-A2 dan pencarian Host Family aman.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -42,323 +42,227 @@ export const Route = createFileRoute("/program-aupair")({
   component: ProgramAupair,
 });
 
-const PROCEDURES = [
-  {
-    icon: CalendarDays,
-    title: "Kursus 6 Bulan",
-    desc: "Kursus bahasa Jerman dilaksanakan selama 6 bulan dengan jadwal yang terstruktur.",
-  },
-  {
-    icon: BookOpen,
-    title: "Ujian Goethe Institut Jakarta",
-    desc: "Setelah kursus, peserta mengikuti ujian A1 di Goethe Institut Jakarta.",
-  },
-  {
-    icon: Plane,
-    title: "Biaya Sendiri",
-    desc: "Tiket penerbangan ke Jerman, biaya ujian, dan biaya visa ditanggung masing-masing kandidat.",
-  },
-];
+export function ProgramAupair() {
+  const { cms } = useCms();
+  const aup = cms.aupair;
+  const k = cms.kontak;
+  const rawWa = (k.hotlineWA || "081265965231").replace(/[^0-9]/g, "");
+  const cleanWa = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
+  const waLink = `https://wa.me/${cleanWa}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20tertarik%20dengan%20program%20Aupair%20ke%20Jerman.`;
 
-const REQUIREMENTS = [
-  "Maksimal 26 tahun",
-  "Bahasa Jerman minimal level A1 — lebih disarankan belajar minimal sampai level A2",
-  "Bersedia tinggal bersama keluarga Jerman (host family)",
-  "Siap membantu pengasuhan anak dan pekerjaan rumah ringan",
-];
+  const timelineSteps = [
+    {
+      step: "01",
+      title: "Pendaftaran & Kursus A1 / A2",
+      desc: "Belajar bahasa Jerman intensif dan mengikuti Cooking Class untuk pembekalan kemandirian hidup.",
+    },
+    {
+      step: "02",
+      title: "Pembuatan Profil & Wawancara",
+      desc: "Menyusun biodata Au Pair (Dear Host Family Letter) dan wawancara online via video call dengan keluarga asuh.",
+    },
+    {
+      step: "03",
+      title: "Penandatanganan Kontrak",
+      desc: "Penerbitan kontrak resmi Au Pair (Au-Pair-Vertrag) dan polis asuransi dari Host Family di Jerman.",
+    },
+    {
+      step: "04",
+      title: "Pengajuan Visa & Berangkat",
+      desc: "Wawancara visa di Kedubes Jerman Jakarta, tiket pesawat, dan penyambutan langsung oleh Host Family.",
+    },
+  ];
 
-const BENEFITS = [
-  "Tinggal bersama keluarga Jerman",
-  "Membantu menjaga anak",
-  "Membantu pekerjaan rumah ringan yang berkaitan dengan kehidupan keluarga",
-  "Berinteraksi menggunakan bahasa Jerman",
-  "Mendapat uang saku",
-  "Mendapat tempat tinggal dan makanan dari host family",
-  "Memiliki kesempatan mengikuti kursus bahasa Jerman",
-];
-
-const GALLERY = [
-  { src: galleryClass, alt: "Kelas bahasa Jerman Ich Liebe Deutsch Medan" },
-  { src: galleryStudy, alt: "Peserta belajar bahasa Jerman" },
-  { src: galleryCity, alt: "Suasana kota di Jerman" },
-  { src: galleryGraduation, alt: "Wisuda dan kelulusan peserta" },
-];
-
-const FEES = [
-  { item: "Pendaftaran", amount: "Rp. 200,000" },
-  { item: "Buku", amount: "Rp. 400,000" },
-  { item: "Kursus bahasa Jerman level A-1", amount: "Rp. 750,000/bulan" },
-  { item: "Ujian A-1", amount: "Rp 1,800,000 (tergantung kurs Euro)" },
-  { item: "Visa", amount: "Rp. 1,400,000 (tergantung kurs Euro)" },
-  { item: "Fee Penyaluran", amount: "Rp. 3,000,000 – dicicil 6 kali" },
-];
-
-const INSTALLMENTS = [
-  "Rp. 500,000 saat mendaftar",
-  "Rp. 500,000 saat mengirimkan Bewerbung",
-  "Rp. 500,000 saat interview dengan calon GF",
-  "Rp. 500,000 saat dapat GF",
-  "Rp. 500,000 saat turun kontrak",
-  "Rp. 500,000 saat pengurusan visa",
-];
-
-function ProgramAupair() {
   return (
-    <main>
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden">
+    <main className="bg-slate-50/50">
+      {/* 1. Hero Header */}
+      <section className="relative isolate overflow-hidden bg-slate-950 text-white border-b border-sky-900/40">
         <img
           src={heroBrandenburg}
           alt="Gerbang Brandenburg di Berlin, Jerman"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
-        <div className="absolute inset-0 bg-night/70" />
-        <div className="relative mx-auto flex min-h-[42vh] flex-col justify-center px-6 py-24 md:min-h-[48vh]">
-          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-surface/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-surface">
-            Program
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
+
+        <div className="relative mx-auto flex min-h-[46vh] sm:min-h-[52vh] max-w-7xl flex-col justify-center px-6 py-20 lg:py-24">
+          <span className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-sky-400 backdrop-blur-md mb-4 w-fit">
+            <Heart className="h-3.5 w-3.5" />
+            <span>{aup.heroBadge || "Program Pertukaran Budaya & Bahasa"}</span>
           </span>
-          <h1 className="max-w-[18ch] text-balance font-display text-5xl leading-[1.05] text-surface md:text-6xl lg:text-7xl">
-            Program Aupair
+          <h1 className="max-w-3xl text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            {aup.heroTitle || "Program Au Pair di Jerman"}
           </h1>
-          <p className="mt-5 max-w-[60ch] text-pretty text-lg leading-relaxed text-surface/75">
-            Wujudkan pengalaman hidup di Jerman melalui program Aupair bersama Ich Liebe Deutsch Medan
-            Indonesia.
+          <p className="mt-4 max-w-2xl text-sm sm:text-base text-slate-300 leading-relaxed">
+            {aup.heroSubtitle ||
+              "Tinggal bersama keluarga asuh Jerman (Host Family), perdalam kemampuan bahasa Jerman secara alami, nikmati kamar pribadi & makan gratis, serta dapatkan uang saku bulanan."}
           </p>
+
+          {/* Quick Facts */}
+          <div className="mt-8 flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold backdrop-blur-md border border-white/10 text-sky-300">
+              <Euro className="h-3.5 w-3.5 text-amber-400" />
+              <span>Uang Saku: ~€300 / bln</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold backdrop-blur-md border border-white/10 text-sky-300">
+              <Clock className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Durasi: 12 Bulan (1 Tahun)</span>
+            </div>
+            <div className="flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold backdrop-blur-md border border-white/10 text-sky-300">
+              <Users2 className="h-3.5 w-3.5 text-sky-400" />
+              <span>Usia: 18 – 26 Tahun</span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Intro */}
-      <section className="border-b border-border py-24">
+      {/* 2. Gambaran & Keuntungan */}
+      <section className="py-20 bg-white">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid items-center gap-14 lg:grid-cols-2">
-            <div>
-              <p className="mb-4 text-[11px] font-semibold uppercase tracking-widest text-primary">
-                Program Aupair
-              </p>
-              <h2 className="max-w-[20ch] text-balance font-display text-4xl leading-tight md:text-5xl">
-                Hidup dan belajar di Jerman sebagai Aupair
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-6">
+              <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
+                Gambaran Program
+              </span>
+              <h2 className="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
+                Apa itu Program Au Pair?
               </h2>
-              <p className="mt-5 font-display text-xl text-muted-foreground">
-                Ich Liebe Deutsch Medan
+              <p className="mt-4 text-sm leading-relaxed text-slate-600">
+                {aup.description ||
+                  "Au Pair adalah program pertukaran budaya resmi yang diakui pemerintah Jerman. Peserta tinggal bersama keluarga Jerman sebagai anggota keluarga, membantu tugas pengasuhan anak ringan, serta memiliki kesempatan emas memperdalam bahasa Jerman dan menjelajahi negara-negara Eropa."}
               </p>
-            </div>
-            <div className="space-y-6 text-pretty leading-relaxed text-muted-foreground">
-              <p>
-                Au Pair adalah program di mana anak muda Indonesia tinggal bersama keluarga di
-                Jerman (host family) sambil membantu kegiatan pengasuhan anak dan pekerjaan rumah
-                ringan. Sebagai gantinya, peserta mendapatkan tempat tinggal, makanan, uang saku,
-                dan kesempatan untuk belajar budaya serta bahasa Jerman.
-              </p>
-              <ul className="space-y-3">
-                {BENEFITS.map((b) => (
-                  <li key={b} className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                    <span className="text-foreground">{b}</span>
-                  </li>
+
+              <div className="mt-6 space-y-3">
+                {(
+                  aup.benefits || [
+                    {
+                      title: "Kamar Pribadi & Makan Gratis",
+                      desc: "Akomodasi kamar pribadi dan makan sehari-hari sepenuhnya ditanggung oleh Host Family.",
+                    },
+                    {
+                      title: "Uang Saku Bulanan (Taschengeld)",
+                      desc: "Menerima uang saku bulanan minimal €280 – €350 per bulan untuk kebutuhan pribadi.",
+                    },
+                    {
+                      title: "Asuransi & Subsidi Kursus",
+                      desc: "Host Family wajib menyediakan asuransi kesehatan lengkap dan memberikan subsidi biaya kursus bahasa Jerman.",
+                    },
+                    {
+                      title: "Batu Loncatan Ideal",
+                      desc: "Sangat strategis sebagai langkah awal mencari kontrak Ausbildung atau mendaftar kuliah di Jerman setelah selesai 1 tahun.",
+                    },
+                  ]
+                ).map((b, i) => (
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-sky-100 bg-sky-50/50 p-4 transition-colors hover:bg-sky-50"
+                  >
+                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <CheckCircle2 className="h-4 w-4 text-sky-600" />
+                      <span>{b.title}</span>
+                    </h4>
+                    <p className="text-xs text-slate-600 mt-1 pl-6">{b.desc}</p>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
 
-      {/* Procedure */}
-      <section className="bg-muted/40 py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <Star className="h-6 w-6 text-primary" />
-            </div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-primary">
-              Prosedur
-            </p>
-            <h2 className="font-display text-3xl leading-tight md:text-4xl">Alur Program Aupair</h2>
-            <p className="mx-auto mt-3 max-w-[60ch] text-pretty text-muted-foreground">
-              Ikuti langkah-langkah berikut untuk bergabung dalam program Aupair ke Jerman.
-            </p>
-          </div>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            {PROCEDURES.map((step, idx) => (
-              <article
-                key={step.title}
-                className="relative rounded-2xl border border-border bg-card p-8 transition-shadow hover:shadow-xl"
-              >
-                <span className="absolute right-6 top-6 font-display text-5xl text-muted/50">
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-                <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                  <step.icon className="h-6 w-6 text-primary" />
-                </div>
-                <h3 className="mb-3 text-lg font-semibold">{step.title}</h3>
-                <p className="text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Requirements + image */}
-      <section className="border-b border-border py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid items-center gap-14 lg:grid-cols-2">
-            <div className="order-2 lg:order-1">
-              <img
-                src={programAupair}
-                alt="Ilustrasi program Aupair Ich Liebe Deutsch Medan"
-                className="rounded-2xl object-cover shadow-xl"
-              />
-            </div>
-            <div className="order-1 lg:order-2">
-              <p className="mb-4 text-[11px] font-semibold uppercase tracking-widest text-primary">
-                Persyaratan
-              </p>
-              <h2 className="max-w-[20ch] text-balance font-display text-4xl leading-tight md:text-5xl">
-                Persyaratan Program Aupair
-              </h2>
-              <p className="mt-5 text-pretty leading-relaxed text-muted-foreground">
-                Pastikan Anda memenuhi persyaratan berikut sebelum mendaftar program Aupair.
-              </p>
-              <ul className="mt-8 space-y-4">
-                {REQUIREMENTS.map((req) => (
-                  <li key={req} className="flex items-start gap-3">
-                    <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-                    <span className="text-foreground">{req}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Gallery */}
-      <section className="py-24">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <Users className="h-6 w-6 text-primary" />
-            </div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-primary">
-              Galeri
-            </p>
-            <h2 className="font-display text-3xl leading-tight md:text-4xl">Momen Program Aupair</h2>
-            <p className="mx-auto mt-3 max-w-[60ch] text-pretty text-muted-foreground">
-              Lihat suasana kegiatan, belajar, dan pengalaman peserta program Aupair.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {GALLERY.map((img) => (
-              <div
-                key={img.alt}
-                className="group relative aspect-[4/3] overflow-hidden rounded-2xl"
-              >
+            <div className="lg:col-span-6">
+              <div className="relative overflow-hidden rounded-3xl border border-sky-100 shadow-2xl">
                 <img
-                  src={img.src}
-                  alt={img.alt}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  src={programAupair}
+                  alt="Peserta Au Pair di Jerman"
+                  className="w-full h-auto object-cover max-h-[460px]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-night/60 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <p className="absolute bottom-4 left-4 translate-y-2 text-sm font-medium text-surface opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  {img.alt}
-                </p>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Fees */}
-      <section className="bg-muted/40 py-24">
+      {/* 3. Persyaratan & Timeline */}
+      <section className="py-20 bg-slate-50 border-y border-sky-100">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="grid gap-14 lg:grid-cols-2">
+          <div className="grid gap-12 lg:grid-cols-2">
             <div>
-              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <CreditCard className="h-6 w-6 text-primary" />
-              </div>
-              <p className="mb-4 text-[11px] font-semibold uppercase tracking-widest text-primary">
-                Biaya Program
-              </p>
-              <h2 className="max-w-[20ch] text-balance font-display text-4xl leading-tight md:text-5xl">
-                Rincian biaya Program Aupair
+              <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
+                Kualifikasi
+              </span>
+              <h2 className="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
+                Persyaratan Calon Au Pair
               </h2>
-              <p className="mt-5 text-pretty leading-relaxed text-muted-foreground">
-                Berikut estimasi biaya yang perlu dipersiapkan untuk mengikuti program Aupair.
-              </p>
+              <ul className="mt-6 space-y-3.5">
+                {(
+                  aup.requirements || [
+                    "Usia 18 – 26 Tahun saat pengajuan visa",
+                    "Lulusan minimal SMA / SMK / Sederajat",
+                    "Memiliki sertifikat bahasa Jerman minimal Goethe-Zertifikat Level A1 (disarankan A2)",
+                    "Menyukai anak-anak dan memiliki kesabaran serta kemampuan adaptasi yang baik",
+                    "Belum menikah dan belum memiliki anak",
+                    "Sehat jasmani dan rohani",
+                  ]
+                ).map((req, i) => (
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 rounded-2xl border border-sky-100 bg-white p-4 text-xs sm:text-sm text-slate-800 shadow-xs"
+                  >
+                    <CheckCircle2 className="h-5 w-5 text-sky-600 shrink-0 mt-0.5" />
+                    <span>{req}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="space-y-6">
-              <div className="overflow-hidden rounded-2xl border border-border bg-card">
-                <div className="grid grid-cols-2 gap-4 border-b border-border bg-muted/50 px-6 py-4 text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                  <span>Keterangan</span>
-                  <span className="text-right">Biaya</span>
-                </div>
-                <ul>
-                  {FEES.map((fee) => (
-                    <li
-                      key={fee.item}
-                      className="grid grid-cols-2 gap-4 border-b border-border px-6 py-4 last:border-b-0"
-                    >
-                      <span className="text-sm font-medium text-foreground">{fee.item}</span>
-                      <span className="text-right text-sm text-muted-foreground">{fee.amount}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="mb-4 text-sm font-semibold text-foreground">
-                  Fee Penyaluran Rp. 3,000,000 dicicil 6 kali:
-                </p>
-                <ul className="space-y-3">
-                  {INSTALLMENTS.map((item) => (
-                    <li key={item} className="flex items-start gap-3 text-sm text-muted-foreground">
-                      <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
+            <div>
+              <span className="text-xs font-bold uppercase tracking-wider text-sky-600">
+                Alur & Langkah
+              </span>
+              <h2 className="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
+                Tahapan Menuju Au Pair
+              </h2>
+              <div className="mt-6 space-y-3.5">
+                {timelineSteps.map((s) => (
+                  <div
+                    key={s.step}
+                    className="flex items-start gap-4 rounded-2xl border border-sky-100 bg-white p-4 shadow-xs"
+                  >
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-600 text-white font-mono text-xs font-bold">
+                      {s.step}
+                    </span>
+                    <div>
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900">{s.title}</h4>
+                      <p className="text-xs text-slate-600 mt-0.5 leading-relaxed">{s.desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="border-t border-border py-24">
+      {/* 4. CTA */}
+      <section className="border-t border-sky-100 bg-gradient-to-r from-sky-600 via-sky-600 to-sky-700 py-16 sm:py-20 text-white">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 md:flex-row md:items-center">
           <div>
-            <h2 className="max-w-[24ch] text-balance font-display text-3xl leading-tight md:text-4xl">
-              Konsultasi sekarang juga!
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+              Ingin Merasakan Pengalaman Hidup di Jerman Lewat Au Pair?
             </h2>
-            <p className="mt-3 max-w-[50ch] text-pretty text-muted-foreground">
-              Tanyakan detail program Aupair, jadwal kursus, dan persyaratan lainnya kepada tim kami.
+            <p className="mt-2 text-sm text-sky-100 max-w-xl">
+              Kami bimbing persiapan bahasa Jerman dari dasar dan fasilitasi pencarian Host Family
+              yang aman dan terpercaya.
             </p>
           </div>
           <a
-            href={WA_LINK}
+            href={waLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-sky-700 shadow-xl transition-all hover:bg-sky-50 hover:scale-105 active:scale-95 shrink-0"
           >
-            Mulai Konsultasi <ArrowUpRight className="h-4 w-4" />
+            <span>Konsultasi Au Pair via WhatsApp</span>
+            <ArrowUpRight className="h-4 w-4" />
           </a>
         </div>
       </section>
-
-      {/* Back to top */}
-      <div className="border-t border-border py-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-center px-6">
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-sm font-semibold text-primary transition-colors hover:underline"
-          >
-            Back To Top
-          </button>
-        </div>
-      </div>
     </main>
   );
 }

@@ -1,10 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight, Users } from "lucide-react";
-
 import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-
-const WA_LINK =
-  "https://wa.me/6281265965231?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.";
+import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/team")({
   head: () => ({
@@ -28,35 +25,12 @@ export const Route = createFileRoute("/team")({
   component: Team,
 });
 
-const TEAM_MEMBERS = [
-  {
-    name: "Founder YPGI",
-    role: "Pendiri Ich Liebe Deutsch Medan",
-    initials: "FY",
-  },
-  {
-    name: "Kepala Kursus",
-    role: "Penanggung jawab kelas bahasa Jerman",
-    initials: "KK",
-  },
-  {
-    name: "Staf Pengajar Ausbildung",
-    role: "Pengajar untuk program Ausbildung Gastronomie",
-    initials: "PA",
-  },
-  {
-    name: "Staf Pengajar Aupair",
-    role: "Pengajar untuk program Aupair",
-    initials: "SA",
-  },
-  {
-    name: "Staf Admin.",
-    role: "Administrasi & koordinasi dokumen peserta",
-    initials: "AD",
-  },
-];
-
 function Team() {
+  const { cms } = useCms();
+  const tm = cms.team;
+  const k = cms.kontak;
+  const waLink = `https://wa.me/${k.hotlineWA.replace(/[^0-9]/g, "")}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.`;
+
   return (
     <main>
       {/* Hero */}
@@ -69,14 +43,14 @@ function Team() {
         <div className="absolute inset-0 bg-night/70" />
         <div className="relative mx-auto flex min-h-[42vh] flex-col justify-center px-6 py-24 md:min-h-[48vh]">
           <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-surface/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-surface">
-            Ich Liebe Deutsch Medan
+            {tm.heroBadge || "Ich Liebe Deutsch Medan"}
           </span>
           <h1 className="max-w-[18ch] text-balance font-display text-5xl leading-[1.05] text-surface md:text-6xl lg:text-7xl">
-            Team
+            {tm.heroTitle || "Team"}
           </h1>
           <p className="mt-5 max-w-[60ch] text-pretty text-lg leading-relaxed text-surface/75">
-            Tim Ich Liebe Deutsch Medan yang mengelola dan
-            mendampingi peserta program Aupair, Ausbildung, dan FSJ Keperawatan menuju Jerman.
+            {tm.heroSubtitle ||
+              "Tim Ich Liebe Deutsch Medan yang mengelola dan mendampingi peserta program Aupair, Ausbildung, dan FSJ Keperawatan menuju Jerman."}
           </p>
         </div>
       </section>
@@ -101,23 +75,30 @@ function Team() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {TEAM_MEMBERS.map((member) => (
-              <article
-                key={member.name}
-                className="flex flex-col items-center rounded-2xl border border-border bg-card p-8 text-center transition-shadow hover:shadow-lg"
-              >
-                <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-2xl font-display font-semibold text-primary">
-                  {member.initials}
-                </div>
-                <h3 className="font-display text-xl">{member.name}</h3>
-                <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">
-                  {member.role}
-                </p>
-                <span className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/70">
-                  Our Team
-                </span>
-              </article>
-            ))}
+            {tm.members &&
+              tm.members.map((member) => (
+                <article
+                  key={member.id || member.name}
+                  className="flex flex-col items-center rounded-2xl border border-border bg-card p-8 text-center transition-shadow hover:shadow-lg"
+                >
+                  <div className="mb-5 flex h-24 w-24 items-center justify-center rounded-full bg-primary/10 text-2xl font-display font-semibold text-primary">
+                    {member.initials ||
+                      member.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .substring(0, 2)
+                        .toUpperCase()}
+                  </div>
+                  <h3 className="font-display text-xl">{member.name}</h3>
+                  <p className="mt-2 text-pretty text-sm leading-relaxed text-muted-foreground">
+                    {member.role}
+                  </p>
+                  <span className="mt-4 text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/70">
+                    Our Team
+                  </span>
+                </article>
+              ))}
           </div>
         </div>
       </section>
@@ -135,28 +116,16 @@ function Team() {
             </p>
           </div>
           <a
-            href={WA_LINK}
+            href={waLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-primary px-8 py-4 text-xs font-semibold uppercase tracking-wider text-primary-foreground shadow-lg shadow-primary/20 transition-all hover:bg-primary/90"
           >
-            Mulai Konsultasi <ArrowUpRight className="h-4 w-4" />
+            <span>Hubungi Kami</span>
+            <ArrowUpRight className="h-4 w-4" />
           </a>
         </div>
       </section>
-
-      {/* Back to top */}
-      <div className="border-t border-border py-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-center px-6">
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-sm font-semibold text-primary transition-colors hover:underline"
-          >
-            Back To Top
-          </button>
-        </div>
-      </div>
     </main>
   );
 }

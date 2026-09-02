@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -13,6 +14,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { SiteHeader } from "../components/site-header";
 import { SiteFooter } from "../components/site-footer";
+import { FloatingConsultation } from "../components/ui/floating-consultation";
+import { CmsProvider } from "../lib/cms-store";
 
 function NotFoundComponent() {
   return (
@@ -101,9 +104,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Young+Serif&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/logo.png", type: "image/png" },
+      { rel: "shortcut icon", href: "/logo.png" },
+      { rel: "apple-touch-icon", href: "/logo.png" },
     ],
   }),
   shellComponent: RootShell,
@@ -128,13 +133,22 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const location = useLocation();
+  const isHome = location.pathname === "/" || location.pathname === "";
+  const isHeaderFooterHidden =
+    location.pathname.startsWith("/admin") || location.pathname.startsWith("/login");
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SiteHeader />
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-      <SiteFooter />
+      <CmsProvider>
+        {!isHeaderFooterHidden && <SiteHeader />}
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <div className={isHeaderFooterHidden ? "" : isHome ? "" : "pt-20"}>
+          <Outlet />
+        </div>
+        {!isHeaderFooterHidden && <SiteFooter />}
+        {!isHeaderFooterHidden && <FloatingConsultation />}
+      </CmsProvider>
     </QueryClientProvider>
   );
 }

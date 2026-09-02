@@ -1,31 +1,34 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowUpRight, BookOpen } from "lucide-react";
-
+import {
+  ArrowUpRight,
+  BookOpen,
+  Sparkles,
+  CheckCircle2,
+  GraduationCap,
+  Award,
+  MessageSquare,
+} from "lucide-react";
+import { useState } from "react";
 import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import galleryStudy from "@/assets/gallery-study.jpg";
 import galleryClass from "@/assets/gallery-class.jpg";
-import galleryCooking from "@/assets/gallery-cooking.jpg";
-import galleryGathering from "@/assets/gallery-gathering.jpg";
-import galleryCity from "@/assets/gallery-city.jpg";
-import galleryGraduation from "@/assets/gallery-graduation.jpg";
-
-const WA_LINK =
-  "https://wa.me/6281265965231?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20bertanya%20tentang%20program%20ke%20Jerman.";
+import galleryStudy from "@/assets/gallery-study.jpg";
+import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
+import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/kegiatan-belajar")({
   head: () => ({
     meta: [
-      { title: "Kegiatan Belajar — Ich Liebe Deutsch Medan" },
+      { title: "Kegiatan Belajar Bahasa Jerman — Ich Liebe Deutsch Medan" },
       {
         name: "description",
         content:
-          "Kegiatan Belajar Ich Liebe Deutsch Medan: kelas bahasa Jerman intensif yang membekali peserta Aupair, Ausbildung, dan FSJ Keperawatan hingga level A1/B1 sebelum berangkat ke Jerman.",
+          "Metode pembelajaran bahasa Jerman intensif level A1, A2, dan B1 di Ich Liebe Deutsch Medan: kurikulum standar Goethe-Zertifikat, simulasi ujian, dan latihan percakapan aktif.",
       },
-      { property: "og:title", content: "Kegiatan Belajar — Ich Liebe Deutsch Medan" },
+      { property: "og:title", content: "Kegiatan Belajar Bahasa Jerman — Ich Liebe Deutsch Medan" },
       {
         property: "og:description",
         content:
-          "Kelas bahasa Jerman intensif Ich Liebe Deutsch Medan untuk mempersiapkan peserta program menguasai bahasa sebelum berangkat ke Jerman.",
+          "Bimbingan intensif bahasa Jerman dengan pengajar alumni UNIMED & Jerman. Siap ujian Goethe dan wawancara kerja.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -34,156 +37,219 @@ export const Route = createFileRoute("/kegiatan-belajar")({
   component: KegiatanBelajar,
 });
 
-const POINTS = [
-  {
-    title: "Bahasa Jerman Intensif",
-    desc: "Kelas bahasa Jerman intensif bersama pengajar berpengalaman, dipersiapkan sampai level A1/B1 sesuai kebutuhan masing-masing program.",
-  },
-  {
-    title: "Materi Terstruktur",
-    desc: "Materi disusun secara terstruktur mulai dari tata bahasa, kosakata, hingga percakapan sehari-hari yang relevan dengan kehidupan di Jerman.",
-  },
-  {
-    title: "Kesiapan Menghadapi Ujian",
-    desc: "Peserta dibekali latihan soal dan simulasi ujian bahasa agar siap menghadapi sertifikasi yang disyaratkan program Aupair dan Ausbildung.",
-  },
-];
+export function KegiatanBelajar() {
+  const { cms } = useCms();
+  const kb = cms.kegiatanBelajar;
+  const k = cms.kontak;
+  const rawWa = (k.hotlineWA || "081265965231").replace(/[^0-9]/g, "");
+  const cleanWa = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
+  const waLink = `https://wa.me/${cleanWa}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20tertarik%20mengikuti%20kursus%20bahasa%20Jerman.`;
 
-const PHOTOS = [
-  { src: galleryStudy, alt: "Kelas belajar bahasa Jerman", caption: "Belajar Bahasa (1)" },
-  { src: galleryClass, alt: "Suasana kelas Ich Liebe Deutsch Medan", caption: "Belajar Bahasa (2)" },
-  { src: galleryGathering, alt: "Belajar bersama peserta", caption: "Belajar Bersama (3)" },
-  { src: galleryCooking, alt: "Kegiatan kelas tambahan", caption: "Kegiatan Kelas (4)" },
-  { src: galleryCity, alt: "Diskusi peserta program", caption: "Diskusi Peserta (5)" },
-  { src: galleryGraduation, alt: "Kelulusan peserta kelas", caption: "Wisuda & Kelulusan (6)" },
-];
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
 
-function KegiatanBelajar() {
+  const defaultPhotos: LightboxPhoto[] = [
+    {
+      id: "kb-1",
+      src: galleryClass,
+      title: "Kelas Bahasa Intensif",
+      caption: "Sesi interaktif pengajaran tata bahasa dan latihan percakapan harian level A1-B1.",
+      category: "Belajar & Kelas",
+    },
+    {
+      id: "kb-2",
+      src: galleryStudy,
+      title: "Simulasi Ujian Goethe-Zertifikat",
+      caption:
+        "Try out membaca (Lesen), mendengar (Hören), menulis (Schreiben), dan berbicara (Sprechen).",
+      category: "Belajar & Kelas",
+    },
+  ];
+
+  const photos: LightboxPhoto[] =
+    kb.photos && kb.photos.length > 0
+      ? kb.photos.map((p, i) => ({
+          id: p.id || `kb-photo-${i}`,
+          src: p.src,
+          alt: p.alt || p.caption,
+          title: p.caption || "Dokumentasi Belajar",
+          caption: p.caption,
+          category: "Belajar & Kelas",
+        }))
+      : defaultPhotos;
+
   return (
-    <main>
-      {/* Hero */}
-      <section className="relative isolate overflow-hidden">
+    <main className="bg-slate-50/50">
+      {/* 1. Hero Header */}
+      <section className="relative isolate overflow-hidden bg-slate-950 text-white border-b border-sky-900/40">
         <img
           src={heroBrandenburg}
           alt="Gerbang Brandenburg di Berlin, Jerman"
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover opacity-25"
         />
-        <div className="absolute inset-0 bg-night/70" />
-        <div className="relative mx-auto flex min-h-[42vh] flex-col justify-center px-6 py-24 md:min-h-[48vh]">
-          <span className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-surface/20 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-widest text-surface">
-            Kegiatan Program
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
+
+        <div className="relative mx-auto flex min-h-[40vh] sm:min-h-[46vh] max-w-7xl flex-col justify-center px-6 py-20 lg:py-24">
+          <span className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-sky-400 backdrop-blur-md mb-4 w-fit">
+            <BookOpen className="h-3.5 w-3.5" />
+            <span>{kb.heroBadge || "Pilar 1: Kurikulum & Akademik"}</span>
           </span>
-          <h1 className="max-w-[18ch] text-balance font-display text-5xl leading-[1.05] text-surface md:text-6xl lg:text-7xl">
-            Kegiatan Belajar
+          <h1 className="max-w-3xl text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+            {kb.heroTitle || "Kegiatan Belajar Bahasa Jerman"}
           </h1>
-          <p className="mt-5 max-w-[60ch] text-pretty text-lg leading-relaxed text-surface/75">
-            Sebelum berangkat ke Jerman, seluruh peserta program Aupair, Ausbildung, dan FSJ
-            Keperawatan mengikuti kelas bahasa Jerman intensif sebagai bekal komunikasi sehari-hari.
+          <p className="mt-4 max-w-2xl text-sm sm:text-base text-slate-300 leading-relaxed">
+            {kb.heroSubtitle ||
+              "Kurikulum intensif dan komunikatif yang dirancang untuk mengantarkan siswa lulus ujian Goethe-Zertifikat Level A1, A2, dan B1 dengan predikat terbaik."}
           </p>
         </div>
       </section>
 
-      {/* Tujuan */}
-      <section className="py-24">
+      {/* 2. Metode & Keunggulan Belajar */}
+      <section className="py-20 bg-white border-b border-sky-100">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 text-center">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <BookOpen className="h-6 w-6 text-primary" />
-            </div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-primary">
-              Tujuan Kegiatan Belajar
-            </p>
-            <h2 className="font-display text-3xl leading-tight md:text-4xl">
-              Bekal bahasa untuk hidup di Jerman
+          <div className="text-center max-w-3xl mx-auto mb-14">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sky-700 border border-sky-100">
+              <Sparkles className="h-3.5 w-3.5 text-sky-600" />
+              <span>Metode Pembelajaran</span>
+            </span>
+            <h2 className="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight sm:text-4xl">
+              Fokus Pada Keterampilan Komunikasi Nyata
             </h2>
-            <p className="mx-auto mt-3 max-w-[60ch] text-pretty text-muted-foreground">
-              Kemampuan bahasa Jerman adalah kunci utama agar peserta dapat beradaptasi dengan cepat
-              di lingkungan keluarga asuh, sekolah, maupun tempat kerja.
+            <p className="mt-3 text-sm text-slate-600 leading-relaxed">
+              {kb.introText ||
+                "Kami memadukan pemahaman tata bahasa Jerman yang sistematis dengan latihan percakapan interaktif, simulasi wawancara kerja, dan pembekalan istilah profesi (Fachsprache) sesuai tujuan program peserta."}
             </p>
           </div>
 
           <div className="grid gap-6 md:grid-cols-3">
-            {POINTS.map((v) => (
-              <article key={v.title} className="rounded-2xl border border-border bg-card p-7">
-                <h3 className="font-display text-xl">{v.title}</h3>
-                <p className="mt-3 text-pretty text-sm leading-relaxed text-muted-foreground">
-                  {v.desc}
-                </p>
-              </article>
-            ))}
+            {kb.methods && kb.methods.length > 0 ? (
+              kb.methods.map((m, i) => (
+                <div
+                  key={m.id || i}
+                  className="rounded-3xl border border-sky-100 bg-sky-50/30 p-7 transition-all hover:bg-white hover:shadow-xl hover:border-sky-300"
+                >
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-600 text-white shadow-md shadow-sky-600/20 mb-4">
+                    <BookOpen className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">{m.title}</h3>
+                  <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-slate-600">
+                    {m.desc}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <>
+                <div className="rounded-3xl border border-sky-100 bg-sky-50/30 p-7 transition-all hover:bg-white hover:shadow-xl hover:border-sky-300">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-600 text-white shadow-md shadow-sky-600/20 mb-4">
+                    <GraduationCap className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">Standar CEFR Goethe-Institut</h3>
+                  <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-slate-600">
+                    Materi dan latihan terstruktur mencakup 4 modul kemampuan: Membaca (Lesen),
+                    Mendengar (Hören), Menulis (Schreiben), dan Berbicara (Sprechen).
+                  </p>
+                </div>
+                <div className="rounded-3xl border border-sky-100 bg-sky-50/30 p-7 transition-all hover:bg-white hover:shadow-xl hover:border-sky-300">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-600 text-white shadow-md shadow-sky-600/20 mb-4">
+                    <MessageSquare className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">Praktik Komunikasi Aktif</h3>
+                  <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-slate-600">
+                    Setiap pertemuan dilengkapi sesi dialog dan roleplay situasi kehidupan nyata di
+                    Jerman (belanja, transportasi, di tempat kerja, dan di rumah).
+                  </p>
+                </div>
+                <div className="rounded-3xl border border-sky-100 bg-sky-50/30 p-7 transition-all hover:bg-white hover:shadow-xl hover:border-sky-300">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-600 text-white shadow-md shadow-sky-600/20 mb-4">
+                    <Award className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">Try Out & Simulasi Wawancara</h3>
+                  <p className="mt-2.5 text-xs sm:text-sm leading-relaxed text-slate-600">
+                    Simulasi ujian berkala dan latihan wawancara bersama penutur asli / pengajar
+                    alumni Jerman untuk mengasah rasa percaya diri.
+                  </p>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </section>
 
-      {/* Galeri Kegiatan Belajar */}
-      <section className="border-t border-border bg-muted/40 py-24">
+      {/* 3. Galeri Foto Belajar */}
+      <section className="py-20 bg-slate-50">
         <div className="mx-auto max-w-7xl px-6">
-          <div className="mb-14 text-center">
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-widest text-primary">
-              Galeri Kegiatan Belajar
-            </p>
-            <h2 className="font-display text-3xl leading-tight md:text-4xl">
-              Momen belajar bersama kami
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-sky-100 px-3 py-1 text-xs font-bold uppercase tracking-wider text-sky-800">
+              <BookOpen className="h-3.5 w-3.5" />
+              <span>Dokumentasi Kelas</span>
+            </span>
+            <h2 className="mt-2 text-3xl font-extrabold text-slate-900 tracking-tight">
+              Momen Suasana Belajar Intensif
             </h2>
           </div>
 
-          <div className="columns-1 gap-4 sm:columns-2 lg:columns-3 [&>*]:mb-4">
-            {PHOTOS.map((photo, idx) => (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            {photos.map((photo, idx) => (
               <figure
-                key={`${photo.caption}-${idx}`}
-                className="group relative break-inside-avoid overflow-hidden rounded-2xl"
+                key={photo.id || idx}
+                onClick={() => {
+                  setPhotoIndex(idx);
+                  setLightboxOpen(true);
+                }}
+                className="group relative overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-2xl hover:border-sky-300 hover:-translate-y-1"
               >
-                <img
-                  src={photo.src}
-                  alt={photo.alt}
-                  loading="lazy"
-                  className="w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-night/70 via-night/0 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-                <figcaption className="absolute bottom-4 left-4 translate-y-2 text-sm font-medium text-surface opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-                  {photo.caption}
-                </figcaption>
+                <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-900">
+                  <img
+                    src={photo.src}
+                    alt={photo.alt || photo.caption || "Kegiatan Belajar"}
+                    loading="lazy"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                    <p className="text-xs sm:text-sm font-semibold text-white leading-snug drop-shadow-sm">
+                      {photo.caption}
+                    </p>
+                  </div>
+                </div>
               </figure>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="border-t border-border py-24">
+      {/* 4. CTA */}
+      <section className="border-t border-sky-100 bg-white py-20">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-8 px-6 md:flex-row md:items-center">
           <div>
-            <h2 className="max-w-[24ch] text-balance font-display text-3xl leading-tight md:text-4xl">
-              Ingin ikut kelas belajar Ich Liebe Deutsch Medan?
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Siap Memulai Kursus Bahasa Jerman Bersama Kami?
             </h2>
-            <p className="mt-3 max-w-[50ch] text-pretty text-muted-foreground">
-              Konsultasikan program Aupair, Ausbildung, dan FSJ Keperawatan bersama tim German
-              Education Indonesia.
+            <p className="mt-2 text-sm text-slate-600 max-w-xl">
+              Pilih kelas bahasa Jerman level A1, A2, atau B1 sesuai kebutuhan dan program impian
+              Anda ke Jerman.
             </p>
           </div>
           <a
-            href={WA_LINK}
+            href={waLink}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+            className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-7 py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-sky-600/25 transition-all hover:bg-sky-500 hover:scale-105 active:scale-95 shrink-0"
           >
-            Mulai Konsultasi <ArrowUpRight className="h-4 w-4" />
+            <span>Daftar Kelas via WhatsApp</span>
+            <ArrowUpRight className="h-4 w-4" />
           </a>
         </div>
       </section>
 
-      {/* Back to top */}
-      <div className="border-t border-border py-8">
-        <div className="mx-auto flex max-w-7xl items-center justify-center px-6">
-          <button
-            type="button"
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-            className="text-sm font-semibold text-primary transition-colors hover:underline"
-          >
-            Back To Top
-          </button>
-        </div>
-      </div>
+      {/* Lightbox */}
+      <PhotoLightbox
+        photos={photos}
+        currentIndex={photoIndex}
+        isOpen={lightboxOpen}
+        onClose={() => setLightboxOpen(false)}
+        onIndexChange={(idx) => setPhotoIndex(idx)}
+      />
     </main>
   );
 }

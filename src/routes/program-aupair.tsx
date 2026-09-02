@@ -16,8 +16,8 @@ import {
   Users2,
   GraduationCap,
 } from "lucide-react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import programAupair from "@/assets/program-aupair.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const programAupair = "/assets/program-aupair.jpg";
 import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/program-aupair")({

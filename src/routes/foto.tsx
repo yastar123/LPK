@@ -1,13 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight, Image as ImageIcon, Sparkles, Filter, Maximize2 } from "lucide-react";
 import { useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import galleryClass from "@/assets/gallery-class.jpg";
-import galleryCooking from "@/assets/gallery-cooking.jpg";
-import galleryStudy from "@/assets/gallery-study.jpg";
-import galleryGraduation from "@/assets/gallery-graduation.jpg";
-import galleryCity from "@/assets/gallery-city.jpg";
-import galleryGathering from "@/assets/gallery-gathering.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const galleryClass = "/assets/gallery-class.jpg";
+const galleryCooking = "/assets/gallery-cooking.jpg";
+const galleryStudy = "/assets/gallery-study.jpg";
+const galleryGraduation = "/assets/gallery-graduation.jpg";
+const galleryCity = "/assets/gallery-city.jpg";
+const galleryGathering = "/assets/gallery-gathering.jpg";
 import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
 import { useCms } from "@/lib/cms-store";
 

@@ -11,7 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
 
 export const Route = createFileRoute("/login")({
   head: () => ({

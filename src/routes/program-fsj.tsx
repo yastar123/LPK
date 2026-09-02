@@ -13,8 +13,8 @@ import {
   Users2,
   Stethoscope,
 } from "lucide-react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import programFsj from "@/assets/program-fsj.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const programFsj = "/assets/program-fsj.jpg";
 import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/program-fsj")({

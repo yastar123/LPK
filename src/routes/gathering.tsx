@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight, Users2, Sparkles, HeartHandshake, ShieldAlert, Trophy } from "lucide-react";
 import { useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import galleryGathering from "@/assets/gallery-gathering.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const galleryGathering = "/assets/gallery-gathering.jpg";
 import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
 import { useCms } from "@/lib/cms-store";
 

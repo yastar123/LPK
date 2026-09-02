@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { z } from "zod";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
 import { useCms } from "@/lib/cms-store";
 
 const contactSchema = z.object({

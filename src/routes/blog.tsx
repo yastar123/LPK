@@ -10,7 +10,7 @@ import {
   User,
 } from "lucide-react";
 import { useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
 import { BLOG_POSTS } from "@/lib/blog-posts";
 import { useCms } from "@/lib/cms-store";
 

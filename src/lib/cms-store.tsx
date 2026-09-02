@@ -1,18 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import programAusbildung from "@/assets/program-ausbildung.jpg";
-import programAupair from "@/assets/program-aupair.jpg";
-import programFsj from "@/assets/program-fsj.jpg";
-import galleryClass from "@/assets/gallery-class.jpg";
-import galleryStudy from "@/assets/gallery-study.jpg";
-import galleryCooking from "@/assets/gallery-cooking.jpg";
-import galleryGathering from "@/assets/gallery-gathering.jpg";
-import galleryCity from "@/assets/gallery-city.jpg";
-import galleryGraduation from "@/assets/gallery-graduation.jpg";
-import blogKarir from "@/assets/blog-karir.jpg";
-import blogAusbildung from "@/assets/blog-ausbildung.jpg";
-import blogAupair from "@/assets/blog-aupair.jpg";
-import blogFsj from "@/assets/blog-fsj.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const programAusbildung = "/assets/program-ausbildung.jpg";
+const programAupair = "/assets/program-aupair.jpg";
+const programFsj = "/assets/program-fsj.jpg";
+const galleryClass = "/assets/gallery-class.jpg";
+const galleryStudy = "/assets/gallery-study.jpg";
+const galleryCooking = "/assets/gallery-cooking.jpg";
+const galleryGathering = "/assets/gallery-gathering.jpg";
+const galleryCity = "/assets/gallery-city.jpg";
+const galleryGraduation = "/assets/gallery-graduation.jpg";
+const blogKarir = "/assets/blog-karir.jpg";
+const blogAusbildung = "/assets/blog-ausbildung.jpg";
+const blogAupair = "/assets/blog-aupair.jpg";
+const blogFsj = "/assets/blog-fsj.jpg";
 
 /* =========================================================================
    TYPE DEFINITIONS FOR ALL PUBLIC PAGES & MODULES

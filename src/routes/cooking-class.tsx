@@ -9,8 +9,8 @@ import {
   Users,
 } from "lucide-react";
 import { useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import galleryCooking from "@/assets/gallery-cooking.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const galleryCooking = "/assets/gallery-cooking.jpg";
 import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
 import { useCms } from "@/lib/cms-store";
 

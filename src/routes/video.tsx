@@ -10,7 +10,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
 import videoAsset from "@/assets/video-german-education.mp4.asset.json";
 import { useCms, type VideoDocumentationItem } from "@/lib/cms-store";
 

@@ -31,19 +31,19 @@ import { HeroSlider } from "@/components/hero-slider";
 import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
 import { useCms } from "@/lib/cms-store";
 
-import programAupair from "@/assets/program-aupair.jpg";
-import programAusbildung from "@/assets/program-ausbildung.jpg";
-import programFsj from "@/assets/program-fsj.jpg";
-import galleryCity from "@/assets/gallery-city.jpg";
-import galleryClass from "@/assets/gallery-class.jpg";
-import galleryCooking from "@/assets/gallery-cooking.jpg";
-import galleryGathering from "@/assets/gallery-gathering.jpg";
-import galleryGraduation from "@/assets/gallery-graduation.jpg";
-import galleryStudy from "@/assets/gallery-study.jpg";
-import blogAupair from "@/assets/blog-aupair.jpg";
-import blogAusbildung from "@/assets/blog-ausbildung.jpg";
-import blogFsj from "@/assets/blog-fsj.jpg";
-import blogKarir from "@/assets/blog-karir.jpg";
+const programAupair = "/assets/program-aupair.jpg";
+const programAusbildung = "/assets/program-ausbildung.jpg";
+const programFsj = "/assets/program-fsj.jpg";
+const galleryCity = "/assets/gallery-city.jpg";
+const galleryClass = "/assets/gallery-class.jpg";
+const galleryCooking = "/assets/gallery-cooking.jpg";
+const galleryGathering = "/assets/gallery-gathering.jpg";
+const galleryGraduation = "/assets/gallery-graduation.jpg";
+const galleryStudy = "/assets/gallery-study.jpg";
+const blogAupair = "/assets/blog-aupair.jpg";
+const blogAusbildung = "/assets/blog-ausbildung.jpg";
+const blogFsj = "/assets/blog-fsj.jpg";
+const blogKarir = "/assets/blog-karir.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({

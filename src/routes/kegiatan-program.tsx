@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowUpRight, ArrowRight, Layers } from "lucide-react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
 import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/kegiatan-program")({

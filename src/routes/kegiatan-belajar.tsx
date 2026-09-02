@@ -9,9 +9,9 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { useState } from "react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import galleryClass from "@/assets/gallery-class.jpg";
-import galleryStudy from "@/assets/gallery-study.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const galleryClass = "/assets/gallery-class.jpg";
+const galleryStudy = "/assets/gallery-study.jpg";
 import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
 import { useCms } from "@/lib/cms-store";
 

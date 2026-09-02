@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowUpRight, Users } from "lucide-react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
 import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/struktur")({

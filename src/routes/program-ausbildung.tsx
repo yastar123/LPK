@@ -20,8 +20,8 @@ import {
   FileCheck,
   Send,
 } from "lucide-react";
-import heroBrandenburg from "@/assets/hero-brandenburg.jpg";
-import programAusbildung from "@/assets/program-ausbildung.jpg";
+const heroBrandenburg = "/assets/hero-brandenburg.jpg";
+const programAusbildung = "/assets/program-ausbildung.jpg";
 import { useCms } from "@/lib/cms-store";
 
 export const Route = createFileRoute("/program-ausbildung")({

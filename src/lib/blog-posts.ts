@@ -1,7 +1,7 @@
-import blogAupair from "@/assets/blog-aupair.jpg";
-import blogAusbildung from "@/assets/blog-ausbildung.jpg";
-import blogFsj from "@/assets/blog-fsj.jpg";
-import blogKarir from "@/assets/blog-karir.jpg";
+const blogAupair = "/assets/blog-aupair.jpg";
+const blogAusbildung = "/assets/blog-ausbildung.jpg";
+const blogFsj = "/assets/blog-fsj.jpg";
+const blogKarir = "/assets/blog-karir.jpg";
 
 export type BlogPost = {
   id?: string;

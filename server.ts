@@ -33,7 +33,7 @@ async function startServer() {
   app.use("/api", apiRouter);
 
   // If a static index.html build exists, serve it statically.
-  // Otherwise, use Vite middleware (for TanStack Start SSR & dev serving)
+  // Otherwise, use Vite middleware + TanStack Start SSR
   const outputPublicPath = path.join(process.cwd(), ".output", "public");
   const distPath = path.join(process.cwd(), "dist");
   const hasStaticIndex =
@@ -43,7 +43,8 @@ async function startServer() {
   if (hasStaticIndex) {
     const staticDir = fs.existsSync(outputPublicPath) ? outputPublicPath : distPath;
     app.use(express.static(staticDir));
-    app.get("*", (_req, res) => {
+    // Express 5 compatible catch-all
+    app.use((_req, res) => {
       const indexPath = path.join(staticDir, "index.html");
       res.sendFile(indexPath);
     });
@@ -55,9 +56,39 @@ async function startServer() {
         port: PORT,
         allowedHosts: true,
       },
-      appType: "custom",
     });
     app.use(vite.middlewares);
+
+    // TanStack Start SSR fallback handler for Express
+    app.use(async (req, res, next) => {
+      if (res.headersSent) return;
+      try {
+        const ssrEnv = (vite.environments as Record<string, unknown>)?.ssr as
+          | {
+              runner?: {
+                import: (id: string) => Promise<{
+                  default?: { fetch?: (r: unknown) => Promise<Response> };
+                  fetch?: (r: unknown) => Promise<Response>;
+                }>;
+              };
+            }
+          | undefined;
+        if (ssrEnv?.runner) {
+          const { NodeRequest, sendNodeResponse } = await import("srvx/node");
+          const webReq = new NodeRequest({ req, res });
+          const entry = await ssrEnv.runner.import("virtual:tanstack-start-server-entry");
+          const handler = entry?.default ?? entry;
+          if (typeof handler?.fetch === "function") {
+            const response = await handler.fetch(webReq);
+            return await sendNodeResponse(res, response);
+          }
+        }
+      } catch (err) {
+        console.error("[TanStack Start SSR Error]", err);
+        return next(err);
+      }
+      next();
+    });
   }
 
   app.listen(PORT, HOST, () => {

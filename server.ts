@@ -18,8 +18,13 @@ async function startServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  // Security: Block access to hidden system files (.env, .git)
+  // Security: Block access to sensitive system files (.env, .git, .aws, etc.)
+  // while allowing Vite internal assets and dependencies
   app.use((req, res, next) => {
+    const p = req.path.toLowerCase();
+    if (p.includes(".vite") || p.includes("vite_cache") || p.includes("@id") || p.includes("@react-refresh")) {
+      return next();
+    }
     if (req.path.startsWith("/.") || req.path.includes("/.")) {
       return res.status(403).send("Forbidden");
     }

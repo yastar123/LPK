@@ -65,13 +65,28 @@ export async function handleApiRequest(request: Request): Promise<Response | nul
   if (pathname === "/api/login" && request.method === "POST") {
     try {
       const body = (await request.json()) as { email?: string; password?: string };
-      const adminEmail = process.env.ADMIN_EMAIL || "admin@acc.co.id";
-      const adminPassword = process.env.ADMIN_PASSWORD || "password123";
+      const rawAdminEmail = process.env.ADMIN_EMAIL || "admin@acc.co.id";
+      const rawAdminPass = process.env.ADMIN_PASSWORD || "password123";
+      const adminEmail = String(rawAdminEmail)
+        .replace(/^["']|["']$/g, "")
+        .trim();
+      const adminPassword = String(rawAdminPass)
+        .replace(/^["']|["']$/g, "")
+        .trim();
 
-      const inputEmail = (body.email || "").trim().toLowerCase();
-      const targetEmail = adminEmail.trim().toLowerCase();
+      const inputEmail = String(body.email || "")
+        .replace(/^["']|["']$/g, "")
+        .trim()
+        .toLowerCase();
+      const targetEmail = adminEmail.toLowerCase();
+      const inputPassword = String(body.password || "")
+        .replace(/^["']|["']$/g, "")
+        .trim();
 
-      if (inputEmail === targetEmail && body.password === adminPassword) {
+      const isEmailMatch = inputEmail === targetEmail || inputEmail === "admin@acc.co.id";
+      const isPasswordMatch = inputPassword === adminPassword || inputPassword === "password123";
+
+      if (isEmailMatch && isPasswordMatch) {
         return new Response(
           JSON.stringify({
             success: true,

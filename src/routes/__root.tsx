@@ -1,3 +1,4 @@
+import "../lib/fetch-guard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -124,6 +125,12 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="id">
       <head>
+        <script
+          id="fetch-getter-guard"
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var w=typeof window!=="undefined"?window:typeof globalThis!=="undefined"?globalThis:null;if(!w)return;var f=typeof w.fetch==="function"&&w.fetch.bind?w.fetch.bind(w):w.fetch;var d=Object.getOwnPropertyDescriptor(w,"fetch");var p=Object.getPrototypeOf(w);var pd=!d&&p?Object.getOwnPropertyDescriptor(p,"fetch"):null;var patch=(d&&!d.writable&&!d.set)||(pd&&!pd.writable&&!pd.set)||(!d&&!pd);if(patch){Object.defineProperty(w,"fetch",{get:function(){return f;},set:function(v){f=v;},configurable:true,enumerable:true});}}catch(e){}})();`,
+          }}
+        />
         <HeadContent />
       </head>
       <body>

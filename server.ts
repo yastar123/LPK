@@ -1,9 +1,26 @@
-import "dotenv/config";
+import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
 import path from "path";
 import fs from "fs";
 import { createServer as createViteServer } from "vite";
+
+// Load environment variables from .env and fallback to .env.example
+if (fs.existsSync(".env")) {
+  dotenv.config({ path: ".env" });
+}
+if (fs.existsSync(".env.example")) {
+  dotenv.config({ path: ".env.example" });
+}
+
+// Normalize credentials in process.env
+if (process.env.ADMIN_EMAIL) {
+  process.env.ADMIN_EMAIL = process.env.ADMIN_EMAIL.replace(/^["']|["']$/g, "").trim();
+}
+if (process.env.ADMIN_PASSWORD) {
+  process.env.ADMIN_PASSWORD = process.env.ADMIN_PASSWORD.replace(/^["']|["']$/g, "").trim();
+}
+
 import { initPostgres } from "./src/server/db";
 import { apiRouter } from "./src/server/routes";
 
@@ -22,7 +39,12 @@ async function startServer() {
   // while allowing Vite internal assets and dependencies
   app.use((req, res, next) => {
     const p = req.path.toLowerCase();
-    if (p.includes(".vite") || p.includes("vite_cache") || p.includes("@id") || p.includes("@react-refresh")) {
+    if (
+      p.includes(".vite") ||
+      p.includes("vite_cache") ||
+      p.includes("@id") ||
+      p.includes("@react-refresh")
+    ) {
       return next();
     }
     if (req.path.startsWith("/.") || req.path.includes("/.")) {

@@ -5,12 +5,75 @@
 //     React/TanStack dedupe, error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... }, etc... }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import type { IncomingMessage, ServerResponse } from "node:http";
 
 export default defineConfig({
   vite: {
     server: {
       allowedHosts: true,
     },
+    plugins: [
+      {
+        name: "dev-api-router",
+        configureServer(server) {
+          server.middlewares.use(
+            async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
+              if (!req.url || !req.url.startsWith("/api")) {
+                return next();
+              }
+
+              try {
+                const { handleApiRequest } = await server.ssrLoadModule(
+                  "/src/server/api-handler.ts",
+                );
+
+                const protocol = req.headers["x-forwarded-proto"] || "http";
+                const host = req.headers.host || "127.0.0.1:3000";
+                const fullUrl = `${protocol}://${host}${req.url}`;
+
+                const chunks: Buffer[] = [];
+                if (req.method !== "GET" && req.method !== "HEAD") {
+                  await new Promise<void>((resolve, reject) => {
+                    req.on("data", (chunk: Buffer) => chunks.push(chunk));
+                    req.on("end", () => resolve());
+                    req.on("error", reject);
+                  });
+                }
+
+                const body = chunks.length > 0 ? Buffer.concat(chunks) : undefined;
+                const webRequest = new Request(fullUrl, {
+                  method: req.method,
+                  headers: req.headers as HeadersInit,
+                  body: body && req.method !== "GET" && req.method !== "HEAD" ? body : undefined,
+                  // @ts-expect-error duplex is required in Node 18+ fetch
+                  duplex: "half",
+                });
+
+                const webResponse = await handleApiRequest(webRequest);
+                if (!webResponse) {
+                  return next();
+                }
+
+                res.statusCode = webResponse.status;
+                webResponse.headers.forEach((val: string, key: string) => {
+                  res.setHeader(key, val);
+                });
+
+                const resBuffer = await webResponse.arrayBuffer();
+                res.end(Buffer.from(resBuffer));
+              } catch (err: unknown) {
+                console.error("[dev-api-router] Error handling API request:", err);
+                res.statusCode = 500;
+                res.setHeader("Content-Type", "application/json");
+                res.end(
+                  JSON.stringify({ error: err instanceof Error ? err.message : String(err) }),
+                );
+              }
+            },
+          );
+        },
+      },
+    ],
   },
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).

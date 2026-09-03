@@ -32,8 +32,22 @@ async function startServer() {
   // Mount API endpoints
   app.use("/api", apiRouter);
 
-  // Vite middleware in development vs Static assets in production
-  if (process.env.NODE_ENV !== "production") {
+  // If a static index.html build exists, serve it statically.
+  // Otherwise, use Vite middleware (for TanStack Start SSR & dev serving)
+  const outputPublicPath = path.join(process.cwd(), ".output", "public");
+  const distPath = path.join(process.cwd(), "dist");
+  const hasStaticIndex =
+    fs.existsSync(path.join(outputPublicPath, "index.html")) ||
+    fs.existsSync(path.join(distPath, "index.html"));
+
+  if (hasStaticIndex) {
+    const staticDir = fs.existsSync(outputPublicPath) ? outputPublicPath : distPath;
+    app.use(express.static(staticDir));
+    app.get("*", (_req, res) => {
+      const indexPath = path.join(staticDir, "index.html");
+      res.sendFile(indexPath);
+    });
+  } else {
     const vite = await createViteServer({
       server: {
         middlewareMode: true,
@@ -41,25 +55,9 @@ async function startServer() {
         port: PORT,
         allowedHosts: true,
       },
-      appType: "spa",
+      appType: "custom",
     });
     app.use(vite.middlewares);
-  } else {
-    const outputPublicPath = path.join(process.cwd(), ".output", "public");
-    const distPath = path.join(process.cwd(), "dist");
-    const staticDir = fs.existsSync(outputPublicPath) ? outputPublicPath : distPath;
-
-    app.use(express.static(staticDir));
-    app.get("*", (_req, res) => {
-      const indexPath = path.join(staticDir, "index.html");
-      if (fs.existsSync(indexPath)) {
-        res.sendFile(indexPath);
-      } else if (fs.existsSync(path.join(distPath, "index.html"))) {
-        res.sendFile(path.join(distPath, "index.html"));
-      } else {
-        res.status(404).send("Build index.html not found");
-      }
-    });
   }
 
   app.listen(PORT, HOST, () => {

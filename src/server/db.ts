@@ -124,6 +124,22 @@ export async function initPostgres(): Promise<boolean> {
     return false;
   }
 
+  const isLocalHost = Boolean(
+    !connectionString ||
+    connectionString.includes("localhost") ||
+    connectionString.includes("127.0.0.1") ||
+    process.env.SQL_HOST === "localhost" ||
+    process.env.SQL_HOST === "127.0.0.1" ||
+    process.env.PGHOST === "localhost" ||
+    process.env.PGHOST === "127.0.0.1",
+  );
+
+  const useSsl =
+    !isLocalHost &&
+    (process.env.PGSSL === "true" ||
+      connectionString?.includes("sslmode=require") ||
+      (process.env.NODE_ENV === "production" && !connectionString?.includes("sslmode=disable")));
+
   try {
     pool = new Pool({
       connectionString: connectionString || undefined,
@@ -133,7 +149,11 @@ export async function initPostgres(): Promise<boolean> {
       database: process.env.SQL_DB_NAME || process.env.PGDATABASE || "postgres",
       port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
       connectionTimeoutMillis: 5000,
-      ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : undefined,
+      ssl: useSsl ? { rejectUnauthorized: false } : undefined,
+    });
+
+    pool.on("error", (err) => {
+      console.warn("[PostgreSQL Pool Warning]", err.message);
     });
 
     const client = await pool.connect();

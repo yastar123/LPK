@@ -82,14 +82,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ich Liebe Deutsch Medan — Ich Liebe Deutsch Medan" },
+      { title: "Ich Liebe Deutsch Medan — Lembaga Bahasa & Pendidikan Jerman" },
       {
         name: "description",
         content:
           "Ich Liebe Deutsch Medan — lembaga penyelenggara program Aupair, Ausbildung Gastronomie, dan FSJ Keperawatan ke Jerman bagi pemuda-pemudi Indonesia.",
       },
       { name: "author", content: "Ich Liebe Deutsch Medan" },
-      { property: "og:title", content: "Ich Liebe Deutsch Medan — Ich Liebe Deutsch Medan" },
+      { property: "og:title", content: "Ich Liebe Deutsch Medan — Lembaga Bahasa & Pendidikan Jerman" },
       {
         property: "og:description",
         content:

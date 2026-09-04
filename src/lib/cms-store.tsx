@@ -268,38 +268,82 @@ export interface SiteCmsData {
     heroBadge: string;
     heroTitle: string;
     heroSubtitle: string;
+    description?: string;
     salaryBadge: string;
     durationBadge: string;
     fields: AusbildungFieldItem[];
     requirements: string[];
+    benefits?: string[];
     steps: StepItem[];
+  };
+  ausbildung?: {
+    heroBadge?: string;
+    heroTitle?: string;
+    heroSubtitle?: string;
+    description?: string;
+    salaryBadge?: string;
+    durationBadge?: string;
+    fields?: AusbildungFieldItem[];
+    requirements?: string[];
+    benefits?: string[];
+    steps?: StepItem[];
   };
   programAupair: {
     heroBadge: string;
     heroTitle: string;
     heroSubtitle: string;
+    description?: string;
     pocketMoneyBadge: string;
     ageLimitBadge: string;
-    benefits: string[];
+    benefits: Array<string | { title: string; desc: string }>;
     requirements: string[];
     steps: StepItem[];
+  };
+  aupair?: {
+    heroBadge?: string;
+    heroTitle?: string;
+    heroSubtitle?: string;
+    description?: string;
+    pocketMoneyBadge?: string;
+    ageLimitBadge?: string;
+    benefits?: Array<string | { title: string; desc: string }>;
+    requirements?: string[];
+    steps?: StepItem[];
   };
   programFsj: {
     heroBadge: string;
     heroTitle: string;
     heroSubtitle: string;
+    description?: string;
     allowanceBadge: string;
     scopeBadge: string;
     areas: string[];
-    benefits: string[];
+    benefits: Array<string | { title: string; desc: string }>;
+    placements?: Array<{ title: string; desc: string }>;
     requirements: string[];
     steps: StepItem[];
   };
+  fsj?: {
+    heroBadge?: string;
+    heroTitle?: string;
+    heroSubtitle?: string;
+    description?: string;
+    allowanceBadge?: string;
+    scopeBadge?: string;
+    areas?: string[];
+    benefits?: Array<string | { title: string; desc: string }>;
+    placements?: Array<{ title: string; desc: string }>;
+    requirements?: string[];
+    steps?: StepItem[];
+  };
   persyaratan: {
     heroBadge: string;
+    heroTitle?: string;
+    heroSubtitle?: string;
     title: string;
     subtitle: string;
     programs: ProgramRequirementItem[];
+    items?: Array<{ id: string; title: string; tag: string; syarat: string[] }>;
     docList: DocChecklistItem[];
     visaSteps: StepItem[];
   };
@@ -423,7 +467,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
     ],
     ctaButton: {
       label: "Konsultasi WA",
-      href: "https://wa.me/6281265965231?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.",
+      href: "https://wa.me/6282127324453?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.",
       isExternal: true,
     },
   },
@@ -431,15 +475,14 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
     brandDesc:
       "Lembaga persiapan dan penyelenggara program Ausbildung, Au Pair, & FSJ ke Jerman terpercaya di Sumatera Utara.",
     badgeText: "Terakreditasi & Berbadan Hukum Resmi",
-    officeAddress:
-      "Komplek Waikiki, Jl. Flamboyan Raya No. 49 Blok F, Tj. Selamat, Kec. Medan Tuntungan, Kota Medan, Sumatera Utara 20135",
-    phone: "0812-6596-5231",
-    whatsapp: "0812-6596-5231",
-    email: "indonesiagerman@gmail.com",
+    officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
+    phone: "082127324453",
+    whatsapp: "082127324453",
+    email: "ichliebedtschmedan@gmail.com",
     operatingHours: "Senin - Sabtu: 08:30 - 17:30 WIB",
     newsletterTitle: "Buletin & Info Beasiswa",
     newsletterDesc: "Dapatkan pembaruan jadwal seleksi dan info beasiswa pelatihan bahasa Jerman.",
-    copyrightText: "©2026 Ich Liebe Deutsch Medan. All rights reserved.",
+    copyrightText: "©2026 ICH LIEBE DEUTSCH MEDAN. All rights reserved.",
     domainText: "www.germaneducation.or.id",
     portalLinkText: "Portal Masuk Siswa & Pengajar",
     socials: {
@@ -464,7 +507,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
         },
         button2: {
           label: "DAFTAR SEKARANG",
-          href: "https://wa.me/6281265965231",
+          href: "https://wa.me/6282127324453",
           isExternal: true,
         },
       },
@@ -481,7 +524,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
         },
         button2: {
           label: "KONSULTASI GRATIS",
-          href: "https://wa.me/6281265965231",
+          href: "https://wa.me/6282127324453",
           isExternal: true,
         },
       },
@@ -570,9 +613,9 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
     ctaBanner: {
       badge: "Wujudkan Impian Karier di Jerman",
       title: "Siap Memulai Langkah Menuju Jerman?",
-      desc: "Konsultasikan minat dan jurusan yang Anda inginkan bersama tim konsultan profesional Ich Liebe Deutsch Medan secara gratis.",
+      desc: "Konsultasikan minat dan jurusan yang Anda inginkan bersama tim konsultan profesional ICH LIEBE DEUTSCH MEDAN secara gratis.",
       primaryButtonText: "Konsultasi WhatsApp Gratis",
-      primaryButtonHref: "https://wa.me/6281265965231",
+      primaryButtonHref: "https://wa.me/6282127324453",
       secondaryButtonText: "Lihat Persyaratan Program",
       secondaryButtonHref: "/persyaratan",
     },
@@ -581,40 +624,41 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
     heroBadge: "Profil Lembaga & Perjalanan Kami",
     heroTitle: "Tentang Ich Liebe Deutsch Medan",
     heroSubtitle:
-      "Lembaga kursus bahasa Jerman berizin resmi yang hadir untuk mendidik, membimbing, dan mempersiapkan generasi muda Indonesia menghadapi kehidupan nyata di Jerman.",
+      "Lembaga kursus bahasa Jerman yang berdiri sejak tahun 2024 dan telah terdaftar serta memiliki izin operasional sebagai lembaga pendidikan di Kota Medan dan sekitarnya.",
     storyParagraphs: [
-      "Ich Liebe Deutsch Medan berawal dari kepedulian mendalam terhadap banyaknya pemuda-pemudi di Medan dan Sumatera Utara yang berkeinginan melanjutkan studi, bekerja, maupun meniti karier di Jerman, namun terkendala oleh minimnya akses pembinaan bahasa Jerman yang berkualitas dan transparan.",
-      "Didirikan oleh para alumni perguruan tinggi dan alumni program Jerman yang telah berpengalaman bertahun-tahun di Jerman, lembaga kami memadukan kurikulum standar Goethe-Institut dengan pembinaan mental, pemahaman etos kerja Jerman, serta pendampingan administrasi yang menyeluruh.",
-      "Kami meyakini bahwa belajar bahasa Jerman bukan sekadar menghafal kosakata, melainkan membangun kepercayaan diri untuk beradaptasi, berkomunikasi secara profesional, dan berprestasi di tingkat internasional.",
+      "Ich Liebe Deutsch Medan merupakan lembaga kursus bahasa Jerman yang berdiri sejak tahun 2024 dan telah terdaftar serta memiliki izin operasional sebagai lembaga pendidikan. Kehadiran Ich Liebe Deutsch Medan berawal dari sebuah komitmen untuk membantu masyarakat Indonesia, khususnya dari Kota Medan dan sekitarnya, dalam mempersiapkan diri untuk melanjutkan pendidikan, mengikuti pelatihan kerja, maupun membangun kehidupan di Jerman.",
+      "Ich Liebe Deutsch Medan didirikan oleh seorang Sarjana Pendidikan Bahasa Jerman Universitas Negeri Medan (UNIMED) yang memiliki pengalaman tinggal dan menjalani kehidupan di Jerman selama kurang lebih 6 tahun. Selama berada di Jerman, pendiri tidak hanya memperoleh pengalaman akademik dan budaya, tetapi juga menjalani Ausbildung dan berhasil menyelesaikannya pada tahun 2020 dengan hasil yang sangat memuaskan. Pengalaman tersebut menjadi salah satu fondasi utama dalam membangun sistem pembelajaran yang tidak hanya berorientasi pada kemampuan bahasa, tetapi juga pada kesiapan siswa menghadapi kehidupan nyata di Jerman.",
+      "Bagi kami, belajar bahasa Jerman bukan sekadar menguasai tata bahasa dan menghafalkan kosakata. Kemampuan bahasa merupakan salah satu bekal penting untuk dapat berkomunikasi, beradaptasi, belajar, dan bekerja secara mandiri di lingkungan masyarakat Jerman. Oleh karena itu, Ich Liebe Deutsch Medan tidak hanya berfokus pada menyalurkan atau mengantarkan siswa menuju Jerman, tetapi juga berkomitmen untuk membimbing dan mempersiapkan siswa agar mampu menjalani kehidupan di Jerman secara mandiri dan percaya diri.",
+      "Khusus bagi kandidat Ausbildung yang telah memperoleh kontrak kerja (Ausbildungsvertrag), Ich Liebe Deutsch Medan memberikan pelatihan dan pendampingan yang disesuaikan dengan bidang Ausbildung yang akan dijalani. Kandidat tidak hanya dipersiapkan dari sisi kemampuan bahasa Jerman secara umum, tetapi juga dilatih dengan kosakata, ungkapan, situasi komunikasi, serta istilah-istilah yang relevan dengan bidang pekerjaan mereka. Dengan demikian, siswa memiliki kesempatan untuk mengenal lingkungan kerja dan istilah profesinya sejak sebelum berangkat ke Jerman.",
+      "Kami percaya bahwa keberhasilan seseorang di Jerman tidak hanya ditentukan oleh keberhasilannya mendapatkan kontrak atau visa, tetapi juga oleh kesiapan bahasa, mental, pengetahuan budaya, kemampuan beradaptasi, dan kemandirian dalam menjalani kehidupan sehari-hari. Karena itu, Ich Liebe Deutsch Medan hadir bukan hanya untuk mengajarkan bahasa Jerman, tetapi untuk mempersiapkan setiap siswa agar siap melangkah, beradaptasi, dan berkembang di Jerman.",
     ],
-    vision:
-      "Menjadi lembaga pendidikan dan pelatihan bahasa Jerman terdepan dan terpercaya di Indonesia yang melahirkan generasi berdaya saing global, berintegritas tinggi, dan sukses di Jerman.",
+    vision: "Deutsch lernen. Deutschland verstehen. Zukunft gestalten.",
     mission: [
-      "Menyelenggarakan pembelajaran bahasa Jerman berstandar Goethe-Zertifikat A1 hingga B2 dengan metode interaktif.",
-      "Membekali peserta dengan wawasan budaya (Interkulturelle Kompetenz), etika kerja, dan kesiapan mental hidup di Jerman.",
-      "Memberikan pendampingan menyeluruh mulai dari pendaftaran, kontrak kerja, hingga pengajuan visa resmi ke Jerman.",
-      "Menjalin kemitraan strategis dengan institusi pendidikan, rumah sakit, dan perusahaan terkemuka di Jerman.",
+      "Belajar bahasa Jerman: Membekali siswa dengan kemampuan bahasa Jerman komunikatif dan terstandarisasi CEFR (Goethe-Zertifikat A1–B2).",
+      "Memahami kehidupan di Jerman: Membekali pemahaman budaya, etika kerja, dan kesiapan mental serta kemandirian hidup sehari-hari.",
+      "Mempersiapkan masa depan dengan lebih baik: Memberikan bimbingan terarah untuk program Ausbildung, Au Pair, FSJ/BFD, G to G, dan Kuliah di Jerman.",
+      "Memberikan pelatihan dan pendampingan khusus istilah profesi dan situasi kerja nyata bagi pemegang Ausbildungsvertrag sebelum berangkat ke Jerman.",
     ],
     values: [
       {
         id: "val-1",
-        title: "Integritas & Transparansi",
-        desc: "Menyajikan informasi program, biaya, dan tahapan secara jujur tanpa janji berlebihan.",
+        title: "Integritas & Izin Resmi",
+        desc: "Lembaga terdaftar dan berizin operasional resmi pendidikan sejak 2024 dengan tata kelola transparan.",
       },
       {
         id: "val-2",
-        title: "Kualitas Pembelajaran",
-        desc: "Instruktur bersertifikat resmi dengan rasio kelas kecil agar perhatian ke setiap siswa optimal.",
+        title: "Didirikan Alumni UNIMED & Praktisi Jerman",
+        desc: "Didirikan oleh Sarjana Pendidikan Bahasa Jerman UNIMED berpengalaman 6 tahun di Jerman & lulusan Ausbildung 2020.",
       },
       {
         id: "val-3",
-        title: "Pendampingan Holistik",
-        desc: "Tidak hanya bahasa, namun juga pembinaan karakter, cooking class, dan pembekalan budaya Jerman.",
+        title: "Pelatihan Khusus Ausbildungsvertrag",
+        desc: "Pelatihan istilah profesi, kosakata, dan komunikasi kerja sesuai bidang Ausbildung sebelum terbang ke Jerman.",
       },
       {
         id: "val-4",
-        title: "Koneksi Resmi",
-        desc: "Bekerjasama langsung dengan institusi dan perusahaan terdaftar di Republik Federal Jerman.",
+        title: "Kesiapan Mental & Kemandirian",
+        desc: "Membimbing kesiapan bahasa, mental, budaya, adaptasi, dan kemandirian nyata di masyarakat Jerman.",
       },
     ],
   },
@@ -705,58 +749,99 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
     ],
   },
   programAusbildung: {
-    heroBadge: "Vokasi & Pelatihan Kerja Jerman",
+    heroBadge: "Pendidikan & Pelatihan Kejuruan Jerman",
     heroTitle: "Program Ausbildung di Jerman",
     heroSubtitle:
-      "Program sekolah kejuruan dual (Dual Ausbildung) di Jerman selama 3 tahun dengan gaji pelatihan bulanan, asuransi, dan jaminan karier profesional di Eropa.",
-    salaryBadge: "Gaji: €950 – €1.400 / bln",
-    durationBadge: "Durasi: 3 Tahun Resmi",
+      "Sistem pendidikan dan pelatihan kejuruan di Jerman yang menggabungkan belajar teori dengan praktik kerja. Sederhananya Sekolah kejuruan + praktik di perusahaan = Ausbildung.",
+    description:
+      "Ausbildung adalah sistem pendidikan dan pelatihan kejuruan di Jerman yang menggabungkan belajar teori dengan praktik kerja, namun program ini tidak bisa dikatakan kuliah karena tidak memiliki gelar. Sederhananya Sekolah kejuruan + praktik di perusahaan = Ausbildung. Jadi Ausbildung bukan satu jenis sekolah atau satu pekerjaan, melainkan sistem pelatihan dengan banyak pilihan profesi.",
+    salaryBadge: "Gaji Pelatihan Resmi Perusahaan",
+    durationBadge: "Durasi: 2 – 3,5 Tahun",
+    benefits: [
+      "Belajar teori di sekolah kejuruan (Berufsschule)",
+      "Melakukan praktik langsung di perusahaan Jerman",
+      "Mendapatkan pengalaman kerja langsung",
+      "Dan dalam banyak program mendapatkan gaji pelatihan dari perusahaan",
+      "Bukan satu jenis sekolah atau satu pekerjaan, melainkan sistem pelatihan dengan banyak pilihan profesi",
+      "Lama Ausbildung umumnya sekitar 2–3,5 tahun, tergantung bidang dan programnya",
+    ],
     requirements: [
-      "Usia 18 – 32 tahun pada saat mendaftar",
-      "Pendidikan minimal SMA / SMK / D3 / S1 semua jurusan",
-      "Lulus ujian sertifikat bahasa Jerman minimal Goethe-Zertifikat B1",
-      "Kondisi fisik sehat dan memiliki motivasi kuat untuk belajar dan bekerja di Jerman",
-      "Lolos seleksi berkas dan wawancara dengan perwakilan institusi / perusahaan Jerman",
+      "Maksimal 32 Tahun saat mendaftar les",
+      "Lulusan SMA / SMK / Sederajat",
+      "Belajar bahasa Jerman sampai level minimal B1 (level bahasa Jerman menyesuaikan jurusan yang dipilih)",
     ],
     fields: [
       {
-        id: "field-1",
-        title: "Ausbildung Gastronomie & Perhotelan",
-        germanTitle: "Hotelfachmann / Hotelfachfrau / Koch",
-        duration: "3 Tahun",
-        salaryRange: "€950 - €1.200 / bln",
-        desc: "Pendidikan kejuruan di hotel berbintang dan restoran Jerman meliputi tata boga kuliner, manajemen restoran, dan operasional perhotelan.",
-        prospect:
-          "Peluang kerja langsung sebagai Supervisor Hotel atau Chef dengan gaji €2.500+/bln.",
-      },
-      {
-        id: "field-2",
-        title: "Ausbildung Keperawatan & Kesehatan",
+        id: "field-pflege",
+        title: "🏥 Perawat / Pflege",
         germanTitle: "Pflegefachmann / Pflegefachfrau",
         duration: "3 Tahun",
         salaryRange: "€1.150 - €1.400 / bln",
-        desc: "Pelatihan perawat profesional berstandar Uni Eropa di rumah sakit modern dan klinik terkemuka di seluruh negara bagian Jerman.",
-        prospect:
-          "Karier Perawat Terdaftar (Registered Nurse) di Jerman dengan gaji €3.000 - €3.800/bln.",
+        desc: "Pelatihan perawat profesional di rumah sakit dan fasilitas kesehatan Jerman.",
+        prospect: "Peluang kerja tetap langsung sebagai perawat bersertifikasi di Uni Eropa.",
       },
       {
-        id: "field-3",
-        title: "Ausbildung Teknik Mekatronika & Otomotif",
-        germanTitle: "Mechatroniker / Kfz-Mechatroniker",
+        id: "field-gastro",
+        title: "🧑‍🍳 Gastronomi & Perhotelan",
+        germanTitle: "Hotelfachmann / Koch / Restaurantfachmann",
+        duration: "3 Tahun",
+        salaryRange: "€950 - €1.200 / bln",
+        desc: "Pelatihan tata boga, manajemen operasional restoran, dan perhotelan berbintang di Jerman.",
+        prospect: "Jenjang karier Chef profesional dan manajer perhotelan di Eropa.",
+      },
+      {
+        id: "field-teknik",
+        title: "🔧 Teknik",
+        germanTitle: "Industriemechaniker / Elektroniker",
         duration: "3.5 Tahun",
         salaryRange: "€1.000 - €1.300 / bln",
-        desc: "Kombinasi teori dan praktik di industri permesinan, robotika manufaktur, dan teknologi otomotif Jerman.",
-        prospect:
-          "Teknisi spesialis industri Jerman dengan jenjang karier Meister berskala internasional.",
+        desc: "Pendidikan kejuruan teknik industri, mesin manufaktur, dan sistem elektronika standar Jerman.",
+        prospect: "Teknisi spesialis industri dengan keahlian berstandar internasional.",
       },
       {
-        id: "field-4",
-        title: "Ausbildung Ritel & Manajemen Toko",
-        germanTitle: "Kaufmann / Kauffrau im Einzelhandel",
+        id: "field-it",
+        title: "💻 IT (Teknologi Informasi)",
+        germanTitle: "Fachinformatiker",
         duration: "3 Tahun",
-        salaryRange: "€950 - €1.150 / bln",
-        desc: "Keahlian manajemen rantai pasok, customer relation, dan administrasi bisnis ritel modern di jaringan ritel Jerman.",
-        prospect: "Kepala Cabang / Store Manager ritel multinasional di kawasan Eropa.",
+        salaryRange: "€1.000 - €1.350 / bln",
+        desc: "Pengembangan perangkat lunak, administrasi jaringan, dan manajemen sistem informasi modern.",
+        prospect: "Software developer dan IT specialist di berbagai sektor bisnis Jerman.",
+      },
+      {
+        id: "field-mekanik",
+        title: "🚗 Mekanik Kendaraan",
+        germanTitle: "Kfz-Mechatroniker",
+        duration: "3.5 Tahun",
+        salaryRange: "€950 - €1.250 / bln",
+        desc: "Spesialisasi pemeliharaan, diagnostik, dan teknologi kendaraan otomotif modern standar Jerman.",
+        prospect: "Mekanik andal di bengkel resmi dan industri otomotif Eropa.",
+      },
+      {
+        id: "field-bisnis",
+        title: "🏢 Administrasi & Bisnis",
+        germanTitle: "Kaufmann / Kauffrau für Büromanagement",
+        duration: "3 Tahun",
+        salaryRange: "€950 - €1.200 / bln",
+        desc: "Manajemen perkantoran, administrasi keuangan, korespondensi, dan logistik bisnis modern.",
+        prospect: "Staf administrasi dan manajemen bisnis profesional di Jerman.",
+      },
+      {
+        id: "field-lab",
+        title: "🧑‍🔬 Laboratorium",
+        germanTitle: "Biologielaborant / Chemielaborant",
+        duration: "3.5 Tahun",
+        salaryRange: "€1.050 - €1.350 / bln",
+        desc: "Pengujian spesimen, analisis kimia, bioteknologi, dan riset di laboratorium industri dan medis.",
+        prospect: "Analis laboratorium bersertifikat di industri farmasi dan riset Jerman.",
+      },
+      {
+        id: "field-anak",
+        title: "👶 Pendidikan / Pendampingan Anak",
+        germanTitle: "Erzieher / Sozialpädagogische Assistenz",
+        duration: "3 – 3.5 Tahun",
+        salaryRange: "€1.000 - €1.300 / bln",
+        desc: "Pendidikan anak usia dini dan pendampingan tumbuh kembang anak di fasilitas pendidikan Jerman.",
+        prospect: "Pendidik dan konselor pendamping anak terdaftar di institusi sosial Jerman.",
       },
     ],
     steps: [
@@ -764,190 +849,569 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
         id: "step-1",
         step: 1,
         title: "Kursus Bahasa Jerman (A1 - B1)",
-        desc: "Belajar intensif di kelas Ich Liebe Deutsch Medan selama 6-8 bulan hingga lulus ujian resmi Goethe-Zertifikat B1.",
+        desc: "Belajar intensif di kelas Ich Liebe Deutsch Medan hingga menguasai level B1 (menyesuaikan jurusan).",
       },
       {
         id: "step-2",
         step: 2,
         title: "Penyusunan Berkas (Bewerbung)",
-        desc: "Pembuatan Anschreiben, Lebenslauf standar Jerman, penerjemahan tersumpah ijazah, dan legalisasi dokumen.",
+        desc: "Pembuatan Anschreiben, Lebenslauf standar Jerman, penerjemahan tersumpah, dan legalisasi dokumen.",
       },
       {
         id: "step-3",
         step: 3,
         title: "Wawancara dengan Perusahaan Jerman",
-        desc: "Simulasi wawancara intensif dan pendampingan saat interview online dengan calon pemberi kerja di Jerman.",
+        desc: "Simulasi wawancara intensif dan pendampingan interview daring dengan calon pemberi kerja di Jerman.",
       },
       {
         id: "step-4",
         step: 4,
-        title: "Penerbitan Kontrak & Pengurusan Visa",
-        desc: "Penandatanganan kontrak Ausbildung resmi dan pengurusan visa nasional tipe D di Kedutaan Besar Jerman di Jakarta.",
+        title: "Penerbitan Kontrak & Pelatihan Khusus",
+        desc: "Penandatanganan Ausbildungsvertrag dan pelatihan khusus kosakata/istilah profesi oleh ILD Medan.",
       },
       {
         id: "step-5",
         step: 5,
-        title: "Pemberangkatan & Orientasi di Jerman",
-        desc: "Pendampingan tiket penerbangan, penjemputan mitra di bandara Jerman, pendaftaran domisili, dan pembukaan rekening bank.",
+        title: "Pengurusan Visa & Keberangkatan",
+        desc: "Pengurusan visa nasional di Kedutaan Jerman Jakarta, tiket pesawat, dan orientasi tiba di Jerman.",
+      },
+    ],
+  },
+  ausbildung: {
+    heroBadge: "Pendidikan & Pelatihan Kejuruan Jerman",
+    heroTitle: "Program Ausbildung di Jerman",
+    heroSubtitle:
+      "Sistem pendidikan dan pelatihan kejuruan di Jerman yang menggabungkan belajar teori di Berufsschule dengan praktik kerja bergaji resmi di perusahaan Jerman (Sekolah kejuruan + praktik di perusahaan = Ausbildung).",
+    description:
+      "Ausbildung adalah sistem pendidikan dan pelatihan kejuruan di Jerman yang menggabungkan belajar teori dengan praktik kerja, namun program ini tidak bisa dikatakan kuliah karena tidak memiliki gelar. Sederhananya Sekolah kejuruan + praktik di perusahaan = Ausbildung. Jadi Ausbildung bukan satu jenis sekolah atau satu pekerjaan, melainkan sistem pelatihan dengan banyak pilihan profesi.",
+    salaryBadge: "Gaji Pelatihan Resmi Perusahaan",
+    durationBadge: "Durasi: 2 – 3,5 Tahun",
+    benefits: [
+      "Belajar teori di sekolah kejuruan (Berufsschule)",
+      "Melakukan praktik di perusahaan",
+      "Mendapatkan pengalaman kerja langsung",
+      "Dan dalam banyak program mendapatkan gaji pelatihan dari perusahaan",
+      "Bukan satu jenis sekolah atau satu pekerjaan, melainkan sistem pelatihan dengan banyak pilihan profesi",
+      "Lama Ausbildung umumnya sekitar 2–3,5 tahun, tergantung bidang dan programnya",
+    ],
+    requirements: [
+      "Maksimal 32 Tahun saat mendaftar les",
+      "Lulusan SMA/Sederajat",
+      "Belajar bahasa jerman sampai level min B1 (level Bahasa jerman menyesuaikan jurusan yang dipilih)",
+    ],
+    fields: [
+      {
+        id: "field-pflege",
+        title: "🏥 Perawat / Pflege",
+        germanTitle: "Pflegefachmann / Pflegefachfrau",
+        duration: "3 Tahun",
+        salaryRange: "€1.150 - €1.400 / bln",
+        desc: "Pelatihan perawat profesional di rumah sakit dan fasilitas kesehatan Jerman.",
+        prospect: "Peluang kerja tetap langsung sebagai perawat bersertifikasi di Uni Eropa.",
+      },
+      {
+        id: "field-gastro",
+        title: "🧑‍🍳 Gastronomi & Perhotelan",
+        germanTitle: "Hotelfachmann / Koch / Restaurantfachmann",
+        duration: "3 Tahun",
+        salaryRange: "€950 - €1.200 / bln",
+        desc: "Pelatihan tata boga, manajemen operasional restoran, dan perhotelan berbintang di Jerman.",
+        prospect: "Jenjang karier Chef profesional dan manajer perhotelan di Eropa.",
+      },
+      {
+        id: "field-teknik",
+        title: "🔧 Teknik",
+        germanTitle: "Industriemechaniker / Elektroniker",
+        duration: "3.5 Tahun",
+        salaryRange: "€1.000 - €1.300 / bln",
+        desc: "Pendidikan kejuruan teknik industri, mesin manufaktur, dan sistem elektronika standar Jerman.",
+        prospect: "Teknisi spesialis industri dengan keahlian berstandar internasional.",
+      },
+      {
+        id: "field-it",
+        title: "💻 IT (Teknologi Informasi)",
+        germanTitle: "Fachinformatiker",
+        duration: "3 Tahun",
+        salaryRange: "€1.000 - €1.350 / bln",
+        desc: "Pengembangan perangkat lunak, administrasi jaringan, dan manajemen sistem informasi modern.",
+        prospect: "Software developer dan IT specialist di berbagai sektor bisnis Jerman.",
+      },
+      {
+        id: "field-mekanik",
+        title: "🚗 Mekanik Kendaraan",
+        germanTitle: "Kfz-Mechatroniker",
+        duration: "3.5 Tahun",
+        salaryRange: "€950 - €1.250 / bln",
+        desc: "Spesialisasi pemeliharaan, diagnostik, dan teknologi kendaraan otomotif modern standar Jerman.",
+        prospect: "Mekanik andal di bengkel resmi dan industri otomotif Eropa.",
+      },
+      {
+        id: "field-bisnis",
+        title: "🏢 Administrasi & Bisnis",
+        germanTitle: "Kaufmann / Kauffrau für Büromanagement",
+        duration: "3 Tahun",
+        salaryRange: "€950 - €1.200 / bln",
+        desc: "Manajemen perkantoran, administrasi keuangan, korespondensi, dan logistik bisnis modern.",
+        prospect: "Staf administrasi dan manajemen bisnis profesional di Jerman.",
+      },
+      {
+        id: "field-lab",
+        title: "🧑‍🔬 Laboratorium",
+        germanTitle: "Biologielaborant / Chemielaborant",
+        duration: "3.5 Tahun",
+        salaryRange: "€1.050 - €1.350 / bln",
+        desc: "Pengujian spesimen, analisis kimia, bioteknologi, dan riset di laboratorium industri dan medis.",
+        prospect: "Analis laboratorium bersertifikat di industri farmasi dan riset Jerman.",
+      },
+      {
+        id: "field-anak",
+        title: "👶 Pendidikan / Pendampingan Anak",
+        germanTitle: "Erzieher / Sozialpädagogische Assistenz",
+        duration: "3 – 3.5 Tahun",
+        salaryRange: "€1.000 - €1.300 / bln",
+        desc: "Pendidikan anak usia dini dan pendampingan tumbuh kembang anak di fasilitas pendidikan Jerman.",
+        prospect: "Pendidik dan konselor pendamping anak terdaftar di institusi sosial Jerman.",
+      },
+    ],
+    steps: [
+      {
+        id: "step-1",
+        step: 1,
+        title: "Kursus Bahasa Jerman (A1 - B1)",
+        desc: "Belajar intensif di kelas Ich Liebe Deutsch Medan hingga menguasai level B1 (menyesuaikan jurusan).",
+      },
+      {
+        id: "step-2",
+        step: 2,
+        title: "Penyusunan Berkas (Bewerbung)",
+        desc: "Pembuatan Anschreiben, Lebenslauf standar Jerman, penerjemahan tersumpah, dan legalisasi dokumen.",
+      },
+      {
+        id: "step-3",
+        step: 3,
+        title: "Wawancara dengan Perusahaan Jerman",
+        desc: "Simulasi wawancara intensif dan pendampingan interview daring dengan calon pemberi kerja di Jerman.",
+      },
+      {
+        id: "step-4",
+        step: 4,
+        title: "Penerbitan Kontrak & Pelatihan Khusus",
+        desc: "Penandatanganan Ausbildungsvertrag dan pelatihan khusus kosakata/istilah profesi oleh ILD Medan.",
+      },
+      {
+        id: "step-5",
+        step: 5,
+        title: "Pengurusan Visa & Keberangkatan",
+        desc: "Pengurusan visa nasional di Kedutaan Jerman Jakarta, tiket pesawat, dan orientasi tiba di Jerman.",
       },
     ],
   },
   programAupair: {
-    heroBadge: "Pertukaran Budaya & Keluarga Asuh",
+    heroBadge: "Pertukaran Budaya & Host Family",
     heroTitle: "Program Au Pair di Jerman",
     heroSubtitle:
-      "Tinggal bersama keluarga Jerman (Gastfamilie) selama 12 bulan untuk mendalami bahasa dan budaya Jerman secara langsung dengan uang saku bulanan, kamar pribadi, dan makan gratis.",
-    pocketMoneyBadge: "Uang Saku: €280 / bln + Kursus",
-    ageLimitBadge: "Batas Usia: 18 – 26 Tahun",
+      "Program di mana anak muda Indonesia tinggal bersama keluarga di Jerman (Host Family) sambil membantu pengasuhan anak dan pekerjaan rumah ringan dengan tempat tinggal, makanan, uang saku, dan kesempatan belajar budaya & bahasa.",
+    description:
+      "Au Pair adalah program di mana seseorang, anak muda indonesia, tinggal bersama keluarga di negara lain (host family) sambil membantu kegiatan pengasuhan anak dan pekerjaan rumah ringan. Sebagai gantinya, peserta mendapatkan tempat tinggal, makanan, uang saku, dan kesempatan untuk belajar budaya serta bahasa negara tersebut.",
+    pocketMoneyBadge: "Uang Saku Bulanan + Kamar & Makan",
+    ageLimitBadge: "Maksimal Usia: 26 Tahun",
     benefits: [
-      "Kamar tidur pribadi (Einzelzimmer) dan makan 3x sehari disediakan oleh Gastfamilie",
-      "Uang saku bulanan sebesar minimal €280 (Taschengeld) bebas pajak",
-      "Tunjangan subsidi kursus bahasa Jerman sebesar €50 / bulan dari keluarga asuh",
-      "Asuransi kesehatan, kecelakaan, dan tanggung jawab hukum (Haftpflichtversicherung) ditanggung penuh",
-      "Hari libur 1.5 hari per minggu dan 4 minggu libur bergaji per tahun",
-      "Jembatan terbaik untuk melanjutkan ke program Ausbildung atau Kuliah di Jerman",
+      "👨‍👩‍👧 Tinggal bersama keluarga Jerman",
+      "🧒 Membantu menjaga anak",
+      "🏠 Membantu pekerjaan rumah ringan yang berkaitan dengan kehidupan keluarga",
+      "🗣️ Berinteraksi menggunakan bahasa Jerman",
+      "💶 Mendapat uang saku",
+      "🍽️ Mendapat tempat tinggal dan makanan dari host family",
+      "📚 Memiliki kesempatan mengikuti kursus bahasa Jerman",
     ],
     requirements: [
-      "Pria / Wanita berusia 18 hingga 26 tahun saat pendaftaran visa",
-      "Lulusan minimal SMA / SMK sederajat",
-      "Memiliki sertifikat bahasa Jerman minimal Goethe-Zertifikat A1 (disarankan A2)",
-      "Menyukai anak-anak dan memiliki keterampilan dasar pekerjaan rumah tangga",
+      "Max umur 26 Tahun",
+      "Level bahasa A1 lebih disarankan belajar Bahasa minimal sampai A2",
+      "Menyukai anak-anak dan siap membantu kegiatan pengasuhan serta kehidupan keluarga asuh",
       "Belum menikah dan belum memiliki anak",
-      "Berkepribadian ramah, bertanggung jawab, dan mudah beradaptasi",
     ],
     steps: [
       {
         id: "step-1",
         step: 1,
         title: "Belajar Bahasa Jerman Level A1/A2",
-        desc: "Mengikuti kursus intensif dan lulus ujian Goethe-Zertifikat A1 di Medan.",
+        desc: "Mengikuti kursus intensif bahasa Jerman A1 (disarankan lanjut A2) di Ich Liebe Deutsch Medan.",
       },
       {
         id: "step-2",
         step: 2,
-        title: "Pembuatan Profil & Matching Gastfamilie",
-        desc: "Menyiapkan foto, video perkenalan, dan surat keluarga untuk dicocokkan dengan keluarga asuh di Jerman.",
+        title: "Pembuatan Profil & Matching Host Family",
+        desc: "Menyiapkan biodata, surat perkenalan keluarga (Dear Host Family), dan pencocokan keluarga asuh terpercaya di Jerman.",
       },
       {
         id: "step-3",
         step: 3,
         title: "Wawancara Video Call",
-        desc: "Sesi kenalan langsung antara peserta dan calon keluarga asuh Jerman.",
+        desc: "Sesi percakapan daring langsung antara calon Au Pair dan keluarga asuh di Jerman.",
       },
       {
         id: "step-4",
         step: 4,
         title: "Penandatanganan Kontrak Au Pair",
-        desc: "Kontrak resmi disahkan oleh agensi Jerman dan dikirim untuk pengajuan visa.",
+        desc: "Penerbitan kontrak resmi Au Pair (Au-Pair-Vertrag) dan jaminan asuransi kesehatan dari keluarga asuh.",
       },
       {
         id: "step-5",
         step: 5,
         title: "Pengurusan Visa & Keberangkatan",
-        desc: "Proses wawancara visa di Kedubes Jerman Jakarta dan tiket penerbangan ke Jerman.",
+        desc: "Wawancara visa di Kedubes Jerman Jakarta dan tiket penerbangan menuju keluarga asuh di Jerman.",
       },
     ],
   },
-  programFsj: {
-    heroBadge: "Relawan Sosial & Medis Jerman",
-    heroTitle: "Program FSJ / BFD Keperawatan di Jerman",
+  aupair: {
+    heroBadge: "Pertukaran Budaya & Host Family",
+    heroTitle: "Program Au Pair di Jerman",
     heroSubtitle:
-      "Freiwilliges Soziales Jahr (FSJ) dan Bundesfreiwilligendienst (BFD) adalah program relawan sosial resmi pemerintah Jerman di rumah sakit dan panti wreda selama 12-18 bulan.",
-    allowanceBadge: "Uang Saku: €450 – €750 / bln",
-    scopeBadge: "Durasi: 12 – 18 Bulan",
-    areas: [
-      "Rumah Sakit Umum & Klinik Khusus (Krankenhaus)",
-      "Panti Wreda & Perawatan Lansia (Seniorenheim / Altenpflege)",
-      "Pusat Rehabilitasi & Terapi Disabilitas (Behindertenhilfe)",
-      "Lembaga Pelayanan Anak & Remaja (Kinder- und Jugendhilfe)",
-    ],
+      "Program di mana anak muda Indonesia tinggal bersama keluarga di Jerman (Host Family) sambil membantu pengasuhan anak dan pekerjaan rumah ringan dengan tempat tinggal, makanan, uang saku, dan kesempatan belajar budaya & bahasa.",
+    description:
+      "Au Pair adalah program di mana seseorang, anak muda indonesia, tinggal bersama keluarga di negara lain (host family) sambil membantu kegiatan pengasuhan anak dan pekerjaan rumah ringan. Sebagai gantinya, peserta mendapatkan tempat tinggal, makanan, uang saku, dan kesempatan untuk belajar budaya serta bahasa negara tersebut.",
+    pocketMoneyBadge: "Uang Saku Bulanan + Kamar & Makan",
+    ageLimitBadge: "Maksimal Usia: 26 Tahun",
     benefits: [
-      "Uang saku bulanan (Taschengeld) berkisar antara €450 hingga €750 / bulan",
-      "Akomodasi (tempat tinggal) dan uang makan (Verpflegung) disediakan atau diganti dalam bentuk subsidi",
-      "Jaminan asuransi sosial dan kesehatan penuh dari lembaga penyalur Jerman",
-      "Minimal 25 hari seminar pelatihan pengembangan diri dan bahasa Jerman selama program",
-      "Surat rekomendasi resmi pemerintah Jerman untuk melamar Ausbildung Keperawatan / Medis",
+      {
+        title: "👨‍👩‍👧 Tinggal Bersama Keluarga Jerman",
+        desc: "Tinggal langsung sebagai bagian dari keluarga asuh (Host Family) di Jerman.",
+      },
+      {
+        title: "🧒 Membantu Menjaga Anak",
+        desc: "Membantu kegiatan pengasuhan dan bermain bersama anak-anak keluarga asuh.",
+      },
+      {
+        title: "🏠 Membantu Pekerjaan Rumah Ringan",
+        desc: "Membantu tugas rumah ringan yang berkaitan dengan kehidupan keluarga sehari-hari.",
+      },
+      {
+        title: "🗣️ Berinteraksi Bahasa Jerman",
+        desc: "Mempraktikkan komunikasi bahasa Jerman aktif setiap hari dalam lingkungan keluarga asli.",
+      },
+      {
+        title: "💶 Mendapat Uang Saku",
+        desc: "Menerima uang saku bulanan rutin untuk keperluan pribadi.",
+      },
+      {
+        title: "🍽️ Tempat Tinggal & Makanan Gratis",
+        desc: "Kamar pribadi dan makanan sehari-hari sepenuhnya disediakan oleh Host Family.",
+      },
+      {
+        title: "📚 Kesempatan Kursus Bahasa",
+        desc: "Memiliki kesempatan mengikuti kursus bahasa Jerman dengan subsidi dari keluarga asuh.",
+      },
     ],
     requirements: [
-      "Usia 18 – 27 tahun (FSJ) atau tanpa batas usia atas untuk program BFD",
-      "Pendidikan minimal SMA / SMK / D3 / S1 (latar belakang kesehatan diutamakan, namun terbuka untuk semua jurusan)",
-      "Memiliki sertifikat bahasa Jerman minimal Goethe-Zertifikat B1",
-      "Memiliki jiwa empati sosial yang tinggi, sabar, dan komunikatif",
-      "Sehat jasmani dan rohani serta siap bekerja dalam tim medis multikultural",
+      "Max umur 26 Tahun",
+      "Level bahasa A1 lebih disarankan belajar Bahasa minimal sampai A2",
+      "Menyukai anak-anak dan siap membantu kegiatan pengasuhan serta kehidupan keluarga asuh",
+      "Belum menikah dan belum memiliki anak",
     ],
     steps: [
       {
         id: "step-1",
         step: 1,
-        title: "Kelas Bahasa Jerman Level B1",
-        desc: "Persiapan bahasa Jerman intensif hingga meraih sertifikat B1.",
+        title: "Belajar Bahasa Jerman Level A1/A2",
+        desc: "Mengikuti kursus intensif bahasa Jerman A1 (disarankan lanjut A2) di Ich Liebe Deutsch Medan.",
       },
       {
         id: "step-2",
         step: 2,
-        title: "Aplikasi ke Lembaga Penyalur Jerman (Träger)",
-        desc: "Pengiriman berkas lamaran ke Träger resmi seperti Caritas, Diakonie, atau Palang Merah Jerman (DRK).",
+        title: "Pembuatan Profil & Matching Host Family",
+        desc: "Menyiapkan biodata, surat perkenalan keluarga (Dear Host Family), dan pencocokan keluarga asuh terpercaya di Jerman.",
       },
       {
         id: "step-3",
         step: 3,
-        title: "Wawancara & Kesepakatan Kontrak FSJ",
-        desc: "Wawancara daring dengan pengelola panti/rumah sakit dan penerbitan kontrak Vereinbarung.",
+        title: "Wawancara Video Call",
+        desc: "Sesi percakapan daring langsung antara calon Au Pair dan keluarga asuh di Jerman.",
+      },
+      {
+        id: "step-4",
+        step: 4,
+        title: "Penandatanganan Kontrak Au Pair",
+        desc: "Penerbitan kontrak resmi Au Pair (Au-Pair-Vertrag) dan jaminan asuransi kesehatan dari keluarga asuh.",
+      },
+      {
+        id: "step-5",
+        step: 5,
+        title: "Pengurusan Visa & Keberangkatan",
+        desc: "Wawancara visa di Kedubes Jerman Jakarta dan tiket penerbangan menuju keluarga asuh di Jerman.",
+      },
+    ],
+  },
+  programFsj: {
+    heroBadge: "Tahun Sukarelawan Sosial Jerman",
+    heroTitle: "Program FSJ / BFD di Jerman",
+    heroSubtitle:
+      "Program Tahun Sukarelawan Sosial di Jerman selama 1 tahun di fasilitas kesehatan dan sosial dengan pendampingan resmi, uang saku, dan fasilitas program.",
+    description:
+      "FSJ/BFD adalah program Tahun Sukarelawan Sosial. Peserta mengikuti kegiatan sosial di Jerman selama satu tahun, biasanya bekerja sebagai relawan di tempat seperti: Rumah sakit, Panti/perawatan lansia, Fasilitas untuk penyandang disabilitas, Lembaga sosial. Peserta bukan karyawan biasa, tetapi menjalankan kegiatan sukarela dengan pendampingan dan mendapatkan uang saku serta fasilitas tertentu sesuai program.",
+    allowanceBadge: "Uang Saku + Fasilitas Program",
+    scopeBadge: "Durasi: 1 Tahun (12 Bulan)",
+    areas: [
+      "🏥 Rumah sakit",
+      "👵 Panti/perawatan lansia",
+      "♿ Fasilitas untuk penyandang disabilitas",
+      "🏫 Lembaga sosial",
+    ],
+    benefits: [
+      "Menjalankan kegiatan sukarela dengan pendampingan resmi di Jerman",
+      "Mendapatkan uang saku bulanan dan fasilitas tertentu sesuai program",
+      "Mendapatkan tempat tinggal dan akomodasi sesuai ketentuan program",
+      "Pengalaman nyata di rumah sakit, panti lansia, atau fasilitas sosial Jerman",
+      "Meningkatkan kemampuan bahasa Jerman secara langsung dalam lingkungan profesional",
+      "Batu loncatan ideal dan prioritas utama untuk lanjut ke jenjang Ausbildung Keperawatan / Medis",
+    ],
+    requirements: [
+      "FSJ maksimal umur 26 Tahun",
+      "BFD tidak ada Batasan umur (namun beberapa Perusahaan mensyaratkan usia)",
+      "Level Bahasa A1 minimal",
+      "Memiliki kepedulian sosial, empati, dan motivasi kerja sosial di Jerman",
+    ],
+    steps: [
+      {
+        id: "step-1",
+        step: 1,
+        title: "Kelas Bahasa Jerman Level A1/A2/B1",
+        desc: "Persiapan bahasa Jerman intensif di ILD Medan hingga memenuhi syarat penempatan.",
+      },
+      {
+        id: "step-2",
+        step: 2,
+        title: "Aplikasi ke Lembaga Penyelenggara (Träger)",
+        desc: "Pengiriman berkas lamaran ke Träger resmi rumah sakit, panti lansia, atau fasilitas sosial di Jerman.",
+      },
+      {
+        id: "step-3",
+        step: 3,
+        title: "Wawancara & Penerbitan Kontrak FSJ/BFD",
+        desc: "Wawancara daring dengan institusi dan penandatanganan kesepakatan tugas relawan resmi.",
       },
       {
         id: "step-4",
         step: 4,
         title: "Pengurusan Visa Relawan Sosial",
-        desc: "Pengajuan visa FSJ di Kedubes Jerman Jakarta dengan jaminan akomodasi dan asuransi.",
+        desc: "Pengajuan visa relawan di Kedubes Jerman Jakarta dengan jaminan akomodasi dan asuransi.",
       },
       {
         id: "step-5",
         step: 5,
         title: "Mulai Bertugas di Jerman",
-        desc: "Tiba di Jerman, orientasi tempat tinggal, dan pembekalan sebelum mulai bertugas.",
+        desc: "Tiba di Jerman, orientasi tempat tinggal, dan pembekalan sebelum mulai menjalankan tugas sosial.",
+      },
+    ],
+  },
+  fsj: {
+    heroBadge: "Tahun Sukarelawan Sosial Jerman",
+    heroTitle: "Program FSJ / BFD di Jerman",
+    heroSubtitle:
+      "Program Tahun Sukarelawan Sosial di Jerman selama 1 tahun di fasilitas kesehatan dan sosial dengan pendampingan resmi, uang saku, dan fasilitas program.",
+    description:
+      "FSJ/BFD adalah program Tahun Sukarelawan Sosial. Peserta mengikuti kegiatan sosial di Jerman selama satu tahun, biasanya bekerja sebagai relawan di tempat seperti: Rumah sakit, Panti/perawatan lansia, Fasilitas untuk penyandang disabilitas, Lembaga sosial. Peserta bukan karyawan biasa, tetapi menjalankan kegiatan sukarela dengan pendampingan dan mendapatkan uang saku serta fasilitas tertentu sesuai program.",
+    allowanceBadge: "Uang Saku + Fasilitas Program",
+    scopeBadge: "Durasi: 1 Tahun (12 Bulan)",
+    areas: [
+      "🏥 Rumah sakit",
+      "👵 Panti/perawatan lansia",
+      "♿ Fasilitas untuk penyandang disabilitas",
+      "🏫 Lembaga sosial",
+    ],
+    placements: [
+      {
+        title: "🏥 Rumah Sakit",
+        desc: "Menjalankan kegiatan sukarela di rumah sakit umum atau klinik medis dengan pendampingan profesional.",
+      },
+      {
+        title: "👵 Panti / Perawatan Lansia",
+        desc: "Mendampingi aktivitas sosial dan perawatan harian bagi para lansia di Jerman.",
+      },
+      {
+        title: "♿ Fasilitas Penyandang Disabilitas",
+        desc: "Mendampingi individu berkebutuhan khusus dalam kegiatan integrasi sosial dan aktivitas harian.",
+      },
+      {
+        title: "🏫 Lembaga Sosial",
+        desc: "Berperan aktif dalam berbagai program kemanusiaan dan kepedulian sosial resmi.",
+      },
+    ],
+    benefits: [
+      {
+        title: "Kegiatan Sukarela Berpendampingan",
+        desc: "Menjalankan kegiatan sukarela terstruktur dengan pendampingan resmi di Jerman.",
+      },
+      {
+        title: "Uang Saku & Fasilitas",
+        desc: "Mendapatkan uang saku bulanan dan fasilitas tertentu sesuai ketentuan program.",
+      },
+      {
+        title: "Pengalaman Sosial Berharga",
+        desc: "Pengalaman nyata di rumah sakit, panti lansia, atau fasilitas sosial Jerman.",
+      },
+      {
+        title: "Batu Loncatan Ausbildung Medis",
+        desc: "Prioritas utama dan jalur strategis untuk diterima pada program Ausbildung Keperawatan.",
+      },
+    ],
+    requirements: [
+      "FSJ maksimal umur 26 Tahun",
+      "BFD tidak ada Batasan umur (namun beberapa Perusahaan mensyaratkan usia)",
+      "Level Bahasa A1 minimal",
+      "Memiliki kepedulian sosial, empati, dan motivasi kerja sosial di Jerman",
+    ],
+    steps: [
+      {
+        id: "step-1",
+        step: 1,
+        title: "Kelas Bahasa Jerman Level A1/A2/B1",
+        desc: "Persiapan bahasa Jerman intensif di ILD Medan hingga memenuhi syarat penempatan.",
+      },
+      {
+        id: "step-2",
+        step: 2,
+        title: "Aplikasi ke Lembaga Penyelenggara (Träger)",
+        desc: "Pengiriman berkas lamaran ke Träger resmi rumah sakit, panti lansia, atau fasilitas sosial di Jerman.",
+      },
+      {
+        id: "step-3",
+        step: 3,
+        title: "Wawancara & Penerbitan Kontrak FSJ/BFD",
+        desc: "Wawancara daring dengan institusi dan penandatanganan kesepakatan tugas relawan resmi.",
+      },
+      {
+        id: "step-4",
+        step: 4,
+        title: "Pengurusan Visa Relawan Sosial",
+        desc: "Pengajuan visa relawan di Kedubes Jerman Jakarta dengan jaminan akomodasi dan asuransi.",
+      },
+      {
+        id: "step-5",
+        step: 5,
+        title: "Mulai Bertugas di Jerman",
+        desc: "Tiba di Jerman, orientasi tempat tinggal, dan pembekalan sebelum mulai menjalankan tugas sosial.",
       },
     ],
   },
   persyaratan: {
-    heroBadge: "Panduan & Kriteria Pendaftaran",
+    heroBadge: "Panduan & Kriteria Resmi",
+    heroTitle: "Persyaratan Program ke Jerman",
+    heroSubtitle:
+      "Persyaratan resmi program Ausbildung, Au Pair, FSJ / BFD, G to G, dan Kuliah / Studium ke Jerman bersama Ich Liebe Deutsch Medan.",
     title: "Persyaratan Program ke Jerman",
     subtitle:
-      "Kriteria resmi dan daftar dokumen yang wajib dipersiapkan untuk mengikuti program Ausbildung, Au Pair, dan FSJ.",
+      "Kriteria resmi dan syarat kualifikasi untuk mengikuti program Ausbildung, Au Pair, FSJ/BFD, G to G, dan Kuliah ke Jerman.",
     programs: [
       {
         id: "req-ausbildung",
-        programName: "Program Ausbildung",
-        tag: "Kejuruan Dual (3 Tahun)",
+        programName: "1. Ausbildung",
+        tag: "Pendidikan & Pelatihan Kejuruan (2–3,5 Tahun)",
         syarat: [
-          "Usia maksimal 32 tahun saat pendaftaran",
-          "Lulusan SMA / SMK / D3 / S1 sederajat",
-          "Sertifikat bahasa Jerman Goethe-Zertifikat minimal level B1",
-          "Surat motivasi (Motivationsschreiben) & CV (Lebenslauf) berbahasa Jerman",
-          "Surat Keterangan Catatan Kepolisian (SKCK) yang masih berlaku",
+          "Maksimal 32 Tahun saat mendaftar les",
+          "Lulusan SMA/Sederajat",
+          "Belajar bahasa jerman sampai level min B1 (level Bahasa jerman menyesuaikan jurusan yang dipilih)",
+          "Pilihan 8 Jurusan: 🏥 Perawat/Pflege, 🧑‍🍳 Gastronomi & perhotelan, 🔧 Teknik, 💻 IT, 🚗 Mekanik kendaraan, 🏢 Administrasi & bisnis, 🧑‍🔬 Laboratorium, 👶 Pendidikan/pendampingan anak",
         ],
       },
       {
         id: "req-aupair",
-        programName: "Program Au Pair",
-        tag: "Tinggal Bersama Keluarga Asuh (1 Tahun)",
+        programName: "2. Au Pair",
+        tag: "Pertukaran Budaya & Host Family (1 Tahun)",
         syarat: [
-          "Usia 18 – 26 tahun saat pengajuan visa ke kedutaan",
-          "Lulusan minimal SMA / sederajat",
-          "Sertifikat bahasa Jerman Goethe-Zertifikat level minimal A1",
-          "Belum menikah dan belum memiliki anak",
-          "Pengalaman merawat anak / referensi penitipan anak (Babysitting)",
+          "Max umur 26 Tahun",
+          "Level bahasa A1 lebih disarankan belajar Bahasa minimal sampai A2",
+          "Tinggal bersama host family, membantu pengasuhan anak dan pekerjaan rumah ringan",
+          "Mendapatkan tempat tinggal, makanan, uang saku, dan kesempatan belajar budaya serta bahasa",
         ],
       },
       {
         id: "req-fsj",
-        programName: "Program FSJ / BFD Keperawatan",
-        tag: "Relawan Sosial & Medis (1–1.5 Tahun)",
+        programName: "3. FSJ (Freiwilliges Soziales Jahr) / BFD (Bundesfreiwilligendienst)",
+        tag: "Tahun Sukarelawan Sosial (1 Tahun)",
         syarat: [
-          "Usia 18 – 27 tahun (FSJ) atau usia terbuka (BFD)",
-          "Lulusan minimal SMA / SMK (kesehatan/umum) / D3 / S1",
-          "Sertifikat bahasa Jerman Goethe-Zertifikat level minimal B1",
-          "Surat keterangan sehat dan catatan vaksinasi lengkap",
-          "Memiliki minat mendalam di bidang pelayanan sosial dan kesehatan",
+          "FSJ maksimal umur 26 Tahun",
+          "BFD tidak ada Batasan umur (namun beberapa Perusahaan mensyaratkan usia)",
+          "Level Bahasa A1 minimal",
+          "Tempat relawan: 🏥 Rumah sakit, 👵 Panti/perawatan lansia, ♿ Fasilitas penyandang disabilitas, 🏫 Lembaga sosial",
+          "Menjalankan kegiatan sukarela dengan pendampingan, mendapatkan uang saku serta fasilitas program",
+        ],
+      },
+      {
+        id: "req-gtog",
+        programName: "4. G to G (Government to Government)",
+        tag: "Program Penempatan Resmi Antarpemerintah",
+        syarat: [
+          "Program penempatan atau kerja sama resmi antara pemerintah Indonesia dan pemerintah Jerman",
+          "Jalur resmi penempatan tenaga kerja Indonesia ke Jerman (khususnya tenaga kesehatan / perawat)",
+          "Kualifikasi pendidikan keperawatan (D3 / S1 Keperawatan + Profesi Ners) & STR aktif",
+          "Kemampuan bahasa Jerman sesuai persyaratan jalur pemerintah (level B1/B2)",
+        ],
+      },
+      {
+        id: "req-studium",
+        programName: "5. Kuliah / Studium",
+        tag: "Pendidikan Tinggi Universitas Jerman",
+        syarat: [
+          "Untuk program kuliah yang menggunakan bahasa Jerman, calon mahasiswa membuktikan kemampuan bahasa Jerman sesuai persyaratan universitas/program",
+          "Persyaratan tidak selalu sama: beberapa program dapat meminta tingkat B2 atau C1 tergantung universitas dan program studinya",
+          "Ijazah pendidikan sebelumnya (SMA / S1) yang diakui serta kualifikasi akademik yang disyaratkan",
+        ],
+      },
+    ],
+    items: [
+      {
+        id: "item-ausbildung",
+        title: "1. Ausbildung",
+        tag: "Pendidikan & Pelatihan Kejuruan (2–3,5 Tahun)",
+        syarat: [
+          "Maksimal 32 Tahun saat mendaftar les",
+          "Lulusan SMA/Sederajat",
+          "Belajar bahasa jerman sampai level min B1 (level Bahasa jerman menyesuaikan jurusan yang dipilih)",
+          "Pilihan 8 Jurusan: 🏥 Perawat/Pflege, 🧑‍🍳 Gastronomi & perhotelan, 🔧 Teknik, 💻 IT, 🚗 Mekanik kendaraan, 🏢 Administrasi & bisnis, 🧑‍🔬 Laboratorium, 👶 Pendidikan/pendampingan anak",
+        ],
+      },
+      {
+        id: "item-aupair",
+        title: "2. Au Pair",
+        tag: "Pertukaran Budaya & Host Family (1 Tahun)",
+        syarat: [
+          "Max umur 26 Tahun",
+          "Level bahasa A1 lebih disarankan belajar Bahasa minimal sampai A2",
+          "Tinggal bersama host family, membantu pengasuhan anak dan pekerjaan rumah ringan",
+          "Mendapatkan tempat tinggal, makanan, uang saku, dan kesempatan belajar budaya serta bahasa",
+        ],
+      },
+      {
+        id: "item-fsj",
+        title: "3. FSJ / BFD (Freiwilliges Soziales Jahr / Bundesfreiwilligendienst)",
+        tag: "Tahun Sukarelawan Sosial (1 Tahun)",
+        syarat: [
+          "FSJ maksimal umur 26 Tahun",
+          "BFD tidak ada Batasan umur (namun beberapa Perusahaan mensyaratkan usia)",
+          "Level Bahasa A1 minimal",
+          "Tempat relawan: 🏥 Rumah sakit, 👵 Panti/perawatan lansia, ♿ Fasilitas penyandang disabilitas, 🏫 Lembaga sosial",
+          "Menjalankan kegiatan sukarela dengan pendampingan, mendapatkan uang saku serta fasilitas program",
+        ],
+      },
+      {
+        id: "item-gtog",
+        title: "4. G to G (Government to Government)",
+        tag: "Program Penempatan Resmi Antarpemerintah",
+        syarat: [
+          "Program penempatan atau kerja sama resmi antara pemerintah Indonesia dan pemerintah Jerman",
+          "Jalur resmi penempatan tenaga kerja Indonesia ke Jerman (khususnya tenaga kesehatan / perawat)",
+          "Kualifikasi pendidikan keperawatan (D3 / S1 Keperawatan + Profesi Ners) & STR aktif",
+          "Kemampuan bahasa Jerman sesuai persyaratan jalur pemerintah (level B1/B2)",
+        ],
+      },
+      {
+        id: "item-studium",
+        title: "5. Kuliah / Studium",
+        tag: "Pendidikan Tinggi Universitas Jerman",
+        syarat: [
+          "Untuk program kuliah yang menggunakan bahasa Jerman, calon mahasiswa membuktikan kemampuan bahasa Jerman sesuai persyaratan universitas/program",
+          "Persyaratan tidak selalu sama: beberapa program dapat meminta tingkat B2 atau C1 tergantung universitas dan program studinya",
+          "Ijazah pendidikan sebelumnya (SMA / S1) yang diakui serta kualifikasi akademik yang disyaratkan",
         ],
       },
     ],
@@ -966,8 +1430,8 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       },
       {
         id: "doc-3",
-        name: "Sertifikat Goethe-Zertifikat (A1/A2/B1)",
-        note: "Diterbitkan resmi oleh Goethe-Institut",
+        name: "Sertifikat Goethe-Zertifikat (A1/A2/B1/B2/C1)",
+        note: "Diterbitkan resmi oleh Goethe-Institut sesuai persyaratan program",
         required: true,
       },
       {
@@ -978,8 +1442,8 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       },
       {
         id: "doc-5",
-        name: "Surat Motivasi (Anschreiben)",
-        note: "Menjelaskan alasan memilih jurusan dan Jerman",
+        name: "Surat Motivasi (Motivationsschreiben)",
+        note: "Menjelaskan alasan memilih jurusan, program, dan masa depan di Jerman",
         required: true,
       },
       {
@@ -1430,18 +1894,17 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
     title: "Hubungi & Kunjungi Kami",
     subtitle:
       "Tim konsultan kami siap memberikan informasi mendalam mengenai program Ausbildung, Au Pair, FSJ, dan kelas kursus bahasa Jerman.",
-    hotlineWA: "+62 812-6596-5231",
-    phoneLandline: "(061) 822-4591",
-    emailOffice: "indonesiagerman@gmail.com",
-    officeAddress:
-      "Komplek Waikiki, Jl. Flamboyan Raya No. 49 Blok F, Tj. Selamat, Kec. Medan Tuntungan, Kota Medan, Sumatera Utara 20135",
+    hotlineWA: "082127324453",
+    phoneLandline: "082127324453",
+    emailOffice: "ichliebedtschmedan@gmail.com",
+    officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
     mapsEmbedUrl:
-      "https://maps.google.com/maps?q=Medan%20Tuntungan%20Komplek%20Waikiki&t=&z=15&ie=UTF8&iwloc=&output=embed",
+      "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
     operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
   },
 };
 
-const STORAGE_KEY = "ild_cms_config_v2";
+const STORAGE_KEY = "ild_cms_config_v4";
 
 /* =========================================================================
    REACT CONTEXT & PROVIDER WITH POSTGRESQL SYNC
@@ -1516,8 +1979,14 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
               ...DEFAULT_CMS_DATA.programAusbildung,
               ...(parsed.programAusbildung || {}),
             },
+            ausbildung: {
+              ...DEFAULT_CMS_DATA.ausbildung,
+              ...(parsed.ausbildung || {}),
+            },
             programAupair: { ...DEFAULT_CMS_DATA.programAupair, ...(parsed.programAupair || {}) },
+            aupair: { ...DEFAULT_CMS_DATA.aupair, ...(parsed.aupair || {}) },
             programFsj: { ...DEFAULT_CMS_DATA.programFsj, ...(parsed.programFsj || {}) },
+            fsj: { ...DEFAULT_CMS_DATA.fsj, ...(parsed.fsj || {}) },
             persyaratan: { ...DEFAULT_CMS_DATA.persyaratan, ...(parsed.persyaratan || {}) },
             team: { ...DEFAULT_CMS_DATA.team, ...(parsed.team || {}) },
             blog: { ...DEFAULT_CMS_DATA.blog, ...(parsed.blog || {}) },

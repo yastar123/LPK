@@ -10,9 +10,9 @@ export function FloatingConsultation() {
   const [showBackToTop, setShowBackToTop] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const cleanWa = (k.hotlineWA || "081265965231").replace(/[^0-9]/g, "");
+  const cleanWa = (k.hotlineWA || "082127324453").replace(/[^0-9]/g, "");
   const formattedWa = cleanWa.startsWith("0") ? "62" + cleanWa.slice(1) : cleanWa;
-  const waUrl = `https://wa.me/${formattedWa}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20tertarik%20untuk%20konsultasi%20program%20ke%20Jerman.`;
+  const waUrl = `https://wa.me/${formattedWa}?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20tertarik%20untuk%20konsultasi%20program%20ke%20Jerman.`;
 
   useEffect(() => {
     const handleScroll = () => {

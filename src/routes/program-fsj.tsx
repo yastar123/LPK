@@ -43,9 +43,9 @@ export function ProgramFsj() {
   const { cms } = useCms();
   const fsj = cms.fsj;
   const k = cms.kontak;
-  const rawWa = (k.hotlineWA || "081265965231").replace(/[^0-9]/g, "");
+  const rawWa = (k.hotlineWA || "082127324453").replace(/[^0-9]/g, "");
   const cleanWa = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
-  const waLink = `https://wa.me/${cleanWa}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20tertarik%20dengan%20program%20FSJ%20ke%20Jerman.`;
+  const waLink = `https://wa.me/${cleanWa}?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20tertarik%20dengan%20program%20FSJ%20ke%20Jerman.`;
 
   const timelineSteps = [
     {
@@ -148,18 +148,22 @@ export function ProgramFsj() {
                       desc: "Alumni FSJ memiliki prioritas tertinggi untuk diterima langsung pada program Ausbildung Perawat bergaji tinggi.",
                     },
                   ]
-                ).map((p, i) => (
-                  <div
-                    key={i}
-                    className="rounded-2xl border border-sky-100 bg-sky-50/50 p-4 transition-colors hover:bg-sky-50"
-                  >
-                    <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 text-sky-600" />
-                      <span>{p.title}</span>
-                    </h4>
-                    <p className="text-xs text-slate-600 mt-1 pl-6">{p.desc}</p>
-                  </div>
-                ))}
+                ).map((p, i) => {
+                  const title = typeof p === "string" ? p : p.title;
+                  const desc = typeof p === "string" ? null : p.desc;
+                  return (
+                    <div
+                      key={i}
+                      className="rounded-2xl border border-sky-100 bg-sky-50/50 p-4 transition-colors hover:bg-sky-50"
+                    >
+                      <h4 className="text-xs sm:text-sm font-bold text-slate-900 flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4 text-sky-600 shrink-0" />
+                        <span>{title}</span>
+                      </h4>
+                      {desc && <p className="text-xs text-slate-600 mt-1 pl-6">{desc}</p>}
+                    </div>
+                  );
+                })}
               </div>
             </div>
 

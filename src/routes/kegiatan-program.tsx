@@ -29,7 +29,9 @@ function KegiatanProgram() {
   const { cms } = useCms();
   const kp = cms.kegiatanProgram;
   const k = cms.kontak;
-  const waLink = `https://wa.me/${k.hotlineWA.replace(/[^0-9]/g, "")}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20bertanya%20tentang%20program%20ke%20Jerman.`;
+  const rawWa = (k.hotlineWA || "082127324453").replace(/[^0-9]/g, "");
+  const cleanWa = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
+  const waLink = `https://wa.me/${cleanWa}?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20bertanya%20tentang%20program%20ke%20Jerman.`;
 
   return (
     <main>

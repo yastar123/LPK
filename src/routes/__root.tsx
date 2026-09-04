@@ -83,21 +83,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Ich Liebe Deutsch Medan — Lembaga Bahasa & Pendidikan Jerman" },
+      { title: "ICH LIEBE DEUTSCH MEDAN — Lembaga Bahasa & Pendidikan Jerman" },
       {
         name: "description",
         content:
-          "Ich Liebe Deutsch Medan — lembaga penyelenggara program Aupair, Ausbildung Gastronomie, dan FSJ Keperawatan ke Jerman bagi pemuda-pemudi Indonesia.",
+          "ICH LIEBE DEUTSCH MEDAN — Lembaga Kursus Bahasa Jerman & Penyelenggara Program Ausbildung, Au Pair, dan FSJ ke Jerman terpercaya di Kota Medan.",
       },
-      { name: "author", content: "Ich Liebe Deutsch Medan" },
+      { name: "author", content: "ICH LIEBE DEUTSCH MEDAN" },
       {
         property: "og:title",
-        content: "Ich Liebe Deutsch Medan — Lembaga Bahasa & Pendidikan Jerman",
+        content: "ICH LIEBE DEUTSCH MEDAN — Lembaga Bahasa & Pendidikan Jerman",
       },
       {
         property: "og:description",
         content:
-          "Kesempatan menimba ilmu dan berkarier di Jerman melalui program Aupair, Ausbildung, dan FSJ Keperawatan.",
+          "Program resmi Ausbildung keperawatan/gastronomi, Au Pair, FSJ, dan kursus bahasa Jerman terpadu di Medan.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

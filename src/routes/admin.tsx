@@ -1025,7 +1025,7 @@ function HeroSliderCrudTab({
       description: "",
       image: "/logo.png",
       button1: { label: "INFO PROGRAM", href: "/program-ausbildung" },
-      button2: { label: "KONSULTASI WA", href: "https://wa.me/6281265965231", isExternal: true },
+      button2: { label: "KONSULTASI WA", href: "https://wa.me/6282127324453", isExternal: true },
     });
   };
 

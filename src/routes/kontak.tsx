@@ -80,7 +80,8 @@ export const Route = createFileRoute("/kontak")({
 function Kontak() {
   const { cms } = useCms();
   const k = cms.kontak;
-  const whatsappClean = k.hotlineWA.replace(/[^0-9]/g, "");
+  const rawWa = (k.hotlineWA || "082127324453").replace(/[^0-9]/g, "");
+  const whatsappClean = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
 
   const [activeTab, setActiveTab] = useState<"message" | "consultation">("message");
   const [dbStatus, setDbStatus] = useState<{
@@ -269,20 +270,20 @@ function Kontak() {
             <ContactCard
               icon={MessageCircle}
               label="WhatsApp Resmi"
-              value={k.hotlineWA}
+              value={k.hotlineWA || "082127324453"}
               href={`https://wa.me/${whatsappClean}`}
             />
             <ContactCard
               icon={Phone}
-              label="Telephone Kantor"
-              value={k.telephone}
-              href={`tel:${k.telephone}`}
+              label="Telepon Kantor"
+              value={k.phoneLandline || k.hotlineWA || "082127324453"}
+              href={`tel:${(k.phoneLandline || k.hotlineWA || "082127324453").replace(/[^0-9]/g, "")}`}
             />
             <ContactCard
-              icon={Globe2}
-              label="Website & Portal"
-              value={k.website}
-              href={`https://${k.website}`}
+              icon={Mail}
+              label="Email Resmi"
+              value={k.emailOffice || "ichliebedtschmedan@gmail.com"}
+              href={`mailto:${k.emailOffice || "ichliebedtschmedan@gmail.com"}`}
             />
           </div>
         </div>
@@ -298,12 +299,12 @@ function Kontak() {
                 <h2 className="mb-4 flex items-center gap-2 font-display text-2xl leading-tight md:text-3xl">
                   <MapPin className="h-5 w-5 text-primary" /> Alamat Kantor
                 </h2>
-                <p className="leading-relaxed text-muted-foreground">{k.address}</p>
-                {k.hours && (
-                  <p className="mt-2 text-xs font-semibold text-primary">
-                    Jam Operasional: {k.hours}
-                  </p>
-                )}
+                <p className="leading-relaxed text-muted-foreground">
+                  {k.officeAddress || "Jl. Ternak II No. 39, Medan Polonia"}
+                </p>
+                <p className="mt-2 text-xs font-semibold text-primary">
+                  Jam Operasional: {k.operatingHoursText || "Senin – Sabtu: 08:30 – 17:30 WIB"}
+                </p>
               </div>
 
               <div className="mb-10">
@@ -311,11 +312,25 @@ function Kontak() {
                   <Mail className="h-5 w-5 text-primary" /> Email Resmi
                 </h2>
                 <a
-                  href={`mailto:${k.email}`}
+                  href={`mailto:${k.emailOffice || "ichliebedtschmedan@gmail.com"}`}
                   className="font-medium text-primary transition-colors hover:underline"
                 >
-                  {k.email}
+                  {k.emailOffice || "ichliebedtschmedan@gmail.com"}
                 </a>
+              </div>
+
+              {/* Map Embed */}
+              <div className="mb-10 overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
+                <iframe
+                  title="Lokasi Kantor ICH LIEBE DEUTSCH MEDAN"
+                  src={
+                    k.mapsEmbedUrl ||
+                    "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed"
+                  }
+                  className="h-52 w-full border-0"
+                  loading="lazy"
+                  allowFullScreen
+                />
               </div>
 
               <div className="mb-10">

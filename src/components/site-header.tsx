@@ -181,7 +181,7 @@ export function SiteHeader() {
           </Link>
 
           <a
-            href={navbar.ctaButton?.href || "https://wa.me/6281265965231"}
+            href={navbar.ctaButton?.href || "https://wa.me/6282127324453"}
             target={navbar.ctaButton?.isExternal ? "_blank" : undefined}
             rel="noreferrer"
             className={`hidden items-center gap-1.5 rounded-full px-3.5 xl:px-5 py-2 text-xs font-bold whitespace-nowrap shrink-0 transition-all sm:inline-flex ${
@@ -288,7 +288,7 @@ export function SiteHeader() {
                 <span>Masuk ke Portal</span>
               </Link>
               <a
-                href={navbar.ctaButton?.href || "https://wa.me/6281265965231"}
+                href={navbar.ctaButton?.href || "https://wa.me/6282127324453"}
                 target={navbar.ctaButton?.isExternal ? "_blank" : undefined}
                 rel="noreferrer"
                 className="flex w-full items-center justify-center gap-2 rounded-full bg-sky-500 py-3 text-center text-sm font-bold text-white shadow-lg shadow-sky-500/25 hover:bg-sky-600"

@@ -41,9 +41,9 @@ export function Persyaratan() {
   const { cms } = useCms();
   const ps = cms.persyaratan;
   const k = cms.kontak;
-  const rawWa = (k.hotlineWA || "081265965231").replace(/[^0-9]/g, "");
+  const rawWa = (k.hotlineWA || "082127324453").replace(/[^0-9]/g, "");
   const cleanWa = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
-  const waLink = `https://wa.me/${cleanWa}?text=Halo%20Ich%20Liebe%20Deutsch%20Medan%2C%20saya%20ingin%20konsultasi%20kelayakan%20persyaratan%20program%20ke%20Jerman.`;
+  const waLink = `https://wa.me/${cleanWa}?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20konsultasi%20kelayakan%20persyaratan%20program%20ke%20Jerman.`;
 
   const [activeFilter, setActiveFilter] = useState("Semua");
 
@@ -68,7 +68,15 @@ export function Persyaratan() {
     },
   ];
 
-  const items = ps.items || [];
+  const items =
+    ps.items && ps.items.length > 0
+      ? ps.items
+      : (ps.programs || []).map((p) => ({
+          id: p.id,
+          title: p.programName,
+          tag: p.tag,
+          syarat: p.syarat,
+        }));
   const filteredItems =
     activeFilter === "Semua"
       ? items

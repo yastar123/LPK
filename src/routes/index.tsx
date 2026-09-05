@@ -48,13 +48,13 @@ const blogKarir = "/assets/blog-karir.jpg";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ich Liebe Deutsch Medan — Program Ausbildung, Au Pair, FSJ & Kuliah di Jerman" },
+      { title: "ICH LIEBE DEUTSCH MEDAN — Program Ausbildung, Au Pair, FSJ & Kuliah di Jerman" },
       {
         name: "description",
         content:
-          "Lembaga kursus bahasa Jerman resmi di Medan sejak 2024. Bimbingan program Ausbildung, Au Pair, FSJ/BFD, G to G, dan Kuliah ke Jerman.",
+          "ICH LIEBE DEUTSCH MEDAN — Lembaga kursus bahasa Jerman terpadu di Medan. Bimbingan resmi program Ausbildung, Au Pair, FSJ/BFD, G to G, dan Kuliah ke Jerman.",
       },
-      { property: "og:title", content: "Ich Liebe Deutsch Medan — German Pathway" },
+      { property: "og:title", content: "ICH LIEBE DEUTSCH MEDAN — German Pathway" },
       {
         property: "og:description",
         content:

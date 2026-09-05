@@ -48,8 +48,8 @@ export function KontakCrudTab({
             Halaman Kontak, Alamat Kantor & Media Sosial
           </h2>
           <p className="text-xs text-slate-500">
-            Kelola alamat kantor fisik Medan Tuntungan, nomor hotline WhatsApp, email, dan akun
-            media sosial.
+            Kelola alamat kantor fisik Medan Polonia, nomor hotline WhatsApp, email, dan akun media
+            sosial.
           </p>
         </div>
         <button

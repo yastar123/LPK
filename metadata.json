@@ -1,6 +1,6 @@
 {
-  "name": "Ich Liebe Deutsch Medan",
-  "description": "Indonesian German language and education center website featuring programs (Ausbildung, Au Pair, FSJ), blog, activities, and registration info.",
+  "name": "ICH LIEBE DEUTSCH MEDAN",
+  "description": "Lembaga Kursus Bahasa Jerman & Penyelenggara Program Ausbildung, Au Pair, dan FSJ ke Jerman terpercaya di Kota Medan.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

@@ -58,17 +58,17 @@ type ConsultationForm = z.infer<typeof consultationSchema>;
 export const Route = createFileRoute("/kontak")({
   head: () => ({
     meta: [
-      { title: "Kontak & Konsultasi — Ich Liebe Deutsch Medan" },
+      { title: "Kontak & Konsultasi — ICH LIEBE DEUTSCH MEDAN" },
       {
         name: "description",
         content:
-          "Hubungi Ich Liebe Deutsch Medan melalui WhatsApp, telepon, email, atau isi formulir kontak untuk konsultasi program Aupair, Ausbildung, dan FSJ ke Jerman.",
+          "Hubungi ICH LIEBE DEUTSCH MEDAN melalui WhatsApp 082127324453, telepon, email ichliebedtschmedan@gmail.com, atau datang langsung ke Jl. Ternak II No. 39, Medan Polonia.",
       },
-      { property: "og:title", content: "Kontak & Konsultasi — Ich Liebe Deutsch Medan" },
+      { property: "og:title", content: "Kontak & Konsultasi — ICH LIEBE DEUTSCH MEDAN" },
       {
         property: "og:description",
         content:
-          "Hubungi Ich Liebe Deutsch Medan untuk konsultasi program ke Jerman. WhatsApp, telepon, email, dan formulir kontak tersedia.",
+          "Hubungi ICH LIEBE DEUTSCH MEDAN untuk konsultasi program ke Jerman. WhatsApp 082127324453, email ichliebedtschmedan@gmail.com, dan formulir konsultasi tersedia.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -590,7 +590,7 @@ function Kontak() {
                               setConsultErrors((prev) => ({ ...prev, phone: undefined }));
                           }}
                           error={consultErrors.phone}
-                          placeholder="08123456789"
+                          placeholder="0821xxxxxxxx"
                         />
                         <Field
                           id="consult-email"

@@ -540,8 +540,9 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
           href: "/kegiatan-belajar",
         },
         button2: {
-          label: "HUBUNGI KAMI",
-          href: "/kontak",
+          label: "HUBUNGI WA ADMIN",
+          href: "https://wa.me/6282127324453?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20tertarik%20dengan%20kursus%20bahasa%20Jerman.",
+          isExternal: true,
         },
       },
     ],

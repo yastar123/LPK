@@ -212,6 +212,18 @@ function Kontak() {
       setConsultSuccess(
         resData.message || "Pendaftaran konsultasi Anda berhasil tersimpan di database PostgreSQL!",
       );
+
+      // Forward to WhatsApp
+      const text =
+        `Halo ICH LIEBE DEUTSCH MEDAN, saya mendaftar konsultasi melalui website.%0A%0A` +
+        `Nama: ${encodeURIComponent(result.data.name)}%0A` +
+        `Telepon: ${encodeURIComponent(result.data.phone)}%0A` +
+        `Program Diminati: ${encodeURIComponent(result.data.program_interest)}%0A` +
+        `Pendidikan: ${encodeURIComponent(result.data.education_level)}%0A` +
+        `Level Jerman: ${encodeURIComponent(result.data.german_level)}%0A` +
+        `Tanggal Pilihan: ${encodeURIComponent(result.data.preferred_date || "-")}`;
+      window.open(`https://wa.me/${whatsappClean}?text=${text}`, "_blank", "noopener,noreferrer");
+
       setConsultForm({
         name: "",
         phone: "",

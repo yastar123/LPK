@@ -80,8 +80,13 @@ export const Route = createFileRoute("/kontak")({
 function Kontak() {
   const { cms } = useCms();
   const k = cms.kontak;
-  const rawWa = (k.hotlineWA || "082127324453").replace(/[^0-9]/g, "");
-  const whatsappClean = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
+  const officialWaNumber = "082127324453";
+  const officialPhone = "082127324453";
+  const officialEmail = "ichliebedtschmedan@gmail.com";
+  const officialAddress = "Jl. Ternak II No. 39, Medan Polonia";
+  const officialMapsEmbed =
+    "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed";
+  const whatsappClean = "6282127324453";
 
   const [activeTab, setActiveTab] = useState<"message" | "consultation">("message");
   const [dbStatus, setDbStatus] = useState<{
@@ -282,20 +287,20 @@ function Kontak() {
             <ContactCard
               icon={MessageCircle}
               label="WhatsApp Resmi"
-              value={k.hotlineWA || "082127324453"}
+              value={officialWaNumber}
               href={`https://wa.me/${whatsappClean}`}
             />
             <ContactCard
               icon={Phone}
               label="Telepon Kantor"
-              value={k.phoneLandline || k.hotlineWA || "082127324453"}
-              href={`tel:${(k.phoneLandline || k.hotlineWA || "082127324453").replace(/[^0-9]/g, "")}`}
+              value={officialPhone}
+              href={`tel:${officialPhone}`}
             />
             <ContactCard
               icon={Mail}
               label="Email Resmi"
-              value={k.emailOffice || "ichliebedtschmedan@gmail.com"}
-              href={`mailto:${k.emailOffice || "ichliebedtschmedan@gmail.com"}`}
+              value={officialEmail}
+              href={`mailto:${officialEmail}`}
             />
           </div>
         </div>
@@ -311,11 +316,11 @@ function Kontak() {
                 <h2 className="mb-4 flex items-center gap-2 font-display text-2xl leading-tight md:text-3xl">
                   <MapPin className="h-5 w-5 text-primary" /> Alamat Kantor
                 </h2>
-                <p className="leading-relaxed text-muted-foreground">
-                  {k.officeAddress || "Jl. Ternak II No. 39, Medan Polonia"}
-                </p>
+                <p className="leading-relaxed text-muted-foreground">{officialAddress}</p>
                 <p className="mt-2 text-xs font-semibold text-primary">
-                  Jam Operasional: {k.operatingHoursText || "Senin – Sabtu: 08:30 – 17:30 WIB"}
+                  Jam Operasional:{" "}
+                  {k.operatingHoursText ||
+                    "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)"}
                 </p>
               </div>
 
@@ -324,10 +329,10 @@ function Kontak() {
                   <Mail className="h-5 w-5 text-primary" /> Email Resmi
                 </h2>
                 <a
-                  href={`mailto:${k.emailOffice || "ichliebedtschmedan@gmail.com"}`}
+                  href={`mailto:${officialEmail}`}
                   className="font-medium text-primary transition-colors hover:underline"
                 >
-                  {k.emailOffice || "ichliebedtschmedan@gmail.com"}
+                  {officialEmail}
                 </a>
               </div>
 
@@ -335,10 +340,7 @@ function Kontak() {
               <div className="mb-10 overflow-hidden rounded-2xl border border-border bg-card shadow-xs">
                 <iframe
                   title="Lokasi Kantor ICH LIEBE DEUTSCH MEDAN"
-                  src={
-                    k.mapsEmbedUrl ||
-                    "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed"
-                  }
+                  src={officialMapsEmbed}
                   className="h-52 w-full border-0"
                   loading="lazy"
                   allowFullScreen
@@ -745,7 +747,7 @@ function Kontak() {
               Konsultasi langsung dengan tim kami!
             </h2>
             <p className="mt-3 max-w-[50ch] text-pretty text-muted-foreground">
-              Tim Ich Liebe Deutsch Medan siap memandu setiap tahapan mulai dari belajar bahasa
+              Tim ICH LIEBE DEUTSCH MEDAN siap memandu setiap tahapan mulai dari belajar bahasa
               hingga berangkat ke Jerman.
             </p>
           </div>

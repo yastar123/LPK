@@ -1905,7 +1905,39 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
   },
 };
 
-const STORAGE_KEY = "ild_cms_config_v4";
+const STORAGE_KEY = "ild_cms_config_v5";
+
+export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
+  return {
+    ...raw,
+    kontak: {
+      ...raw.kontak,
+      officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
+      hotlineWA: "082127324453",
+      phoneLandline: "082127324453",
+      emailOffice: "ichliebedtschmedan@gmail.com",
+      mapsEmbedUrl:
+        "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
+      operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
+    },
+    footer: {
+      ...raw.footer,
+      officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
+      phone: "082127324453",
+      whatsapp: "082127324453",
+      email: "ichliebedtschmedan@gmail.com",
+    },
+    navbar: {
+      ...raw.navbar,
+      brandTitle: "ICH LIEBE DEUTSCH MEDAN",
+      ctaButton: {
+        label: "Konsultasi WA",
+        href: "https://wa.me/6282127324453?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.",
+        isExternal: true,
+      },
+    },
+  };
+}
 
 /* =========================================================================
    REACT CONTEXT & PROVIDER WITH POSTGRESQL SYNC
@@ -1964,10 +1996,19 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
   const [cms, setCms] = useState<SiteCmsData>(() => {
     if (typeof window !== "undefined") {
       try {
+        // Clean out legacy cached keys from prior builds
+        [
+          "ild_cms_data",
+          "ild_cms_config_v1",
+          "ild_cms_config_v2",
+          "ild_cms_config_v3",
+          "ild_cms_config_v4",
+        ].forEach((k) => localStorage.removeItem(k));
+
         const local = localStorage.getItem(STORAGE_KEY);
         if (local) {
           const parsed = JSON.parse(local);
-          return {
+          return sanitizeSiteCmsData({
             ...DEFAULT_CMS_DATA,
             ...parsed,
             navbar: { ...DEFAULT_CMS_DATA.navbar, ...(parsed.navbar || {}) },
@@ -2004,7 +2045,7 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
             foto: { ...DEFAULT_CMS_DATA.foto, ...(parsed.foto || {}) },
             video: { ...DEFAULT_CMS_DATA.video, ...(parsed.video || {}) },
             kontak: { ...DEFAULT_CMS_DATA.kontak, ...(parsed.kontak || {}) },
-          };
+          });
         }
       } catch (e) {
         console.warn("[CMS Store] Local storage read error", e);
@@ -2021,10 +2062,11 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
   const syncToPostgres = async (data: SiteCmsData) => {
     setIsSyncing(true);
     try {
+      const cleanData = sanitizeSiteCmsData(data);
       const res = await fetch("/api/cms/main_cms_config", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data }),
+        body: JSON.stringify({ data: cleanData }),
       });
       if (res.ok) {
         setDbConnected(true);
@@ -2037,16 +2079,17 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
   };
 
   const saveState = (newState: SiteCmsData) => {
-    setCms(newState);
+    const clean = sanitizeSiteCmsData(newState);
+    setCms(clean);
     setLastUpdated(new Date().toLocaleTimeString("id-ID"));
     if (typeof window !== "undefined") {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(clean));
         window.dispatchEvent(new Event("ild_cms_updated"));
       } catch (e) {
         console.warn("[CMS Store] Error writing to localStorage", e);
       }
-      syncToPostgres(newState);
+      syncToPostgres(clean);
     }
   };
 
@@ -2057,11 +2100,14 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         .then((res) => (res.ok ? res.json() : null))
         .then((payload) => {
           if (payload?.data && payload.data.navbar) {
-            setCms((prev) => ({
-              ...DEFAULT_CMS_DATA,
-              ...prev,
-              ...payload.data,
-            }));
+            setCms((prev) => {
+              const merged = {
+                ...DEFAULT_CMS_DATA,
+                ...prev,
+                ...payload.data,
+              };
+              return sanitizeSiteCmsData(merged);
+            });
             setLastUpdated("Tersinkronisasi PostgreSQL");
             setDbConnected(true);
           }
@@ -2085,10 +2131,13 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-          setCms((prev) => ({
-            ...prev,
-            ...JSON.parse(saved),
-          }));
+          setCms((prev) => {
+            const parsed = JSON.parse(saved);
+            return sanitizeSiteCmsData({
+              ...prev,
+              ...parsed,
+            });
+          });
           setLastUpdated(new Date().toLocaleTimeString("id-ID"));
         }
       } catch (e) {

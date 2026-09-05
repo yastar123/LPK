@@ -37,6 +37,14 @@ export function KontakCrudTab({
         tiktok: formData.tiktok,
       },
     });
+    cmsStore.updateSection("kontak", {
+      ...cmsStore.cms.kontak,
+      officeAddress: formData.officeAddress,
+      hotlineWA: formData.whatsapp,
+      phoneLandline: formData.phone,
+      emailOffice: formData.email,
+      operatingHoursText: formData.operatingHours,
+    });
     showToast("Informasi Kontak & Lokasi Kantor berhasil disimpan!");
   };
 

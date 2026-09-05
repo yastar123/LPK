@@ -591,15 +591,58 @@ export async function getNewsletterSubscribers(): Promise<NewsletterRecord[]> {
   return memoryStore.newsletter;
 }
 
+function sanitizeCmsPayload(key: string, rawData: unknown): unknown {
+  if (!rawData || typeof rawData !== "object") return rawData;
+  if (key === "main_cms_config") {
+    const d = { ...(rawData as Record<string, unknown>) };
+    const kontak = (d.kontak || {}) as Record<string, unknown>;
+    const footer = (d.footer || {}) as Record<string, unknown>;
+    const navbar = (d.navbar || {}) as Record<string, unknown>;
+
+    d.kontak = {
+      ...kontak,
+      officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
+      hotlineWA: "082127324453",
+      phoneLandline: "082127324453",
+      emailOffice: "ichliebedtschmedan@gmail.com",
+      mapsEmbedUrl:
+        "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
+      operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
+    };
+
+    d.footer = {
+      ...footer,
+      officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
+      phone: "082127324453",
+      whatsapp: "082127324453",
+      email: "ichliebedtschmedan@gmail.com",
+    };
+
+    d.navbar = {
+      ...navbar,
+      brandTitle: "ICH LIEBE DEUTSCH MEDAN",
+      ctaButton: {
+        label: "Konsultasi WA",
+        href: "https://wa.me/6282127324453?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.",
+        isExternal: true,
+      },
+    };
+
+    return d;
+  }
+  return rawData;
+}
+
 // CMS Persistence in PostgreSQL
 export async function saveCmsData(key: string, data: unknown): Promise<boolean> {
+  const cleanData = sanitizeCmsPayload(key, data);
   if (isConnectedToPostgres && pool) {
     try {
       await pool.query(
         `INSERT INTO cms_content (key, data, updated_at)
          VALUES ($1, $2, NOW())
          ON CONFLICT (key) DO UPDATE SET data = $2, updated_at = NOW()`,
-        [key, JSON.stringify(data)],
+        [key, JSON.stringify(cleanData)],
       );
       // Log audit
       await pool.query(
@@ -612,7 +655,7 @@ export async function saveCmsData(key: string, data: unknown): Promise<boolean> 
       console.error("[Save CMS DB Error]", e);
     }
   }
-  memoryStore.cmsContent[key] = data;
+  memoryStore.cmsContent[key] = cleanData;
   return true;
 }
 
@@ -621,11 +664,12 @@ export async function getCmsData(key: string): Promise<unknown | null> {
     try {
       const res = await pool.query(`SELECT data FROM cms_content WHERE key = $1`, [key]);
       if (res.rows.length > 0) {
-        return res.rows[0].data;
+        const sanitized = sanitizeCmsPayload(key, res.rows[0].data);
+        return sanitized;
       }
     } catch (e) {
       console.error("[Get CMS DB Error]", e);
     }
   }
-  return memoryStore.cmsContent[key] || null;
+  return sanitizeCmsPayload(key, memoryStore.cmsContent[key] || null);
 }

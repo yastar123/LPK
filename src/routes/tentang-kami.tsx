@@ -317,7 +317,7 @@ function TentangKami() {
                 <div>
                   <h4 className="text-xs font-bold text-slate-900">Alamat Kantor</h4>
                   <p className="text-xs text-slate-600 mt-1 leading-relaxed">
-                    {k.officeAddress || "Jl. Ternak II No. 39, Medan Polonia"}
+                    Jl. Ternak II No. 39, Medan Polonia
                   </p>
                 </div>
               </div>
@@ -328,7 +328,7 @@ function TentangKami() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-slate-900">WhatsApp / Telepon</h4>
-                  <p className="text-xs text-slate-600 mt-1">{k.hotlineWA || "082127324453"}</p>
+                  <p className="text-xs text-slate-600 mt-1">082127324453</p>
                 </div>
               </div>
 
@@ -338,9 +338,7 @@ function TentangKami() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-slate-900">Email Resmi</h4>
-                  <p className="text-xs text-slate-600 mt-1">
-                    {k.emailOffice || "ichliebedtschmedan@gmail.com"}
-                  </p>
+                  <p className="text-xs text-slate-600 mt-1">ichliebedtschmedan@gmail.com</p>
                 </div>
               </div>
             </div>

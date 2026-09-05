@@ -34,10 +34,10 @@ export function SiteFooter() {
     }
   }
 
-  const cleanWhatsappNumber = (footer.whatsapp || "082127324453").replace(/[^0-9]/g, "");
-  const formattedWa = cleanWhatsappNumber.startsWith("0")
-    ? "62" + cleanWhatsappNumber.slice(1)
-    : cleanWhatsappNumber;
+  const formattedWa = "6282127324453";
+  const officialPhone = "082127324453";
+  const officialEmail = "ichliebedtschmedan@gmail.com";
+  const officialAddress = "Jl. Ternak II No. 39, Medan Polonia";
 
   return (
     <footer
@@ -86,9 +86,7 @@ export function SiteFooter() {
             <h4 className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-white">
               <MapPin className="h-4 w-4 text-sky-400" /> Alamat Kantor
             </h4>
-            <p className="text-xs leading-relaxed text-slate-400">
-              {footer.officeAddress || "Jl. Ternak II No. 39, Medan Polonia"}
-            </p>
+            <p className="text-xs leading-relaxed text-slate-400">{officialAddress}</p>
             {footer.operatingHours && (
               <p className="mt-2 text-[11px] text-slate-500">{footer.operatingHours}</p>
             )}
@@ -107,20 +105,19 @@ export function SiteFooter() {
                   rel="noreferrer"
                   className="transition-colors hover:text-sky-300"
                 >
-                  {footer.whatsapp || "082127324453"}
+                  082127324453
                 </a>
               </li>
               <li className="flex items-center gap-2">
-                <span className="font-semibold text-sky-400">Telp:</span>{" "}
-                {footer.phone || "082127324453"}
+                <span className="font-semibold text-sky-400">Telp:</span> {officialPhone}
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="h-3.5 w-3.5 text-sky-400" />
                 <a
-                  href={`mailto:${footer.email || "ichliebedtschmedan@gmail.com"}`}
+                  href={`mailto:${officialEmail}`}
                   className="transition-colors hover:text-sky-300"
                 >
-                  {footer.email || "ichliebedtschmedan@gmail.com"}
+                  {officialEmail}
                 </a>
               </li>
             </ul>

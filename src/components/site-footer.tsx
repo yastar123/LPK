@@ -36,7 +36,7 @@ export function SiteFooter() {
 
   const formattedWa = "6282127324453";
   const officialPhone = "082127324453";
-  const officialEmail = "ichliebedtschmedan@gmail.com";
+  const officialEmail = "Ichliebedeutschmedan@gmail.com";
   const officialAddress = "Jl. Ternak II No. 39, Medan Polonia";
 
   return (

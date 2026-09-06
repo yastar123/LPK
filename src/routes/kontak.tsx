@@ -62,13 +62,13 @@ export const Route = createFileRoute("/kontak")({
       {
         name: "description",
         content:
-          "Hubungi ICH LIEBE DEUTSCH MEDAN melalui WhatsApp 082127324453, telepon, email ichliebedtschmedan@gmail.com, atau datang langsung ke Jl. Ternak II No. 39, Medan Polonia.",
+          "Hubungi ICH LIEBE DEUTSCH MEDAN melalui WhatsApp 082127324453, telepon, email Ichliebedeutschmedan@gmail.com, atau datang langsung ke Jl. Ternak II No. 39, Medan Polonia.",
       },
       { property: "og:title", content: "Kontak & Konsultasi — ICH LIEBE DEUTSCH MEDAN" },
       {
         property: "og:description",
         content:
-          "Hubungi ICH LIEBE DEUTSCH MEDAN untuk konsultasi program ke Jerman. WhatsApp 082127324453, email ichliebedtschmedan@gmail.com, dan formulir konsultasi tersedia.",
+          "Hubungi ICH LIEBE DEUTSCH MEDAN untuk konsultasi program ke Jerman. WhatsApp 082127324453, email Ichliebedeutschmedan@gmail.com, dan formulir konsultasi tersedia.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -82,7 +82,7 @@ function Kontak() {
   const k = cms.kontak;
   const officialWaNumber = "082127324453";
   const officialPhone = "082127324453";
-  const officialEmail = "ichliebedtschmedan@gmail.com";
+  const officialEmail = "Ichliebedeutschmedan@gmail.com";
   const officialAddress = "Jl. Ternak II No. 39, Medan Polonia";
   const officialMapsEmbed =
     "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed";

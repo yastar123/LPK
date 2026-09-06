@@ -338,7 +338,7 @@ function TentangKami() {
                 </div>
                 <div>
                   <h4 className="text-xs font-bold text-slate-900">Email Resmi</h4>
-                  <p className="text-xs text-slate-600 mt-1">ichliebedtschmedan@gmail.com</p>
+                  <p className="text-xs text-slate-600 mt-1">Ichliebedeutschmedan@gmail.com</p>
                 </div>
               </div>
             </div>

@@ -604,7 +604,7 @@ function sanitizeCmsPayload(key: string, rawData: unknown): unknown {
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       hotlineWA: "082127324453",
       phoneLandline: "082127324453",
-      emailOffice: "ichliebedtschmedan@gmail.com",
+      emailOffice: "Ichliebedeutschmedan@gmail.com",
       mapsEmbedUrl:
         "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
       operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
@@ -615,7 +615,7 @@ function sanitizeCmsPayload(key: string, rawData: unknown): unknown {
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       phone: "082127324453",
       whatsapp: "082127324453",
-      email: "ichliebedtschmedan@gmail.com",
+      email: "Ichliebedeutschmedan@gmail.com",
     };
 
     d.navbar = {

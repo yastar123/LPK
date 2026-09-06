@@ -478,7 +478,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
     officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
     phone: "082127324453",
     whatsapp: "082127324453",
-    email: "ichliebedtschmedan@gmail.com",
+    email: "Ichliebedeutschmedan@gmail.com",
     operatingHours: "Senin - Sabtu: 08:30 - 17:30 WIB",
     newsletterTitle: "Buletin & Info Beasiswa",
     newsletterDesc: "Dapatkan pembaruan jadwal seleksi dan info beasiswa pelatihan bahasa Jerman.",
@@ -1897,7 +1897,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       "Tim konsultan kami siap memberikan informasi mendalam mengenai program Ausbildung, Au Pair, FSJ, dan kelas kursus bahasa Jerman.",
     hotlineWA: "082127324453",
     phoneLandline: "082127324453",
-    emailOffice: "ichliebedtschmedan@gmail.com",
+    emailOffice: "Ichliebedeutschmedan@gmail.com",
     officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
     mapsEmbedUrl:
       "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
@@ -1905,7 +1905,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
   },
 };
 
-const STORAGE_KEY = "ild_cms_config_v5";
+const STORAGE_KEY = "ild_cms_config_v6";
 
 export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
   return {
@@ -1915,7 +1915,7 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       hotlineWA: "082127324453",
       phoneLandline: "082127324453",
-      emailOffice: "ichliebedtschmedan@gmail.com",
+      emailOffice: "Ichliebedeutschmedan@gmail.com",
       mapsEmbedUrl:
         "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
       operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
@@ -1925,7 +1925,7 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       phone: "082127324453",
       whatsapp: "082127324453",
-      email: "ichliebedtschmedan@gmail.com",
+      email: "Ichliebedeutschmedan@gmail.com",
     },
     navbar: {
       ...raw.navbar,
@@ -2003,6 +2003,7 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
           "ild_cms_config_v2",
           "ild_cms_config_v3",
           "ild_cms_config_v4",
+          "ild_cms_config_v5",
         ].forEach((k) => localStorage.removeItem(k));
 
         const local = localStorage.getItem(STORAGE_KEY);

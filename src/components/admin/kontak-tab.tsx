@@ -11,11 +11,11 @@ export function KontakCrudTab({
 }) {
   const footerData = cmsStore.cms.footer;
   const [formData, setFormData] = useState({
-    officeAddress: footerData.officeAddress || "",
-    phone: footerData.phone || "",
-    whatsapp: footerData.whatsapp || "",
-    email: footerData.email || "",
-    operatingHours: footerData.operatingHours || "",
+    officeAddress: footerData.officeAddress || "Jl. Ternak II No. 39, Medan Polonia",
+    phone: footerData.phone || "082127324453",
+    whatsapp: footerData.whatsapp || "082127324453",
+    email: footerData.email || "Ichliebedeutschmedan@gmail.com",
+    operatingHours: footerData.operatingHours || "Senin - Sabtu: 08:30 - 17:30 WIB",
     instagram: footerData.socials?.instagram || "",
     facebook: footerData.socials?.facebook || "",
     youtube: footerData.socials?.youtube || "",

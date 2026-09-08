@@ -56,6 +56,31 @@ async function startServer() {
   // Initialize PostgreSQL database connection and auto-create schema
   await initPostgres();
 
+  // Google Search Console verification endpoint
+  app.get("/google4dfae9546e319b9f.html", (_req, res) => {
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.status(200).send("google-site-verification: google4dfae9546e319b9f.html");
+  });
+
+  // Sitemap & Robots
+  app.get("/sitemap.xml", (_req, res) => {
+    const sitemapPath = path.join(process.cwd(), "public", "sitemap.xml");
+    if (fs.existsSync(sitemapPath)) {
+      res.setHeader("Content-Type", "application/xml; charset=utf-8");
+      return res.sendFile(sitemapPath);
+    }
+    res.status(404).end();
+  });
+
+  app.get("/robots.txt", (_req, res) => {
+    const robotsPath = path.join(process.cwd(), "public", "robots.txt");
+    if (fs.existsSync(robotsPath)) {
+      res.setHeader("Content-Type", "text/plain; charset=utf-8");
+      return res.sendFile(robotsPath);
+    }
+    res.status(404).end();
+  });
+
   // Mount API endpoints
   app.use("/api", apiRouter);
 

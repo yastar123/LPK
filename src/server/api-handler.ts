@@ -344,19 +344,22 @@ export async function handleApiRequest(request: Request): Promise<Response | nul
         motivation,
       } = body;
 
-      if (!program_type || !full_name || !email || !whatsapp) {
+      if (!program_type || !full_name || !whatsapp) {
         return new Response(
           JSON.stringify({
-            error: "Program, nama lengkap, email, dan WhatsApp wajib diisi.",
+            error: "Program, nama lengkap, dan WhatsApp wajib diisi.",
           }),
           { status: 400, headers: jsonHeaders },
         );
       }
 
+      const cleanWaNumber = (whatsapp || "").replace(/\D/g, "") || "62821";
+      const safeEmail = email && email.trim() ? email.trim() : `pendaftar-${cleanWaNumber}@pendaftar.ild`;
+
       const application = await createApplication({
         program_type,
         full_name,
-        email,
+        email: safeEmail,
         whatsapp,
         city,
         age: age ? Number(age) : undefined,

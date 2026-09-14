@@ -444,6 +444,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
         id: "nav-program",
         label: "Program",
         children: [
+          { label: "Pendaftaran Online", href: "/daftar" },
           { label: "Ausbildung Kejuruan", href: "/program-ausbildung" },
           { label: "Au Pair Gastfamilie", href: "/program-aupair" },
           { label: "FSJ / BFD Relawan", href: "/program-fsj" },
@@ -462,6 +463,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
           { label: "Video Dokumentasi", href: "/video" },
         ],
       },
+      { id: "nav-daftar", label: "Daftar", href: "/daftar" },
       { id: "nav-blog", label: "Blog", href: "/blog" },
       { id: "nav-kontak", label: "Kontak", href: "/kontak" },
     ],
@@ -507,8 +509,8 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
         },
         button2: {
           label: "DAFTAR SEKARANG",
-          href: "https://wa.me/6282127324453",
-          isExternal: true,
+          href: "/daftar",
+          isExternal: false,
         },
       },
       {
@@ -523,9 +525,9 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
           href: "/program-aupair",
         },
         button2: {
-          label: "KONSULTASI GRATIS",
-          href: "https://wa.me/6282127324453",
-          isExternal: true,
+          label: "DAFTAR PROGRAM",
+          href: "/daftar",
+          isExternal: false,
         },
       },
       {
@@ -540,9 +542,9 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
           href: "/kegiatan-belajar",
         },
         button2: {
-          label: "HUBUNGI WA ADMIN",
-          href: "https://wa.me/6282127324453?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20tertarik%20dengan%20kursus%20bahasa%20Jerman.",
-          isExternal: true,
+          label: "DAFTAR KELAS",
+          href: "/daftar",
+          isExternal: false,
         },
       },
     ],
@@ -1908,7 +1910,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
 const STORAGE_KEY = "ild_cms_config_v6";
 
 export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
-  return {
+  const sanitized = {
     ...raw,
     kontak: {
       ...raw.kontak,
@@ -1937,6 +1939,24 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
       },
     },
   };
+
+  if (sanitized.home?.heroSlides && Array.isArray(sanitized.home.heroSlides)) {
+    sanitized.home.heroSlides = sanitized.home.heroSlides.map((s) => {
+      if (s.button2 && (s.button2.label?.toUpperCase().includes("DAFTAR") || s.id === "slide-ausbildung")) {
+        return {
+          ...s,
+          button2: {
+            ...s.button2,
+            href: "/daftar",
+            isExternal: false,
+          },
+        };
+      }
+      return s;
+    });
+  }
+
+  return sanitized;
 }
 
 /* =========================================================================

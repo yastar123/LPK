@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  ArrowRight,
   ArrowUpRight,
   BookOpen,
   CalendarDays,
@@ -256,15 +257,24 @@ export function ProgramAupair() {
               yang aman dan terpercaya.
             </p>
           </div>
-          <a
-            href={waLink}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-sky-700 shadow-xl transition-all hover:bg-sky-50 hover:scale-105 active:scale-95 shrink-0"
-          >
-            <span>Konsultasi Au Pair via WhatsApp</span>
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <Link
+              to="/daftar"
+              className="inline-flex items-center gap-2 rounded-full bg-amber-400 hover:bg-amber-300 px-7 py-3.5 text-xs sm:text-sm font-bold text-slate-950 shadow-xl shadow-amber-400/20 transition-all hover:scale-105 active:scale-95"
+            >
+              <span>Daftar Sekarang (Online)</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs sm:text-sm font-bold text-sky-700 shadow-xl transition-all hover:bg-sky-50 hover:scale-105 active:scale-95"
+            >
+              <span>Konsultasi WA</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+          </div>
         </div>
       </section>
     </main>

@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  ArrowRight,
   ArrowUpRight,
   BookOpen,
   Sparkles,
@@ -230,15 +231,24 @@ export function KegiatanBelajar() {
               Anda ke Jerman.
             </p>
           </div>
-          <a
-            href={waLink}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-7 py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-sky-600/25 transition-all hover:bg-sky-500 hover:scale-105 active:scale-95 shrink-0"
-          >
-            <span>Daftar Kelas via WhatsApp</span>
-            <ArrowUpRight className="h-4 w-4" />
-          </a>
+          <div className="flex flex-wrap items-center gap-3 shrink-0">
+            <Link
+              to="/daftar"
+              className="inline-flex items-center gap-2 rounded-full bg-amber-400 hover:bg-amber-300 px-7 py-3.5 text-xs sm:text-sm font-bold text-slate-950 shadow-lg shadow-amber-400/20 transition-all hover:scale-105 active:scale-95"
+            >
+              <span>Formulir Pendaftaran</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 rounded-full bg-sky-600 px-6 py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg shadow-sky-600/25 transition-all hover:bg-sky-500 hover:scale-105 active:scale-95"
+            >
+              <span>Chat WhatsApp</span>
+              <ArrowUpRight className="h-4 w-4" />
+            </a>
+          </div>
         </div>
       </section>
 

@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
+  ArrowRight,
   ArrowUpRight,
   BadgeCheck,
   BookOpen,
@@ -604,18 +605,27 @@ export function Index() {
                           to={p.href}
                           className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold text-sky-600 hover:text-sky-700 transition-colors"
                         >
-                          <span>Pelajari Rincian Program & Langkah Pendaftaran</span>
+                          <span>Rincian & Syarat</span>
                           <ChevronRight className="h-4 w-4" />
                         </Link>
-                        <a
-                          href={waLink}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 rounded-full bg-sky-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-sky-600/20 transition-all hover:bg-sky-500 hover:scale-105"
-                        >
-                          <span>Konsultasi Jalur Ini</span>
-                          <ArrowUpRight className="h-3.5 w-3.5" />
-                        </a>
+                        <div className="flex items-center gap-2">
+                          <Link
+                            to="/daftar"
+                            className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 hover:from-sky-400 hover:to-sky-500 px-4 py-2 text-xs font-bold text-white shadow-md shadow-sky-600/20 transition-all hover:scale-105"
+                          >
+                            <span>Daftar</span>
+                            <ArrowRight className="h-3 w-3" />
+                          </Link>
+                          <a
+                            href={waLink}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="inline-flex items-center gap-1.5 rounded-full border border-slate-200 bg-white hover:bg-slate-50 px-3.5 py-2 text-xs font-bold text-slate-700 transition-all hover:scale-105"
+                          >
+                            <span>Konsultasi WA</span>
+                            <ArrowUpRight className="h-3.5 w-3.5" />
+                          </a>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -934,20 +944,27 @@ export function Index() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3.5 shrink-0">
+            <Link
+              to="/daftar"
+              className="inline-flex items-center gap-2 rounded-full bg-amber-400 hover:bg-amber-300 px-7 py-3.5 text-xs sm:text-sm font-bold text-slate-950 shadow-xl shadow-amber-400/20 transition-all hover:scale-105 active:scale-95"
+            >
+              <span>Daftar Sekarang (Online)</span>
+              <ArrowRight className="h-4 w-4" />
+            </Link>
             <a
               href={waLink}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-xs sm:text-sm font-bold text-sky-700 shadow-xl shadow-sky-950/20 transition-all hover:scale-105 hover:bg-sky-50 active:scale-95"
+              className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3.5 text-xs sm:text-sm font-bold text-sky-700 shadow-xl shadow-sky-950/20 transition-all hover:scale-105 hover:bg-sky-50 active:scale-95"
             >
               <span>Chat WhatsApp Admin</span>
               <ArrowUpRight className="h-4 w-4" />
             </a>
             <Link
               to="/kontak"
-              className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/10 backdrop-blur-md px-6 py-3.5 text-xs sm:text-sm font-bold text-white transition-all hover:bg-white/20 hover:border-white"
+              className="inline-flex items-center gap-2 rounded-full border border-white/60 bg-white/10 backdrop-blur-md px-5 py-3.5 text-xs sm:text-sm font-bold text-white transition-all hover:bg-white/20 hover:border-white"
             >
-              <span>Formulir Konsultasi</span>
+              <span>Kontak Kami</span>
             </Link>
           </div>
         </div>

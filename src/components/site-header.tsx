@@ -168,9 +168,22 @@ export function SiteHeader() {
 
         {/* Right CTA Button (Pill Layout matching reference image) */}
         <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+          {/* Tombol Pendaftaran Baru */}
+          <Link
+            to="/daftar"
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 sm:px-4 py-1.5 sm:py-2 text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
+              isTransparent
+                ? "bg-amber-400 hover:bg-amber-300 text-slate-950 shadow-md hover:shadow-lg shadow-amber-400/20 hover:scale-105 active:scale-95"
+                : "bg-sky-600 hover:bg-sky-500 text-white shadow-md shadow-sky-600/20 hover:shadow-lg hover:scale-105 active:scale-95"
+            }`}
+          >
+            <span>Daftar</span>
+            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
+          </Link>
+
           <Link
             to="/login"
-            className={`items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap shrink-0 transition-all inline-flex ${
+            className={`items-center gap-1 rounded-full px-3 py-1.5 text-xs font-semibold whitespace-nowrap shrink-0 transition-all hidden sm:inline-flex ${
               isTransparent
                 ? "text-white/90 hover:text-white hover:bg-white/15 border border-white/20"
                 : "text-slate-700 hover:text-sky-600 hover:bg-slate-100 border border-slate-200"
@@ -184,16 +197,15 @@ export function SiteHeader() {
             href={navbar.ctaButton?.href || "https://wa.me/6282127324453"}
             target={navbar.ctaButton?.isExternal ? "_blank" : undefined}
             rel="noreferrer"
-            className={`hidden items-center gap-1.5 rounded-full px-3.5 xl:px-5 py-2 text-xs font-bold whitespace-nowrap shrink-0 transition-all sm:inline-flex ${
+            className={`hidden items-center gap-1.5 rounded-full px-3.5 xl:px-4 py-1.5 sm:py-2 text-xs font-bold whitespace-nowrap shrink-0 transition-all md:inline-flex ${
               isTransparent
-                ? "bg-white text-sky-700 shadow-md hover:bg-slate-100 hover:shadow-lg"
-                : "bg-sky-500 text-white shadow-md shadow-sky-500/20 hover:bg-sky-600 hover:shadow-lg hover:shadow-sky-500/30"
+                ? "bg-white/20 text-white border border-white/30 backdrop-blur-xs hover:bg-white hover:text-sky-700 hover:shadow-lg"
+                : "bg-emerald-600 text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-500 hover:shadow-lg"
             }`}
           >
             <span className="whitespace-nowrap">
-              {navbar.ctaButton?.label || "Konsultasi Gratis"}
+              {navbar.ctaButton?.label || "Konsultasi WA"}
             </span>
-            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
           </a>
 
           <button
@@ -276,6 +288,14 @@ export function SiteHeader() {
             ))}
             <li className="pt-3 space-y-2">
               <Link
+                to="/daftar"
+                onClick={() => setOpen(false)}
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-sky-500 to-sky-600 py-3 text-center text-sm font-bold text-white shadow-lg shadow-sky-600/25 hover:from-sky-400 hover:to-sky-500"
+              >
+                <span>Daftar Sekarang (Online)</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
                 to="/login"
                 onClick={() => setOpen(false)}
                 className={`flex w-full items-center justify-center gap-2 rounded-full py-2.5 text-center text-xs font-bold border transition-colors ${
@@ -291,10 +311,10 @@ export function SiteHeader() {
                 href={navbar.ctaButton?.href || "https://wa.me/6282127324453"}
                 target={navbar.ctaButton?.isExternal ? "_blank" : undefined}
                 rel="noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-full bg-sky-500 py-3 text-center text-sm font-bold text-white shadow-lg shadow-sky-500/25 hover:bg-sky-600"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 py-2.5 text-center text-xs font-bold text-white shadow-md hover:bg-emerald-500"
               >
-                <span>{navbar.ctaButton?.label || "Konsultasi Gratis"}</span>
-                <ArrowRight className="h-4 w-4" />
+                <span>{navbar.ctaButton?.label || "Konsultasi WA"}</span>
+                <ArrowRight className="h-3.5 w-3.5" />
               </a>
             </li>
           </ul>

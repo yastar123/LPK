@@ -102,6 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://ichliebedeutschmedan.or.id/" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "google-site-verification", content: "M8aMApoMF6guhrl7e4RjHYaTm3toe1nAZf-7teM0iIg" },
       { name: "google-site-verification", content: "google4dfae9546e319b9f" },
       { name: "google-site-verification", content: "4dfae9546e319b9f" },
     ],
@@ -129,6 +130,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="id">
       <head>
+        <meta name="google-site-verification" content="M8aMApoMF6guhrl7e4RjHYaTm3toe1nAZf-7teM0iIg" />
         <link rel="canonical" href="https://ichliebedeutschmedan.or.id/" id="primary-canonical" />
         <script
           id="fetch-getter-guard"

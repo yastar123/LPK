@@ -1,87 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/</loc>
+    <loc>https://ichliebedeutschmedan.or.id/</loc>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>/tentang-kami</loc>
+    <loc>https://ichliebedeutschmedan.or.id/daftar</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://ichliebedeutschmedan.or.id/tentang-kami</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/program-ausbildung</loc>
+    <loc>https://ichliebedeutschmedan.or.id/program-ausbildung</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>/program-aupair</loc>
+    <loc>https://ichliebedeutschmedan.or.id/program-aupair</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>/program-fsj</loc>
+    <loc>https://ichliebedeutschmedan.or.id/program-fsj</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>/persyaratan</loc>
+    <loc>https://ichliebedeutschmedan.or.id/persyaratan</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/kontak</loc>
+    <loc>https://ichliebedeutschmedan.or.id/kontak</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>/blog</loc>
+    <loc>https://ichliebedeutschmedan.or.id/blog</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>/kegiatan-belajar</loc>
+    <loc>https://ichliebedeutschmedan.or.id/blog/panduan-lengkap-ausbildung-jerman-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ichliebedeutschmedan.or.id/blog/tips-sukses-menjadi-au-pair-di-jerman</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ichliebedeutschmedan.or.id/blog/mengenal-program-fsj-jerman</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ichliebedeutschmedan.or.id/blog/strategi-lulus-goethe-zertifikat-b1-cepat</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://ichliebedeutschmedan.or.id/kegiatan-belajar</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>/kegiatan-program</loc>
+    <loc>https://ichliebedeutschmedan.or.id/kegiatan-program</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>/cooking-class</loc>
+    <loc>https://ichliebedeutschmedan.or.id/cooking-class</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>/gathering</loc>
+    <loc>https://ichliebedeutschmedan.or.id/gathering</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>/foto</loc>
+    <loc>https://ichliebedeutschmedan.or.id/foto</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>/video</loc>
+    <loc>https://ichliebedeutschmedan.or.id/video</loc>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>/legalitas</loc>
+    <loc>https://ichliebedeutschmedan.or.id/legalitas</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>/struktur</loc>
+    <loc>https://ichliebedeutschmedan.or.id/struktur</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>/team</loc>
+    <loc>https://ichliebedeutschmedan.or.id/team</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>

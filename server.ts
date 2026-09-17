@@ -35,6 +35,38 @@ async function startServer() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
+  // SEO: Canonical Host & URL Normalization
+  app.use((req, res, next) => {
+    const rawHost = (req.headers["x-forwarded-host"] || req.headers.host || "")
+      .toString()
+      .toLowerCase();
+    const isWww = rawHost.startsWith("www.ichliebedeutschmedan.or.id");
+
+    // 1. Redirect www to non-www with 301 Permanent Redirect
+    if (isWww) {
+      const redirectUrl = `https://ichliebedeutschmedan.or.id${req.originalUrl}`;
+      return res.redirect(301, redirectUrl);
+    }
+
+    // 2. Trailing slash normalization (e.g. /program-ausbildung/ -> /program-ausbildung)
+    if (req.method === "GET" && req.path.length > 1 && req.path.endsWith("/")) {
+      const cleanPath = req.path.slice(0, -1);
+      const query = req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : "";
+      return res.redirect(301, cleanPath + query);
+    }
+
+    // 3. Inject HTTP Link header for canonical URL for web crawlers
+    if (req.method === "GET" && !req.path.startsWith("/api") && !req.path.includes(".")) {
+      const canonicalPath = req.path === "/" ? "/" : req.path.replace(/\/+$/, "");
+      res.setHeader(
+        "Link",
+        `<https://ichliebedeutschmedan.or.id${canonicalPath}>; rel="canonical"`,
+      );
+    }
+
+    next();
+  });
+
   // Security: Block access to sensitive system files (.env, .git, .aws, etc.)
   // while allowing Vite internal assets and dependencies
   app.use((req, res, next) => {

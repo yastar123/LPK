@@ -34,7 +34,10 @@ export const Route = createFileRoute("/daftar")({
         content:
           "Formulir pendaftaran resmi kursus bahasa Jerman Level A1, A2, B1, B2 dan persiapan program Ausbildung, Au Pair, serta FSJ bersama Ich Liebe Deutsch Medan.",
       },
-      { property: "og:title", content: "Pendaftaran Kursus Bahasa Jerman — ICH LIEBE DEUTSCH MEDAN" },
+      {
+        property: "og:title",
+        content: "Pendaftaran Kursus Bahasa Jerman — ICH LIEBE DEUTSCH MEDAN",
+      },
       {
         property: "og:description",
         content:
@@ -234,7 +237,9 @@ export function PendaftaranPage() {
         `📱 *Nomor WhatsApp:* ${encodeURIComponent(form.whatsapp.trim())}%0A` +
         (form.email.trim() ? `✉️ *Email:* ${encodeURIComponent(form.email.trim())}%0A` : "") +
         `🎯 *Program Tujuan:* ${encodeURIComponent(form.program)}%0A` +
-        (form.catatan.trim() ? `📝 *Catatan Tambahan:* ${encodeURIComponent(form.catatan.trim())}%0A` : "") +
+        (form.catatan.trim()
+          ? `📝 *Catatan Tambahan:* ${encodeURIComponent(form.catatan.trim())}%0A`
+          : "") +
         `----------------------------------------------%0A` +
         `Mohon informasi ketersediaan jadwal kelas terdekat, biaya, dan tahapan selanjutnya. Terima kasih!`;
 
@@ -291,7 +296,8 @@ export function PendaftaranPage() {
             </h1>
             <p className="mt-3 text-xs sm:text-sm md:text-base text-slate-300 leading-relaxed max-w-2xl">
               Lengkapi formulir pendaftaran di bawah ini untuk memulai langkah Anda menuju Jerman.
-              Data Anda akan langsung diteruskan ke WhatsApp resmi tim <strong>ICH LIEBE DEUTSCH MEDAN</strong> untuk konfirmasi kelas.
+              Data Anda akan langsung diteruskan ke WhatsApp resmi tim{" "}
+              <strong>ICH LIEBE DEUTSCH MEDAN</strong> untuk konfirmasi kelas.
             </p>
 
             {/* Micro Highlights */}
@@ -324,9 +330,7 @@ export function PendaftaranPage() {
               noValidate
             >
               <div className="border-b border-slate-100 pb-5 mb-7">
-                <h2 className="text-lg sm:text-xl font-bold text-slate-900">
-                  Data Calon Peserta
-                </h2>
+                <h2 className="text-lg sm:text-xl font-bold text-slate-900">Data Calon Peserta</h2>
                 <p className="text-xs text-slate-500 mt-1">
                   Harap mengisi data diri dengan benar sesuai identitas resmi Anda.
                 </p>
@@ -340,7 +344,9 @@ export function PendaftaranPage() {
                       <User className="h-3.5 w-3.5 text-sky-600" />
                       Nama Lengkap <span className="text-red-500">*</span>
                     </span>
-                    <span className="text-[11px] font-normal text-slate-400">Sesuai KTP / Ijazah</span>
+                    <span className="text-[11px] font-normal text-slate-400">
+                      Sesuai KTP / Ijazah
+                    </span>
                   </label>
                   <input
                     type="text"
@@ -369,7 +375,9 @@ export function PendaftaranPage() {
                       <MapPin className="h-3.5 w-3.5 text-sky-600" />
                       Alamat Domisili <span className="text-red-500">*</span>
                     </span>
-                    <span className="text-[11px] font-normal text-slate-400">Kota / Daerah saat ini</span>
+                    <span className="text-[11px] font-normal text-slate-400">
+                      Kota / Daerah saat ini
+                    </span>
                   </label>
                   <textarea
                     rows={2}
@@ -468,7 +476,8 @@ export function PendaftaranPage() {
                         type="button"
                         onClick={() => {
                           setForm({ ...form, ijazahTerakhir: opt });
-                          if (errors.ijazahTerakhir) setErrors({ ...errors, ijazahTerakhir: undefined });
+                          if (errors.ijazahTerakhir)
+                            setErrors({ ...errors, ijazahTerakhir: undefined });
                         }}
                         className={`rounded-xl px-3 py-1.5 text-xs font-medium transition-all ${
                           form.ijazahTerakhir === opt
@@ -487,7 +496,8 @@ export function PendaftaranPage() {
                     value={form.ijazahTerakhir}
                     onChange={(e) => {
                       setForm({ ...form, ijazahTerakhir: e.target.value });
-                      if (errors.ijazahTerakhir) setErrors({ ...errors, ijazahTerakhir: undefined });
+                      if (errors.ijazahTerakhir)
+                        setErrors({ ...errors, ijazahTerakhir: undefined });
                     }}
                     placeholder="Ketik atau pilih jenjang pendidikan terakhir Anda"
                     className={`w-full rounded-2xl border px-4 py-3 text-sm transition-all focus:outline-none focus:ring-2 ${
@@ -497,7 +507,9 @@ export function PendaftaranPage() {
                     }`}
                   />
                   {errors.ijazahTerakhir && (
-                    <p className="mt-1.5 text-xs text-red-500 font-medium">{errors.ijazahTerakhir}</p>
+                    <p className="mt-1.5 text-xs text-red-500 font-medium">
+                      {errors.ijazahTerakhir}
+                    </p>
                   )}
                 </div>
 
@@ -508,7 +520,9 @@ export function PendaftaranPage() {
                       <BookOpen className="h-4 w-4 text-sky-600" />
                       Level Bahasa Jerman yang Mau Dipilih <span className="text-red-500">*</span>
                     </label>
-                    <span className="text-[11px] font-medium text-slate-500">Pilih salah satu (A1, A2, B1, B2)</span>
+                    <span className="text-[11px] font-medium text-slate-500">
+                      Pilih salah satu (A1, A2, B1, B2)
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
@@ -518,8 +532,9 @@ export function PendaftaranPage() {
                         <div
                           key={lvl.id}
                           onClick={() => {
-                            setForm({ ...form, levelBahasa: lvl.id as any });
-                            if (errors.levelBahasa) setErrors({ ...errors, levelBahasa: undefined });
+                            setForm({ ...form, levelBahasa: lvl.id as GermanLevel });
+                            if (errors.levelBahasa)
+                              setErrors({ ...errors, levelBahasa: undefined });
                           }}
                           className={`cursor-pointer rounded-2xl border p-4 transition-all relative ${
                             isSelected
@@ -538,9 +553,7 @@ export function PendaftaranPage() {
                                 <h3 className="text-xs font-bold text-slate-900 leading-tight">
                                   {lvl.level}
                                 </h3>
-                                <p className="text-[11px] text-slate-500 font-medium">
-                                  {lvl.name}
-                                </p>
+                                <p className="text-[11px] text-slate-500 font-medium">{lvl.name}</p>
                               </div>
                             </div>
 
@@ -631,7 +644,10 @@ export function PendaftaranPage() {
                 <div className="rounded-2xl bg-sky-50/70 border border-sky-100 p-4 text-xs text-sky-900 flex items-start gap-3">
                   <Info className="h-4 w-4 text-sky-600 shrink-0 mt-0.5" />
                   <p className="leading-relaxed">
-                    Setelah menekan tombol kirim, Anda akan langsung dialihkan ke <strong>WhatsApp resmi ICH LIEBE DEUTSCH MEDAN ({officialWaNumber})</strong> dengan format pesan yang sudah terisi otomatis. Tim kami akan segera membalas rincian biaya, jadwal kelas terdekat, dan modul belajar.
+                    Setelah menekan tombol kirim, Anda akan langsung dialihkan ke{" "}
+                    <strong>WhatsApp resmi ICH LIEBE DEUTSCH MEDAN ({officialWaNumber})</strong>{" "}
+                    dengan format pesan yang sudah terisi otomatis. Tim kami akan segera membalas
+                    rincian biaya, jadwal kelas terdekat, dan modul belajar.
                   </p>
                 </div>
 
@@ -673,9 +689,7 @@ export function PendaftaranPage() {
                 <p className="text-[11px] font-semibold text-emerald-900 uppercase tracking-wider">
                   Admin Pendaftaran &amp; Konsultasi
                 </p>
-                <p className="text-lg font-extrabold text-emerald-700 mt-0.5">
-                  {officialWaNumber}
-                </p>
+                <p className="text-lg font-extrabold text-emerald-700 mt-0.5">{officialWaNumber}</p>
                 <p className="text-xs text-emerald-800/80 mt-1">
                   Respon cepat pada jam operasional: Senin – Sabtu, 08:30 – 17:30 WIB.
                 </p>
@@ -716,25 +730,29 @@ export function PendaftaranPage() {
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Metode Intensif &amp; Teruji:</strong> Fokus penguasaan 4 keterampilan (Membaca, Menulis, Mendengar, Berbicara).
+                    <strong>Metode Intensif &amp; Teruji:</strong> Fokus penguasaan 4 keterampilan
+                    (Membaca, Menulis, Mendengar, Berbicara).
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Pengajar Berpengalaman:</strong> Sertifikasi resmi Goethe-Institut dengan pengalaman langsung di Jerman.
+                    <strong>Pengajar Berpengalaman:</strong> Sertifikasi resmi Goethe-Institut
+                    dengan pengalaman langsung di Jerman.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Pendampingan Karir:</strong> Konsultasi kontrak Ausbildung, Au Pair, FSJ, dan simulasi wawancara visa.
+                    <strong>Pendampingan Karir:</strong> Konsultasi kontrak Ausbildung, Au Pair,
+                    FSJ, dan simulasi wawancara visa.
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
                   <span>
-                    <strong>Kelas Fleksibel:</strong> Tersedia kelas tatap muka di Medan dan kelas daring interaktif.
+                    <strong>Kelas Fleksibel:</strong> Tersedia kelas tatap muka di Medan dan kelas
+                    daring interaktif.
                   </span>
                 </li>
               </ul>
@@ -753,8 +771,9 @@ export function PendaftaranPage() {
 
             <h3 className="text-xl font-bold text-slate-900">Pendaftaran Berhasil Dikirim!</h3>
             <p className="mt-2 text-xs sm:text-sm text-slate-600 leading-relaxed">
-              Terima kasih, <strong>{submittedData.formSnapshot.nama}</strong>! Data pendaftaran Anda untuk{" "}
-              <strong>Level {submittedData.formSnapshot.levelBahasa}</strong> telah kami terima dan langsung dihubungkan ke WhatsApp admin kami.
+              Terima kasih, <strong>{submittedData.formSnapshot.nama}</strong>! Data pendaftaran
+              Anda untuk <strong>Level {submittedData.formSnapshot.levelBahasa}</strong> telah kami
+              terima dan langsung dihubungkan ke WhatsApp admin kami.
             </p>
 
             <div className="mt-5 rounded-2xl bg-slate-50 border border-slate-200/80 p-4 text-left text-xs space-y-1.5 text-slate-700">

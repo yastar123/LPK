@@ -285,7 +285,7 @@ apiRouter.delete("/consultations/:id", async (req, res) => {
 // Program registration applications
 apiRouter.post("/applications", async (req, res) => {
   try {
-    let {
+    const {
       program_type,
       full_name,
       email,
@@ -308,13 +308,12 @@ apiRouter.post("/applications", async (req, res) => {
     };
 
     if (!program_type || !full_name || !whatsapp) {
-      return res
-        .status(400)
-        .json({ error: "Program, nama lengkap, dan WhatsApp wajib diisi." });
+      return res.status(400).json({ error: "Program, nama lengkap, dan WhatsApp wajib diisi." });
     }
 
     const cleanWaNumber = (whatsapp || "").replace(/\D/g, "") || "62821";
-    const safeEmail = email && email.trim() ? email.trim() : `pendaftar-${cleanWaNumber}@pendaftar.ild`;
+    const safeEmail =
+      email && email.trim() ? email.trim() : `pendaftar-${cleanWaNumber}@pendaftar.ild`;
 
     const application = await createApplication({
       program_type,

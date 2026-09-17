@@ -14,8 +14,22 @@ export default defineConfig({
     },
     plugins: [
       {
-        name: "dev-api-router",
+        name: "canonical-and-api-router",
         configureServer(server) {
+          // Canonical host & trailing slash redirect middleware
+          server.middlewares.use((req: IncomingMessage, res: ServerResponse, next: () => void) => {
+            const rawHost = (req.headers["x-forwarded-host"] || req.headers.host || "")
+              .toString()
+              .toLowerCase();
+            if (rawHost.startsWith("www.ichliebedeutschmedan.or.id")) {
+              const redirectUrl = `https://ichliebedeutschmedan.or.id${req.url || "/"}`;
+              res.statusCode = 301;
+              res.setHeader("Location", redirectUrl);
+              return res.end();
+            }
+            next();
+          });
+
           server.middlewares.use(
             async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
               if (!req.url || !req.url.startsWith("/api")) {

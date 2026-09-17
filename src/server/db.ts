@@ -630,19 +630,31 @@ function sanitizeCmsPayload(key: string, rawData: unknown): unknown {
 
     const home = (d.home || {}) as Record<string, unknown>;
     if (home.heroSlides && Array.isArray(home.heroSlides)) {
-      home.heroSlides = home.heroSlides.map((s: any) => {
-        if (s.button2 && (String(s.button2.label || "").toUpperCase().includes("DAFTAR") || s.id === "slide-ausbildung")) {
-          return {
-            ...s,
-            button2: {
-              ...s.button2,
-              href: "/daftar",
-              isExternal: false,
-            },
-          };
-        }
-        return s;
-      });
+      home.heroSlides = home.heroSlides.map(
+        (s: {
+          id?: string;
+          button2?: { label?: string; href?: string; isExternal?: boolean };
+          [key: string]: unknown;
+        }) => {
+          if (
+            s.button2 &&
+            (String(s.button2.label || "")
+              .toUpperCase()
+              .includes("DAFTAR") ||
+              s.id === "slide-ausbildung")
+          ) {
+            return {
+              ...s,
+              button2: {
+                ...s.button2,
+                href: "/daftar",
+                isExternal: false,
+              },
+            };
+          }
+          return s;
+        },
+      );
       d.home = home;
     }
 

@@ -100,11 +100,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
           "Program resmi Ausbildung keperawatan/gastronomi, Au Pair, FSJ, dan kursus bahasa Jerman terpadu di Medan.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://ichliebedeutschmedan.or.id/" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "google-site-verification", content: "google4dfae9546e319b9f" },
       { name: "google-site-verification", content: "4dfae9546e319b9f" },
     ],
     links: [
+      { rel: "canonical", href: "https://ichliebedeutschmedan.or.id/" },
       { rel: "stylesheet", href: appCss },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
@@ -127,6 +129,7 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="id">
       <head>
+        <link rel="canonical" href="https://ichliebedeutschmedan.or.id/" id="primary-canonical" />
         <script
           id="fetch-getter-guard"
           dangerouslySetInnerHTML={{
@@ -143,6 +146,34 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function CanonicalUrlManager() {
+  const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const cleanPath = location.pathname === "/" ? "/" : location.pathname.replace(/\/+$/, "");
+    const canonicalUrl = `https://ichliebedeutschmedan.or.id${cleanPath === "/" ? "/" : cleanPath}`;
+
+    let canonicalLink = document.querySelector<HTMLLinkElement>('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement("link");
+      canonicalLink.setAttribute("rel", "canonical");
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute("href", canonicalUrl);
+
+    let ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+    if (!ogUrl) {
+      ogUrl = document.createElement("meta");
+      ogUrl.setAttribute("property", "og:url");
+      document.head.appendChild(ogUrl);
+    }
+    ogUrl.setAttribute("content", canonicalUrl);
+  }, [location.pathname]);
+
+  return null;
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const location = useLocation();
@@ -153,6 +184,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <CmsProvider>
+        <CanonicalUrlManager />
         {!isHeaderFooterHidden && <SiteHeader />}
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
         <div className={isHeaderFooterHidden ? "" : isHome ? "" : "pt-20"}>

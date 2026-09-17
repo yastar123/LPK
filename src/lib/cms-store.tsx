@@ -1942,7 +1942,10 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
 
   if (sanitized.home?.heroSlides && Array.isArray(sanitized.home.heroSlides)) {
     sanitized.home.heroSlides = sanitized.home.heroSlides.map((s) => {
-      if (s.button2 && (s.button2.label?.toUpperCase().includes("DAFTAR") || s.id === "slide-ausbildung")) {
+      if (
+        s.button2 &&
+        (s.button2.label?.toUpperCase().includes("DAFTAR") || s.id === "slide-ausbildung")
+      ) {
         return {
           ...s,
           button2: {

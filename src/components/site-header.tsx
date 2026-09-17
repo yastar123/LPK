@@ -203,9 +203,7 @@ export function SiteHeader() {
                 : "bg-emerald-600 text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-500 hover:shadow-lg"
             }`}
           >
-            <span className="whitespace-nowrap">
-              {navbar.ctaButton?.label || "Konsultasi WA"}
-            </span>
+            <span className="whitespace-nowrap">{navbar.ctaButton?.label || "Konsultasi WA"}</span>
           </a>
 
           <button

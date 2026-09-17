@@ -354,7 +354,8 @@ export async function handleApiRequest(request: Request): Promise<Response | nul
       }
 
       const cleanWaNumber = (whatsapp || "").replace(/\D/g, "") || "62821";
-      const safeEmail = email && email.trim() ? email.trim() : `pendaftar-${cleanWaNumber}@pendaftar.ild`;
+      const safeEmail =
+        email && email.trim() ? email.trim() : `pendaftar-${cleanWaNumber}@pendaftar.ild`;
 
       const application = await createApplication({
         program_type,

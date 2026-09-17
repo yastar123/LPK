@@ -1,8 +1,16 @@
+# robots.txt for https://ichliebedeutschmedan.or.id
+
 User-agent: Googlebot
 Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
 
 User-agent: Bingbot
 Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
 
 User-agent: Twitterbot
 Allow: /
@@ -12,5 +20,8 @@ Allow: /
 
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /login
+Disallow: /api/
 
-Sitemap: /sitemap.xml
+Sitemap: https://ichliebedeutschmedan.or.id/sitemap.xml

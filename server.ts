@@ -30,10 +30,31 @@ const HOST = "0.0.0.0";
 async function startServer() {
   const app = express();
 
-  // Basic security and parsing middleware
+  // Basic security and parsing middleware with high payload capacity for rich CMS content & base64 images
   app.use(cors());
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({ limit: "50mb" }));
+  app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+
+  // Handle payload or parsing errors gracefully with JSON response
+  app.use(
+    (err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const errorObj = err as { status?: number; type?: string; message?: string };
+      if (errorObj && (errorObj.status === 413 || errorObj.type === "entity.too.large")) {
+        return res.status(413).json({
+          success: false,
+          error:
+            "Ukuran data yang dikirim terlalu besar. Harap perkecil atau kompres file media sebelum menyimpan.",
+        });
+      }
+      if (errorObj && errorObj.status === 400 && "body" in errorObj) {
+        return res.status(400).json({
+          success: false,
+          error: "Format payload JSON tidak valid.",
+        });
+      }
+      next(err);
+    },
+  );
 
   // SEO: Canonical Host & URL Normalization
   app.use((req, res, next) => {

@@ -54,9 +54,16 @@ export async function compressAndReadFile(
         }
 
         ctx.drawImage(img, 0, 0, width, height);
-        // Use webp or jpeg for smaller storage footprint
-        const mime = file.type === "image/png" ? "image/png" : "image/jpeg";
-        const dataUrl = canvas.toDataURL(mime, quality);
+        // Prioritize modern WebP compression for superior footprint, fallback to JPEG
+        let dataUrl = "";
+        try {
+          dataUrl = canvas.toDataURL("image/webp", quality);
+          if (!dataUrl.startsWith("data:image/webp")) {
+            dataUrl = canvas.toDataURL("image/jpeg", quality);
+          }
+        } catch {
+          dataUrl = canvas.toDataURL("image/jpeg", quality);
+        }
         resolve(dataUrl);
       };
       img.onerror = () => resolve(e.target?.result as string);

@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useRef, useState } from "react";
 const heroBrandenburg = "/assets/hero-brandenburg.jpg";
 const programAusbildung = "/assets/program-ausbildung.jpg";
 const programAupair = "/assets/program-aupair.jpg";
@@ -2043,53 +2043,107 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
     });
   }
 
-  // Ensure fotoAlumni default objects and photos exist if empty
-  if (
-    !sanitized.fotoAlumni ||
-    !Array.isArray(sanitized.fotoAlumni.photos) ||
-    sanitized.fotoAlumni.photos.length === 0
-  ) {
-    sanitized.fotoAlumni = {
-      heroBadge: sanitized.fotoAlumni?.heroBadge?.trim() || DEFAULT_CMS_DATA.fotoAlumni.heroBadge,
-      title: sanitized.fotoAlumni?.title?.trim() || DEFAULT_CMS_DATA.fotoAlumni.title,
-      subtitle: sanitized.fotoAlumni?.subtitle?.trim() || DEFAULT_CMS_DATA.fotoAlumni.subtitle,
-      photos:
-        sanitized.fotoAlumni?.photos && sanitized.fotoAlumni.photos.length > 0
-          ? sanitized.fotoAlumni.photos
-          : DEFAULT_CMS_DATA.fotoAlumni.photos,
-    };
+  // Preserve fotoAlumni: if admin deleted all photos, keep photos as empty array []
+  if (!sanitized.fotoAlumni) {
+    sanitized.fotoAlumni = { ...DEFAULT_CMS_DATA.fotoAlumni };
   } else {
     sanitized.fotoAlumni = {
-      heroBadge: sanitized.fotoAlumni.heroBadge?.trim() || DEFAULT_CMS_DATA.fotoAlumni.heroBadge,
-      title: sanitized.fotoAlumni.title?.trim() || DEFAULT_CMS_DATA.fotoAlumni.title,
-      subtitle: sanitized.fotoAlumni.subtitle?.trim() || DEFAULT_CMS_DATA.fotoAlumni.subtitle,
-      photos: sanitized.fotoAlumni.photos,
+      heroBadge: sanitized.fotoAlumni.heroBadge ?? DEFAULT_CMS_DATA.fotoAlumni.heroBadge,
+      title: sanitized.fotoAlumni.title ?? DEFAULT_CMS_DATA.fotoAlumni.title,
+      subtitle: sanitized.fotoAlumni.subtitle ?? DEFAULT_CMS_DATA.fotoAlumni.subtitle,
+      photos: Array.isArray(sanitized.fotoAlumni.photos)
+        ? sanitized.fotoAlumni.photos
+        : DEFAULT_CMS_DATA.fotoAlumni.photos,
     };
   }
 
-  // Ensure ruanganKelas default objects and photos exist if empty
-  if (
-    !sanitized.ruanganKelas ||
-    !Array.isArray(sanitized.ruanganKelas.photos) ||
-    sanitized.ruanganKelas.photos.length === 0
-  ) {
-    sanitized.ruanganKelas = {
-      heroBadge:
-        sanitized.ruanganKelas?.heroBadge?.trim() || DEFAULT_CMS_DATA.ruanganKelas.heroBadge,
-      title: sanitized.ruanganKelas?.title?.trim() || DEFAULT_CMS_DATA.ruanganKelas.title,
-      subtitle: sanitized.ruanganKelas?.subtitle?.trim() || DEFAULT_CMS_DATA.ruanganKelas.subtitle,
-      photos:
-        sanitized.ruanganKelas?.photos && sanitized.ruanganKelas.photos.length > 0
-          ? sanitized.ruanganKelas.photos
-          : DEFAULT_CMS_DATA.ruanganKelas.photos,
-    };
+  // Preserve ruanganKelas: if admin deleted all photos, keep photos as empty array []
+  if (!sanitized.ruanganKelas) {
+    sanitized.ruanganKelas = { ...DEFAULT_CMS_DATA.ruanganKelas };
   } else {
     sanitized.ruanganKelas = {
-      heroBadge:
-        sanitized.ruanganKelas.heroBadge?.trim() || DEFAULT_CMS_DATA.ruanganKelas.heroBadge,
-      title: sanitized.ruanganKelas.title?.trim() || DEFAULT_CMS_DATA.ruanganKelas.title,
-      subtitle: sanitized.ruanganKelas.subtitle?.trim() || DEFAULT_CMS_DATA.ruanganKelas.subtitle,
-      photos: sanitized.ruanganKelas.photos,
+      heroBadge: sanitized.ruanganKelas.heroBadge ?? DEFAULT_CMS_DATA.ruanganKelas.heroBadge,
+      title: sanitized.ruanganKelas.title ?? DEFAULT_CMS_DATA.ruanganKelas.title,
+      subtitle: sanitized.ruanganKelas.subtitle ?? DEFAULT_CMS_DATA.ruanganKelas.subtitle,
+      photos: Array.isArray(sanitized.ruanganKelas.photos)
+        ? sanitized.ruanganKelas.photos
+        : DEFAULT_CMS_DATA.ruanganKelas.photos,
+    };
+  }
+
+  // Preserve empty arrays across all CMS modules so user deletions are permanent and don't revert to seeds
+  if (sanitized.foto) {
+    sanitized.foto = {
+      ...sanitized.foto,
+      photos: Array.isArray(sanitized.foto.photos)
+        ? sanitized.foto.photos
+        : DEFAULT_CMS_DATA.foto.photos,
+    };
+  }
+
+  if (sanitized.video) {
+    sanitized.video = {
+      ...sanitized.video,
+      videos: Array.isArray(sanitized.video.videos)
+        ? sanitized.video.videos
+        : DEFAULT_CMS_DATA.video.videos,
+    };
+  }
+
+  if (sanitized.team) {
+    sanitized.team = {
+      ...sanitized.team,
+      members: Array.isArray(sanitized.team.members)
+        ? sanitized.team.members
+        : DEFAULT_CMS_DATA.team.members,
+    };
+  }
+
+  if (sanitized.blog) {
+    sanitized.blog = {
+      ...sanitized.blog,
+      posts: Array.isArray(sanitized.blog.posts)
+        ? sanitized.blog.posts
+        : DEFAULT_CMS_DATA.blog.posts,
+    };
+  }
+
+  if (sanitized.cookingClass) {
+    sanitized.cookingClass = {
+      ...sanitized.cookingClass,
+      photos: Array.isArray(sanitized.cookingClass.photos)
+        ? sanitized.cookingClass.photos
+        : DEFAULT_CMS_DATA.cookingClass?.photos || [],
+    };
+  }
+
+  if (sanitized.gathering) {
+    sanitized.gathering = {
+      ...sanitized.gathering,
+      photos: Array.isArray(sanitized.gathering.photos)
+        ? sanitized.gathering.photos
+        : DEFAULT_CMS_DATA.gathering?.photos || [],
+    };
+  }
+
+  if (sanitized.kegiatanBelajar) {
+    sanitized.kegiatanBelajar = {
+      ...sanitized.kegiatanBelajar,
+      photos: Array.isArray(sanitized.kegiatanBelajar.photos)
+        ? sanitized.kegiatanBelajar.photos
+        : DEFAULT_CMS_DATA.kegiatanBelajar?.photos || [],
+      classes: Array.isArray(sanitized.kegiatanBelajar.classes)
+        ? sanitized.kegiatanBelajar.classes
+        : DEFAULT_CMS_DATA.kegiatanBelajar?.classes || [],
+    };
+  }
+
+  if (sanitized.legalitas) {
+    sanitized.legalitas = {
+      ...sanitized.legalitas,
+      documents: Array.isArray(sanitized.legalitas.documents)
+        ? sanitized.legalitas.documents
+        : DEFAULT_CMS_DATA.legalitas.documents,
     };
   }
 
@@ -2245,25 +2299,31 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
   const [lastUpdated, setLastUpdated] = useState<string>("Tersinkronisasi");
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [dbConnected, setDbConnected] = useState<boolean>(true);
+  const syncTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Sync to PostgreSQL database via /api/cms/main_cms_config
-  const syncToPostgres = async (data: SiteCmsData) => {
-    setIsSyncing(true);
-    try {
-      const cleanData = sanitizeSiteCmsData(data);
-      const res = await fetch("/api/cms/main_cms_config", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: cleanData }),
-      });
-      if (res.ok) {
-        setDbConnected(true);
-      }
-    } catch (err) {
-      console.warn("[PostgreSQL Sync] Error saving to DB:", err);
-    } finally {
-      setIsSyncing(false);
+  // Sync to PostgreSQL database via /api/cms/main_cms_config (debounced 350ms to prevent network storm)
+  const syncToPostgres = (data: SiteCmsData) => {
+    if (syncTimerRef.current) {
+      clearTimeout(syncTimerRef.current);
     }
+    setIsSyncing(true);
+    syncTimerRef.current = setTimeout(async () => {
+      try {
+        const cleanData = sanitizeSiteCmsData(data);
+        const res = await fetch("/api/cms/main_cms_config", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: cleanData }),
+        });
+        if (res.ok) {
+          setDbConnected(true);
+        }
+      } catch (err) {
+        console.warn("[PostgreSQL Sync] Error saving to DB:", err);
+      } finally {
+        setIsSyncing(false);
+      }
+    }, 350);
   };
 
   const saveState = (newState: SiteCmsData) => {
@@ -2273,7 +2333,6 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
     if (typeof window !== "undefined") {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(clean));
-        window.dispatchEvent(new Event("ild_cms_updated"));
       } catch (e) {
         console.warn("[CMS Store] Error writing to localStorage", e);
       }
@@ -2281,17 +2340,22 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // On mount: Load from PostgreSQL
+  // On mount: Load from PostgreSQL (Database is the single source of truth)
   useEffect(() => {
     if (typeof window !== "undefined") {
       fetch("/api/cms/main_cms_config")
         .then((res) => (res.ok ? res.json() : null))
         .then((payload) => {
-          if (payload?.data && payload.data.navbar) {
-            setCms((prev) => {
+          if (
+            payload?.data &&
+            (payload.data.navbar ||
+              payload.data.fotoAlumni ||
+              payload.data.foto ||
+              payload.data.home)
+          ) {
+            setCms(() => {
               const merged = {
                 ...DEFAULT_CMS_DATA,
-                ...prev,
                 ...payload.data,
               };
               return sanitizeSiteCmsData(merged);
@@ -2319,13 +2383,13 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
       try {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-          setCms((prev) => {
-            const parsed = JSON.parse(saved);
-            return sanitizeSiteCmsData({
-              ...prev,
+          const parsed = JSON.parse(saved);
+          setCms(() =>
+            sanitizeSiteCmsData({
+              ...DEFAULT_CMS_DATA,
               ...parsed,
-            });
-          });
+            }),
+          );
           setLastUpdated(new Date().toLocaleTimeString("id-ID"));
         }
       } catch (e) {
@@ -2333,10 +2397,8 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    window.addEventListener("ild_cms_updated", handleStorage);
     window.addEventListener("storage", handleStorage);
     return () => {
-      window.removeEventListener("ild_cms_updated", handleStorage);
       window.removeEventListener("storage", handleStorage);
     };
   }, []);
@@ -2638,10 +2700,25 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
 
   const forceSyncPostgres = async (): Promise<boolean> => {
     try {
-      await syncToPostgres(cms);
-      return true;
+      if (syncTimerRef.current) {
+        clearTimeout(syncTimerRef.current);
+      }
+      setIsSyncing(true);
+      const cleanData = sanitizeSiteCmsData(cms);
+      const res = await fetch("/api/cms/main_cms_config", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ data: cleanData }),
+      });
+      if (res.ok) {
+        setDbConnected(true);
+        return true;
+      }
+      return false;
     } catch {
       return false;
+    } finally {
+      setIsSyncing(false);
     }
   };
 

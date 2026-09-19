@@ -46,21 +46,20 @@ export function Blog() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Semua");
 
-  // Merge CMS posts with static blog posts
-  const posts =
-    cms.blog?.posts && cms.blog.posts.length > 0
-      ? cms.blog.posts
-      : BLOG_POSTS.map((p) => ({
-          id: p.slug,
-          slug: p.slug,
-          title: p.title,
-          category: p.tag,
-          date: p.date,
-          image: p.img,
-          author: p.author,
-          readTime: "5 mnt baca",
-          summary: p.excerpt,
-        }));
+  const posts = (cms.blog?.posts || []).map((p) => {
+    const raw = p as Record<string, unknown>;
+    return {
+      id: p.id || p.slug,
+      slug: p.slug,
+      title: p.title,
+      category: p.tag || (typeof raw.category === "string" ? raw.category : "Artikel"),
+      date: p.date,
+      image: p.img || (typeof raw.image === "string" ? raw.image : "/logo.png"),
+      author: p.author,
+      readTime: typeof raw.readTime === "string" ? raw.readTime : "5 mnt baca",
+      summary: p.excerpt || (typeof raw.summary === "string" ? raw.summary : ""),
+    };
+  });
 
   const categories = ["Semua", "Au Pair", "Ausbildung", "FSJ", "Karier & Visa"];
 

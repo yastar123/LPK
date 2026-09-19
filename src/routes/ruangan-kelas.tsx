@@ -83,17 +83,22 @@ export function RuanganKelas() {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/70 to-slate-950/40" />
 
         <div className="relative mx-auto flex min-h-[40vh] sm:min-h-[46vh] max-w-7xl flex-col justify-center px-6 py-20 lg:py-24">
-          <span className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-sky-400 backdrop-blur-md mb-4 w-fit">
-            <School className="h-3.5 w-3.5" />
-            <span>{kelasConfig.heroBadge || "Fasilitas Belajar Representatif"}</span>
-          </span>
-          <h1 className="max-w-3xl text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
-            {kelasConfig.title || "Ruangan Kelas ILD Medan"}
-          </h1>
-          <p className="mt-4 max-w-2xl text-sm sm:text-base text-slate-300 leading-relaxed">
-            {kelasConfig.subtitle ||
-              "Dukung kenyamanan belajar bahasa Jerman intensif dengan suasana kelas modern, interaktif, dan berfasilitas lengkap."}
-          </p>
+          {kelasConfig.heroBadge ? (
+            <span className="inline-flex items-center gap-2 rounded-full border border-sky-400/30 bg-sky-500/10 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-sky-400 backdrop-blur-md mb-4 w-fit">
+              <School className="h-3.5 w-3.5" />
+              <span>{kelasConfig.heroBadge}</span>
+            </span>
+          ) : null}
+          {kelasConfig.title ? (
+            <h1 className="max-w-3xl text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight">
+              {kelasConfig.title}
+            </h1>
+          ) : null}
+          {kelasConfig.subtitle ? (
+            <p className="mt-4 max-w-2xl text-sm sm:text-base text-slate-300 leading-relaxed">
+              {kelasConfig.subtitle}
+            </p>
+          ) : null}
         </div>
       </section>
 

@@ -76,9 +76,9 @@ function Team() {
             </p>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {tm.members &&
-              tm.members.map((member) => (
+          {tm.members && tm.members.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {tm.members.map((member) => (
                 <article
                   key={member.id || member.name}
                   className="flex flex-col items-center rounded-2xl border border-border bg-card p-8 text-center transition-shadow hover:shadow-lg"
@@ -101,7 +101,16 @@ function Team() {
                   </span>
                 </article>
               ))}
-          </div>
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8">
+              <span className="text-4xl">👥</span>
+              <h3 className="mt-4 text-lg font-bold text-slate-800">Belum Ada Anggota Tim</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                Data tim pengajar belum ditambahkan atau telah dihapus.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

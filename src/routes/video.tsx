@@ -67,51 +67,7 @@ export function Video() {
         duration: string;
         thumbnail?: string;
       }
-  )[] =
-    vid.videos && vid.videos.length > 0
-      ? vid.videos
-      : [
-          {
-            id: "vid-1",
-            title: "Profil Resmi Lembaga Ich Liebe Deutsch Medan",
-            youtubeId: "dQw4w9WgXcQ",
-            category: "Profil & Kelas",
-            description:
-              "Pengenalan fasilitas, kurikulum A1-B2 Goethe, dan bimbingan karir vokasi Jerman di Medan.",
-            speaker: "Pimpinan & Tim Pengajar ILD",
-            duration: "03:45",
-          },
-          {
-            id: "vid-2",
-            title: "Testimoni Alumni Ausbildung Gastronomie di Bayern",
-            youtubeId: "dQw4w9WgXcQ",
-            category: "Testimoni Alumni",
-            description:
-              "Kisah sukses siswa ILD Medan menjalani sekolah kejuruan dan praktik kerja di hotel ternama Jerman.",
-            speaker: "Alumni Angkatan 2023",
-            duration: "05:12",
-          },
-          {
-            id: "vid-3",
-            title: "Sesi Cooking Class Persiapan Adaptasi di Jerman",
-            youtubeId: "dQw4w9WgXcQ",
-            category: "Cooking Class",
-            description:
-              "Pelatihan memasak kuliner khas Jerman untuk mengasah kemandirian hidup sebelum berangkat.",
-            speaker: "Peserta Au Pair & Ausbildung",
-            duration: "04:30",
-          },
-          {
-            id: "vid-4",
-            title: "Gathering Siswa & Sesi Sharing Mental Juang",
-            youtubeId: "dQw4w9WgXcQ",
-            category: "Gathering",
-            description:
-              "Momen silaturahmi keluarga besar ILD Medan, pembinaan motivasi, dan kebersamaan antar kandidat.",
-            speaker: "Keluarga Besar ILD Medan",
-            duration: "03:15",
-          },
-        ];
+  )[] = vid.videos || [];
 
   const categories = ["Semua", "Testimoni Alumni", "Profil & Kelas", "Cooking Class", "Gathering"];
 
@@ -271,95 +227,105 @@ export function Video() {
           </div>
 
           {/* Grid of video cards */}
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredVideos.map((item, idx) => {
-              const hasDirectVideo = isDirectVideo(item.youtubeId);
-              return (
-                <div
-                  key={item.id || idx}
-                  className="group flex flex-col overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm transition-all hover:shadow-xl hover:border-sky-300 hover:-translate-y-1"
-                >
-                  {/* Video Thumbnail Preview / Play trigger */}
+          {filteredVideos.length > 0 ? (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredVideos.map((item, idx) => {
+                const hasDirectVideo = isDirectVideo(item.youtubeId);
+                return (
                   <div
-                    onClick={() =>
-                      setActiveVideo({
-                        title: item.title,
-                        description: item.description,
-                        youtubeId: item.youtubeId,
-                        videoUrl: hasDirectVideo ? item.youtubeId : undefined,
-                      })
-                    }
-                    className="relative aspect-video w-full overflow-hidden bg-slate-900 cursor-pointer"
+                    key={item.id || idx}
+                    className="group flex flex-col overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm transition-all hover:shadow-xl hover:border-sky-300 hover:-translate-y-1"
                   >
-                    <img
-                      src={item.thumbnail || heroBrandenburg}
-                      alt={item.title}
-                      loading="lazy"
-                      className="h-full w-full object-cover opacity-80 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-90"
-                    />
-                    <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
+                    {/* Video Thumbnail Preview / Play trigger */}
+                    <div
+                      onClick={() =>
+                        setActiveVideo({
+                          title: item.title,
+                          description: item.description,
+                          youtubeId: item.youtubeId,
+                          videoUrl: hasDirectVideo ? item.youtubeId : undefined,
+                        })
+                      }
+                      className="relative aspect-video w-full overflow-hidden bg-slate-900 cursor-pointer"
+                    >
+                      <img
+                        src={item.thumbnail || heroBrandenburg}
+                        alt={item.title}
+                        loading="lazy"
+                        className="h-full w-full object-cover opacity-80 transition-transform duration-500 group-hover:scale-105 group-hover:opacity-90"
+                      />
+                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/40 transition-colors" />
 
-                    {/* Play Button Overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-sky-500 text-white shadow-xl shadow-sky-500/40 transition-transform duration-300 group-hover:scale-115">
-                        <Play className="h-6 w-6 translate-x-0.5 fill-white" />
+                      {/* Play Button Overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-sky-500 text-white shadow-xl shadow-sky-500/40 transition-transform duration-300 group-hover:scale-115">
+                          <Play className="h-6 w-6 translate-x-0.5 fill-white" />
+                        </div>
                       </div>
-                    </div>
 
-                    {/* Category Badge & Duration */}
-                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                      <span className="rounded-full bg-white/90 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-700 shadow-sm">
-                        {item.category || "Dokumentasi"}
-                      </span>
-                    </div>
-
-                    {item.duration && (
-                      <div className="absolute bottom-3 right-3 rounded-md bg-black/80 backdrop-blur-md px-2 py-0.5 text-[11px] font-bold text-white">
-                        {item.duration}
+                      {/* Category Badge & Duration */}
+                      <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                        <span className="rounded-full bg-white/90 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-700 shadow-sm">
+                          {item.category || "Dokumentasi"}
+                        </span>
                       </div>
-                    )}
-                  </div>
 
-                  {/* Video Info */}
-                  <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
-                    <div>
-                      <h3 className="text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-2">
-                        {item.title}
-                      </h3>
-                      {item.speaker && (
-                        <p className="text-xs font-semibold text-sky-600 mt-1">
-                          Narasumber: {item.speaker}
-                        </p>
-                      )}
-                      {item.description && (
-                        <p className="mt-2 text-xs text-slate-600 leading-relaxed line-clamp-2">
-                          {item.description}
-                        </p>
+                      {item.duration && (
+                        <div className="absolute bottom-3 right-3 rounded-md bg-black/80 backdrop-blur-md px-2 py-0.5 text-[11px] font-bold text-white">
+                          {item.duration}
+                        </div>
                       )}
                     </div>
 
-                    <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          setActiveVideo({
-                            title: item.title,
-                            description: item.description,
-                            youtubeId: item.youtubeId,
-                            videoUrl: hasDirectVideo ? item.youtubeId : undefined,
-                          })
-                        }
-                        className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-700"
-                      >
-                        <Eye className="h-3.5 w-3.5" />
-                        <span>Tonton Video</span>
-                      </button>
+                    {/* Video Info */}
+                    <div className="p-5 sm:p-6 flex flex-col justify-between flex-1">
+                      <div>
+                        <h3 className="text-base font-bold text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-2">
+                          {item.title}
+                        </h3>
+                        {item.speaker && (
+                          <p className="text-xs font-semibold text-sky-600 mt-1">
+                            Narasumber: {item.speaker}
+                          </p>
+                        )}
+                        {item.description && (
+                          <p className="mt-2 text-xs text-slate-600 leading-relaxed line-clamp-2">
+                            {item.description}
+                          </p>
+                        )}
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setActiveVideo({
+                              title: item.title,
+                              description: item.description,
+                              youtubeId: item.youtubeId,
+                              videoUrl: hasDirectVideo ? item.youtubeId : undefined,
+                            })
+                          }
+                          className="inline-flex items-center gap-1.5 text-xs font-bold text-sky-600 hover:text-sky-700"
+                        >
+                          <Eye className="h-3.5 w-3.5" />
+                          <span>Tonton Video</span>
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8">
+              <span className="text-4xl">🎬</span>
+              <h3 className="mt-4 text-lg font-bold text-slate-800">Belum Ada Video</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                Koleksi video belum ditambahkan atau telah dihapus.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

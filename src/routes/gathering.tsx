@@ -39,28 +39,14 @@ export function Gathering() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  const defaultPhotos: LightboxPhoto[] = [
-    {
-      id: "gth-1",
-      src: galleryGathering,
-      title: "Gathering & Sharing Session",
-      caption:
-        "Pertemuan silaturahmi akbar siswa dan orang tua bersama tim pengajar dan konsultan ILD Medan.",
-      category: "Gathering Siswa",
-    },
-  ];
-
-  const photos: LightboxPhoto[] =
-    gth.photos && gth.photos.length > 0
-      ? gth.photos.map((p, i) => ({
-          id: p.id || `gth-photo-${i}`,
-          src: p.src,
-          alt: p.alt || p.caption,
-          title: p.caption || "Dokumentasi Gathering",
-          caption: p.caption,
-          category: "Gathering Siswa",
-        }))
-      : defaultPhotos;
+  const photos: LightboxPhoto[] = (gth.photos || []).map((p, i) => ({
+    id: p.id || `gth-photo-${i}`,
+    src: p.src,
+    alt: p.alt || p.caption,
+    title: p.caption || "Dokumentasi Gathering",
+    caption: p.caption,
+    category: "Gathering Siswa",
+  }));
 
   return (
     <main className="bg-slate-50/50">
@@ -172,33 +158,43 @@ export function Gathering() {
             </h2>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {photos.map((photo, idx) => (
-              <figure
-                key={photo.id || idx}
-                onClick={() => {
-                  setPhotoIndex(idx);
-                  setLightboxOpen(true);
-                }}
-                className="group relative overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-2xl hover:border-emerald-300 hover:-translate-y-1"
-              >
-                <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-900">
-                  <img
-                    src={photo.src}
-                    alt={photo.alt || photo.caption || "Gathering"}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
-                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                    <p className="text-xs sm:text-sm font-semibold text-white leading-snug drop-shadow-sm">
-                      {photo.caption}
-                    </p>
+          {photos.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {photos.map((photo, idx) => (
+                <figure
+                  key={photo.id || idx}
+                  onClick={() => {
+                    setPhotoIndex(idx);
+                    setLightboxOpen(true);
+                  }}
+                  className="group relative overflow-hidden rounded-3xl border border-emerald-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-2xl hover:border-emerald-300 hover:-translate-y-1"
+                >
+                  <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-900">
+                    <img
+                      src={photo.src}
+                      alt={photo.alt || photo.caption || "Gathering"}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                      <p className="text-xs sm:text-sm font-semibold text-white leading-snug drop-shadow-sm">
+                        {photo.caption}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </figure>
-            ))}
-          </div>
+                </figure>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8">
+              <span className="text-4xl">🤝</span>
+              <h3 className="mt-4 text-lg font-bold text-slate-800">Belum Ada Foto Gathering</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                Foto kegiatan gathering belum ditambahkan atau telah dihapus.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

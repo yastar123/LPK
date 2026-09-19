@@ -45,67 +45,17 @@ export function Foto() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  // Default seed photos
-  const defaultPhotos: LightboxPhoto[] = [
-    {
-      id: "ph-1",
-      src: galleryClass,
-      title: "Suasana Belajar Bahasa Jerman Intensif",
-      caption: "Siswa berlatih percakapan bahasa Jerman aktif dan tata bahasa di kelas ILD Medan.",
-      category: "Belajar & Kelas",
-    },
-    {
-      id: "ph-2",
-      src: galleryCooking,
-      title: "Cooking Class Kuliner Jerman",
-      caption:
-        "Pelatihan memasak menu khas Jerman sebagai bekal kemandirian hidup peserta Au Pair dan Ausbildung.",
-      category: "Cooking Class",
-    },
-    {
-      id: "ph-3",
-      src: galleryStudy,
-      title: "Simulasi Ujian Goethe & Wawancara",
-      caption: "Sesi try out intensif persiapan ujian sertifikat bahasa Jerman internasional.",
-      category: "Belajar & Kelas",
-    },
-    {
-      id: "ph-4",
-      src: galleryGathering,
-      title: "Gathering Bulanan & Sharing Session",
-      caption: "Kebersamaan dan pembinaan mental siswa bersama alumni yang telah berada di Jerman.",
-      category: "Gathering Siswa",
-    },
-    {
-      id: "ph-5",
-      src: galleryGraduation,
-      title: "Pelepasan Siswa Lulus Visa",
-      caption: "Momen haru dan bangga pelepasan siswa yang telah mengantongi visa resmi ke Jerman.",
-      category: "Pelepasan & Wisuda",
-    },
-    {
-      id: "ph-6",
-      src: galleryCity,
-      title: "Aktivitas Siswa di Kota Jerman",
-      caption: "Dokumentasi peserta yang telah aktif bekerja dan menempuh pendidikan di Jerman.",
-      category: "Kehidupan di Jerman",
-    },
-  ];
-
-  // Merge with CMS photos if provided
-  const allPhotos: LightboxPhoto[] =
-    ft.photos && ft.photos.length > 0
-      ? ft.photos.map((p, i) => ({
-          id: p.id || `cms-photo-${i}`,
-          src: p.src,
-          alt: p.alt || p.caption,
-          title: p.caption || "Dokumentasi Kegiatan",
-          caption: p.caption,
-          category:
-            ((p as Record<string, unknown>).category as string) ||
-            (i % 2 === 0 ? "Belajar & Kelas" : "Cooking Class"),
-        }))
-      : defaultPhotos;
+  // Photos directly synced from CMS Store (no fallback dummy data)
+  const allPhotos: LightboxPhoto[] = (ft.photos || []).map((p, i) => ({
+    id: p.id || `cms-photo-${i}`,
+    src: p.src,
+    alt: p.alt || p.caption,
+    title: p.caption || "Dokumentasi Kegiatan",
+    caption: p.caption,
+    category:
+      ((p as Record<string, unknown>).category as string) ||
+      (i % 2 === 0 ? "Belajar & Kelas" : "Cooking Class"),
+  }));
 
   const categories = [
     "Semua",
@@ -184,60 +134,70 @@ export function Foto() {
           </div>
 
           {/* Grid Layout with Lightbox Trigger */}
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredPhotos.map((photo, idx) => (
-              <figure
-                key={photo.id || idx}
-                onClick={() => {
-                  setPhotoIndex(idx);
-                  setLightboxOpen(true);
-                }}
-                className="group relative overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-2xl hover:border-sky-300 hover:-translate-y-1"
-              >
-                <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-900">
-                  <img
-                    src={photo.src}
-                    alt={photo.alt || photo.caption || "Dokumentasi Foto"}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).src = "/logo.png";
-                    }}
-                  />
-                  {/* Atmospheric overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
+          {filteredPhotos.length > 0 ? (
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {filteredPhotos.map((photo, idx) => (
+                <figure
+                  key={photo.id || idx}
+                  onClick={() => {
+                    setPhotoIndex(idx);
+                    setLightboxOpen(true);
+                  }}
+                  className="group relative overflow-hidden rounded-3xl border border-sky-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-2xl hover:border-sky-300 hover:-translate-y-1"
+                >
+                  <div className="relative aspect-4/3 w-full overflow-hidden bg-slate-900">
+                    <img
+                      src={photo.src}
+                      alt={photo.alt || photo.caption || "Dokumentasi Foto"}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-108"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/logo.png";
+                      }}
+                    />
+                    {/* Atmospheric overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/30 to-transparent opacity-60 group-hover:opacity-100 transition-opacity" />
 
-                  {/* Expand button badge */}
-                  <div className="absolute top-3.5 right-3.5 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all group-hover:scale-105">
-                    <Maximize2 className="h-4 w-4" />
-                  </div>
-
-                  {/* Category badge */}
-                  {photo.category && (
-                    <div className="absolute top-3.5 left-3.5">
-                      <span className="rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-700 shadow-sm">
-                        {photo.category}
-                      </span>
+                    {/* Expand button badge */}
+                    <div className="absolute top-3.5 right-3.5 flex h-9 w-9 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md opacity-0 group-hover:opacity-100 transition-all group-hover:scale-105">
+                      <Maximize2 className="h-4 w-4" />
                     </div>
-                  )}
 
-                  {/* Caption & Title */}
-                  <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                    {photo.title && (
-                      <h3 className="text-sm sm:text-base font-bold text-white mb-1 drop-shadow-sm">
-                        {photo.title}
-                      </h3>
+                    {/* Category badge */}
+                    {photo.category && (
+                      <div className="absolute top-3.5 left-3.5">
+                        <span className="rounded-full bg-white/90 backdrop-blur-md px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-sky-700 shadow-sm">
+                          {photo.category}
+                        </span>
+                      </div>
                     )}
-                    {photo.caption && (
-                      <p className="text-xs text-slate-200 line-clamp-2 leading-relaxed drop-shadow-sm">
-                        {photo.caption}
-                      </p>
-                    )}
+
+                    {/* Caption & Title */}
+                    <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                      {photo.title && (
+                        <h3 className="text-sm sm:text-base font-bold text-white mb-1 drop-shadow-sm">
+                          {photo.title}
+                        </h3>
+                      )}
+                      {photo.caption && (
+                        <p className="text-xs text-slate-200 line-clamp-2 leading-relaxed drop-shadow-sm">
+                          {photo.caption}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </figure>
-            ))}
-          </div>
+                </figure>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-16 bg-white rounded-3xl border border-slate-100 p-8">
+              <span className="text-4xl">📸</span>
+              <h3 className="mt-4 text-lg font-bold text-slate-800">Belum Ada Foto</h3>
+              <p className="text-sm text-slate-500 mt-1">
+                Foto dokumentasi belum ditambahkan atau telah dihapus.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 

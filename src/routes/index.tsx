@@ -25,6 +25,7 @@ import {
   Wrench,
   Clock,
   Calendar,
+  Camera,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -239,104 +240,35 @@ export function Index() {
   const cleanWa = rawWa.startsWith("0") ? "62" + rawWa.slice(1) : rawWa;
   const waLink = `https://wa.me/${cleanWa}?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.`;
 
-  // Gallery Photos for Lightbox
-  const galleryItems: LightboxPhoto[] = [
-    {
-      src: galleryClass,
-      caption: "Kelas bahasa Jerman intensif level A1-B1 di ILD Medan",
-      category: "Belajar & Kelas",
-      title: "Suasana Belajar Intensif",
-    },
-    {
-      src: galleryCooking,
-      caption: "Cooking class memasak menu khas Jerman persiapan hidup mandiri",
-      category: "Cooking Class",
-      title: "Pelatihan Kuliner Jerman",
-    },
-    {
-      src: galleryStudy,
-      caption: "Simulasi wawancara kerja & latihan ujian Goethe-Zertifikat",
-      category: "Persiapan Ujian",
-      title: "Simulasi Wawancara",
-    },
-    {
-      src: galleryGraduation,
-      caption: "Pelepasan siswa yang telah lulus visa dan siap terbang ke Jerman",
-      category: "Pelepasan Siswa",
-      title: "Wisuda & Pelepasan",
-    },
-    {
-      src: galleryCity,
-      caption: "Dokumentasi peserta ILD Medan yang telah tiba dan aktif di Jerman",
-      category: "Kehidupan di Jerman",
-      title: "Tiba di Jerman",
-    },
-    {
-      src: galleryGathering,
-      caption: "Gathering bulanan, pembinaan mental, & sharing session alumni",
-      category: "Gathering",
-      title: "Gathering & Komunitas",
-    },
-  ];
+  // Gallery Photos for Lightbox strictly synced from CMS
+  const galleryPhotos = cms.foto?.photos || [];
+  const galleryItems: LightboxPhoto[] = galleryPhotos.slice(0, 6).map((p, idx) => ({
+    id: p.id || `home-gallery-${idx}`,
+    src: p.imgUrl || "/assets/gallery-class.jpg",
+    caption: p.caption || p.title || "Dokumentasi Kegiatan",
+    category: p.category || "Dokumentasi",
+    title: p.title || "Dokumentasi",
+  }));
 
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
-  // Dynamic Blog posts from CMS or fallback
-  const blogPosts =
-    cms.blog?.posts && cms.blog.posts.length > 0
-      ? cms.blog.posts.slice(0, 4)
-      : [
-          {
-            id: "post-1",
-            slug: "hidup-setahun-bersama-gastfamily-di-jerman",
-            title: "Pengalaman Hidup Bersama Gastfamily di Jerman",
-            category: "Au Pair",
-            date: "15 Mei 2024",
-            image: blogAupair,
-            author: "Alumni Au Pair ILD",
-            readTime: "4 mnt baca",
-            summary:
-              "Tips adaptasi budaya, komunikasi harian dengan anak asuh, dan eksplorasi akhir pekan di kota-kota Eropa.",
-          },
-          {
-            id: "post-2",
-            slug: "kenapa-ausbildung-gastronomie-banyak-diminati",
-            title: "Mengapa Ausbildung Banyak Diminati Generasi Muda?",
-            category: "Ausbildung",
-            date: "28 April 2024",
-            image: blogAusbildung,
-            author: "Instruktur ILD",
-            readTime: "5 mnt baca",
-            summary:
-              "Sekolah kejuruan dual dengan gaji pelatihan dari perusahaan sejak hari pertama di Jerman.",
-          },
-          {
-            id: "post-3",
-            slug: "fsj-langkah-awal-karier-keperawatan-di-jerman",
-            title: "FSJ: Pintu Masuk Emas Pengalaman Medis di Jerman",
-            category: "FSJ",
-            date: "10 April 2024",
-            image: blogFsj,
-            author: "Tim Konsultan",
-            readTime: "6 mnt baca",
-            summary:
-              "Memahami sistem pelayanan sosial Jerman dan persiapan transisi menuju karier keperawatan profesional.",
-          },
-          {
-            id: "post-4",
-            slug: "peluang-kerja-setelah-program-selesai",
-            title: "Peluang Kerja dan Izin Tinggal Tetap di Jerman",
-            category: "Karier & Visa",
-            date: "02 Maret 2024",
-            image: blogKarir,
-            author: "Legal Consultant",
-            readTime: "5 mnt baca",
-            summary:
-              "Panduan transisi dari visa pelatihan dan pendidikan menuju kontrak kerja profesional tetap di Jerman.",
-          },
-        ];
+  // Dynamic Blog posts strictly from CMS (no static fallback)
+  const blogPosts = (cms.blog?.posts || []).slice(0, 4).map((p) => {
+    const raw = p as Record<string, unknown>;
+    return {
+      id: p.id || p.slug,
+      slug: p.slug,
+      title: p.title,
+      category: p.tag || (typeof raw.category === "string" ? raw.category : "Artikel"),
+      date: p.date,
+      image: p.img || (typeof raw.image === "string" ? raw.image : "/logo.png"),
+      author: p.author,
+      readTime: "5 mnt baca",
+      summary: p.excerpt || (typeof raw.summary === "string" ? raw.summary : ""),
+    };
+  });
 
   return (
     <main className="bg-slate-50/50">
@@ -784,35 +716,45 @@ export function Index() {
             </Link>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {galleryItems.map((g, idx) => (
-              <figure
-                key={idx}
-                onClick={() => {
-                  setPhotoIndex(idx);
-                  setLightboxOpen(true);
-                }}
-                className="group relative overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-xl hover:border-sky-300"
-              >
-                <div className="relative h-64 overflow-hidden">
-                  <img
-                    src={g.src}
-                    alt={g.caption}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-5">
-                    <span className="inline-block w-fit rounded-full bg-sky-500/90 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white mb-1.5">
-                      {g.category}
-                    </span>
-                    <p className="text-xs sm:text-sm font-semibold text-white leading-snug">
-                      {g.caption}
-                    </p>
+          {galleryItems.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center">
+              <Camera className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-slate-600">Belum ada foto dokumentasi</p>
+              <p className="text-xs text-slate-400 mt-1">
+                Dokumentasi kegiatan dapat dikelola melalui Admin Dashboard.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {galleryItems.map((g, idx) => (
+                <figure
+                  key={idx}
+                  onClick={() => {
+                    setPhotoIndex(idx);
+                    setLightboxOpen(true);
+                  }}
+                  className="group relative overflow-hidden rounded-2xl border border-sky-100 bg-white shadow-sm cursor-pointer transition-all hover:shadow-xl hover:border-sky-300"
+                >
+                  <div className="relative h-64 overflow-hidden">
+                    <img
+                      src={g.src}
+                      alt={g.caption}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-950/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-5">
+                      <span className="inline-block w-fit rounded-full bg-sky-500/90 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold text-white mb-1.5">
+                        {g.category}
+                      </span>
+                      <p className="text-xs sm:text-sm font-semibold text-white leading-snug">
+                        {g.caption}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </figure>
-            ))}
-          </div>
+                </figure>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -837,45 +779,57 @@ export function Index() {
             </Link>
           </div>
 
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {blogPosts.map((post) => (
-              <Link
-                key={post.id || post.slug}
-                to={`/blog/${post.slug}`}
-                className="group flex flex-col overflow-hidden rounded-2xl border border-sky-100 bg-white transition-all hover:-translate-y-1.5 hover:shadow-xl hover:border-sky-300"
-              >
-                <div className="relative h-44 overflow-hidden">
-                  <img
-                    src={post.image}
-                    alt={post.title}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                  <span className="absolute left-3 top-3 rounded-full bg-white/95 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-700 shadow-sm">
-                    {post.category}
-                  </span>
-                </div>
-                <div className="p-5 flex flex-col justify-between flex-1">
-                  <div>
-                    <div className="flex items-center gap-2 text-[11px] text-slate-500 mb-2">
-                      <Calendar className="h-3 w-3 text-sky-600" />
-                      <span>{post.date}</span>
-                    </div>
-                    <h3 className="text-sm font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors line-clamp-2">
-                      {post.title}
-                    </h3>
-                    <p className="mt-2 text-xs leading-relaxed text-slate-600 line-clamp-2">
-                      {post.summary}
-                    </p>
+          {blogPosts.length === 0 ? (
+            <div className="rounded-2xl border border-dashed border-slate-200 bg-slate-50/50 p-10 text-center">
+              <BookOpen className="h-8 w-8 text-slate-300 mx-auto mb-2" />
+              <p className="text-sm font-semibold text-slate-600">
+                Belum ada artikel yang dipublikasikan
+              </p>
+              <p className="text-xs text-slate-400 mt-1">
+                Artikel terbaru dapat ditambahkan melalui Admin Dashboard.
+              </p>
+            </div>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {blogPosts.map((post) => (
+                <Link
+                  key={post.id || post.slug}
+                  to={`/blog/${post.slug}`}
+                  className="group flex flex-col overflow-hidden rounded-2xl border border-sky-100 bg-white transition-all hover:-translate-y-1.5 hover:shadow-xl hover:border-sky-300"
+                >
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={post.image}
+                      alt={post.title}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <span className="absolute left-3 top-3 rounded-full bg-white/95 backdrop-blur-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-sky-700 shadow-sm">
+                      {post.category}
+                    </span>
                   </div>
-                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-sky-600 group-hover:text-sky-700">
-                    <span>Baca Artikel</span>
-                    <ChevronRight className="h-3.5 w-3.5" />
-                  </span>
-                </div>
-              </Link>
-            ))}
-          </div>
+                  <div className="p-5 flex flex-col justify-between flex-1">
+                    <div>
+                      <div className="flex items-center gap-2 text-[11px] text-slate-500 mb-2">
+                        <Calendar className="h-3 w-3 text-sky-600" />
+                        <span>{post.date}</span>
+                      </div>
+                      <h3 className="text-sm font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors line-clamp-2">
+                        {post.title}
+                      </h3>
+                      <p className="mt-2 text-xs leading-relaxed text-slate-600 line-clamp-2">
+                        {post.summary}
+                      </p>
+                    </div>
+                    <span className="mt-4 inline-flex items-center gap-1 text-xs font-bold text-sky-600 group-hover:text-sky-700">
+                      <span>Baca Artikel</span>
+                      <ChevronRight className="h-3.5 w-3.5" />
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

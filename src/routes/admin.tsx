@@ -2158,14 +2158,10 @@ function FotoAlumniCrudTab({
   const [newCaption, setNewCaption] = useState("");
 
   const handleAddPhoto = () => {
-    if (!newTitle.trim()) {
-      showToast("Judul foto wajib diisi!");
-      return;
-    }
     const newPhoto: GalleryPhotoItem = {
       id: `alumni-${Date.now()}`,
       title: newTitle.trim(),
-      category: newCategory as GalleryPhotoItem["category"],
+      category: (newCategory.trim() || "Jerman") as GalleryPhotoItem["category"],
       date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
       imgUrl: newUrl.trim() || "/logo.png",
       caption: newCaption.trim(),
@@ -2205,37 +2201,41 @@ function FotoAlumniCrudTab({
       <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
           <Edit2 className="h-4 w-4 text-sky-600" />
-          <span>Konfigurasi Teks Halaman</span>
+          <span>Konfigurasi Teks Halaman (Opsional)</span>
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Badge Atas</label>
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Badge Atas (Opsional)
+            </label>
             <input
               type="text"
               value={config.heroBadge}
               onChange={(e) =>
                 cmsStore.updateSection("fotoAlumni", { ...config, heroBadge: e.target.value })
               }
-              placeholder="Badge Atas"
+              placeholder="Badge Atas (Opsional)"
               className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Judul Utama</label>
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Judul Utama (Opsional)
+            </label>
             <input
               type="text"
               value={config.title}
               onChange={(e) =>
                 cmsStore.updateSection("fotoAlumni", { ...config, title: e.target.value })
               }
-              placeholder="Judul Utama"
+              placeholder="Judul Utama (Opsional)"
               className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
             />
           </div>
         </div>
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-slate-500 uppercase">
-            Sub-judul / Deskripsi Singkat
+            Sub-judul / Deskripsi Singkat (Opsional)
           </label>
           <input
             type="text"
@@ -2243,7 +2243,7 @@ function FotoAlumniCrudTab({
             onChange={(e) =>
               cmsStore.updateSection("fotoAlumni", { ...config, subtitle: e.target.value })
             }
-            placeholder="Deskripsi Singkat"
+            placeholder="Deskripsi Singkat (Opsional)"
             className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
         </div>
@@ -2254,29 +2254,33 @@ function FotoAlumniCrudTab({
           <Plus className="h-4 w-4 text-sky-600" />
           <span>Tambah Foto Alumni Baru</span>
         </h3>
+        <p className="text-[11px] text-slate-400 -mt-2">
+          Semua kolom di bawah ini bersifat opsional. Anda dapat mengisi judul, kota, foto, atau
+          keterangan sesuai kebutuhan.
+        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <input
             type="text"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Nama Alumni / Aktivitas (Contoh: Bagas di Hamburg)"
+            placeholder="Nama Alumni / Aktivitas (Opsional)"
             className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
           <input
             type="text"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Kota / Wilayah Jerman (Contoh: Hamburg, Berlin, Munchen)"
+            placeholder="Kota / Wilayah Jerman (Opsional, contoh: Berlin)"
             className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
         </div>
 
         <ImageUploader
-          label="File Foto Alumni"
+          label="File Foto Alumni (Opsional)"
           value={newUrl}
           onChange={setNewUrl}
           aspectRatio="wide"
-          placeholderText="Klik untuk Memilih Foto dari HP/Laptop"
+          placeholderText="Klik untuk Memilih Foto dari HP/Laptop (Opsional)"
         />
 
         <div className="flex gap-2">
@@ -2284,7 +2288,7 @@ function FotoAlumniCrudTab({
             type="text"
             value={newCaption}
             onChange={(e) => setNewCaption(e.target.value)}
-            placeholder="Keterangan singkat / testimoni alumni..."
+            placeholder="Keterangan singkat / testimoni alumni (Opsional)..."
             className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
           <button
@@ -2305,19 +2309,25 @@ function FotoAlumniCrudTab({
             <div className="h-32 bg-slate-100 relative">
               <img
                 src={photo.imgUrl}
-                alt={photo.title}
+                alt={photo.title || "Foto Alumni"}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/logo.png";
                 }}
               />
               <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
-                {photo.category}
+                {photo.category || "Jerman"}
               </span>
             </div>
             <div className="p-3 space-y-1">
-              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">{photo.title}</h5>
-              <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">
+                {photo.title || "(Tanpa Judul)"}
+              </h5>
+              {photo.caption ? (
+                <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+              ) : (
+                <p className="text-[11px] text-slate-400 italic">Tanpa keterangan</p>
+              )}
             </div>
             <div className="p-2 border-t border-slate-100 flex justify-end">
               <button
@@ -2359,14 +2369,10 @@ function RuanganKelasCrudTab({
   const [newCaption, setNewCaption] = useState("");
 
   const handleAddPhoto = () => {
-    if (!newTitle.trim()) {
-      showToast("Judul foto wajib diisi!");
-      return;
-    }
     const newPhoto: GalleryPhotoItem = {
       id: `kelas-${Date.now()}`,
       title: newTitle.trim(),
-      category: newCategory as GalleryPhotoItem["category"],
+      category: (newCategory.trim() || "Ruang Kelas") as GalleryPhotoItem["category"],
       date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
       imgUrl: newUrl.trim() || "/logo.png",
       caption: newCaption.trim(),
@@ -2406,37 +2412,41 @@ function RuanganKelasCrudTab({
       <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
           <Edit2 className="h-4 w-4 text-sky-600" />
-          <span>Konfigurasi Teks Halaman</span>
+          <span>Konfigurasi Teks Halaman (Opsional)</span>
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Badge Atas</label>
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Badge Atas (Opsional)
+            </label>
             <input
               type="text"
               value={config.heroBadge}
               onChange={(e) =>
                 cmsStore.updateSection("ruanganKelas", { ...config, heroBadge: e.target.value })
               }
-              placeholder="Badge Atas"
+              placeholder="Badge Atas (Opsional)"
               className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
             />
           </div>
           <div className="space-y-1">
-            <label className="text-[10px] font-bold text-slate-500 uppercase">Judul Utama</label>
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Judul Utama (Opsional)
+            </label>
             <input
               type="text"
               value={config.title}
               onChange={(e) =>
                 cmsStore.updateSection("ruanganKelas", { ...config, title: e.target.value })
               }
-              placeholder="Judul Utama"
+              placeholder="Judul Utama (Opsional)"
               className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
             />
           </div>
         </div>
         <div className="space-y-1">
           <label className="text-[10px] font-bold text-slate-500 uppercase">
-            Sub-judul / Deskripsi Singkat
+            Sub-judul / Deskripsi Singkat (Opsional)
           </label>
           <input
             type="text"
@@ -2444,7 +2454,7 @@ function RuanganKelasCrudTab({
             onChange={(e) =>
               cmsStore.updateSection("ruanganKelas", { ...config, subtitle: e.target.value })
             }
-            placeholder="Deskripsi Singkat"
+            placeholder="Deskripsi Singkat (Opsional)"
             className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
         </div>
@@ -2455,29 +2465,33 @@ function RuanganKelasCrudTab({
           <Plus className="h-4 w-4 text-sky-600" />
           <span>Tambah Foto Fasilitas/Kelas Baru</span>
         </h3>
+        <p className="text-[11px] text-slate-400 -mt-2">
+          Semua kolom di bawah ini bersifat opsional. Anda dapat mengisi judul, kategori, foto, atau
+          keterangan sesuai kebutuhan.
+        </p>
         <div className="grid gap-3 sm:grid-cols-2">
           <input
             type="text"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Judul Fasilitas (Contoh: Ruangan Kelas B1, Perpustakaan)"
+            placeholder="Judul Fasilitas (Opsional, contoh: Ruangan Kelas B1)"
             className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
           <input
             type="text"
             value={newCategory}
             onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Kategori Fasilitas (Contoh: Ruang Kelas, Perpustakaan, Dapur Praktik)"
+            placeholder="Kategori Fasilitas (Opsional, contoh: Ruang Kelas)"
             className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
         </div>
 
         <ImageUploader
-          label="File Foto Fasilitas/Kelas"
+          label="File Foto Fasilitas/Kelas (Opsional)"
           value={newUrl}
           onChange={setNewUrl}
           aspectRatio="wide"
-          placeholderText="Klik untuk Memilih Foto dari HP/Laptop"
+          placeholderText="Klik untuk Memilih Foto dari HP/Laptop (Opsional)"
         />
 
         <div className="flex gap-2">
@@ -2485,7 +2499,7 @@ function RuanganKelasCrudTab({
             type="text"
             value={newCaption}
             onChange={(e) => setNewCaption(e.target.value)}
-            placeholder="Keterangan singkat mengenai fasilitas ini..."
+            placeholder="Keterangan singkat mengenai fasilitas ini (Opsional)..."
             className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
           />
           <button
@@ -2506,19 +2520,25 @@ function RuanganKelasCrudTab({
             <div className="h-32 bg-slate-100 relative">
               <img
                 src={photo.imgUrl}
-                alt={photo.title}
+                alt={photo.title || "Foto Fasilitas"}
                 className="h-full w-full object-cover"
                 onError={(e) => {
                   (e.target as HTMLImageElement).src = "/logo.png";
                 }}
               />
               <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
-                {photo.category}
+                {photo.category || "Fasilitas"}
               </span>
             </div>
             <div className="p-3 space-y-1">
-              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">{photo.title}</h5>
-              <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">
+                {photo.title || "(Tanpa Judul)"}
+              </h5>
+              {photo.caption ? (
+                <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+              ) : (
+                <p className="text-[11px] text-slate-400 italic">Tanpa keterangan</p>
+              )}
             </div>
             <div className="p-2 border-t border-slate-100 flex justify-end">
               <button

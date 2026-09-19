@@ -204,18 +204,20 @@ export function FotoAlumni() {
                     )}
 
                     {/* Caption & Title */}
-                    <div className="absolute inset-x-0 bottom-0 p-5 text-white">
-                      {photo.title && (
-                        <h3 className="text-sm sm:text-base font-bold text-white mb-1 drop-shadow-sm">
-                          {photo.title}
-                        </h3>
-                      )}
-                      {photo.caption && (
-                        <p className="text-xs text-slate-200 line-clamp-2 leading-relaxed drop-shadow-sm">
-                          {photo.caption}
-                        </p>
-                      )}
-                    </div>
+                    {(photo.title || photo.caption) && (
+                      <div className="absolute inset-x-0 bottom-0 p-5 text-white">
+                        {photo.title && (
+                          <h3 className="text-sm sm:text-base font-bold text-white mb-1 drop-shadow-sm">
+                            {photo.title}
+                          </h3>
+                        )}
+                        {photo.caption && (
+                          <p className="text-xs text-slate-200 line-clamp-2 leading-relaxed drop-shadow-sm">
+                            {photo.caption}
+                          </p>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </figure>
               ))}

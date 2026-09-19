@@ -46,30 +46,37 @@ export function Foto() {
   const [photoIndex, setPhotoIndex] = useState(0);
 
   // Photos directly synced from CMS Store (no fallback dummy data)
-  const allPhotos: LightboxPhoto[] = (ft.photos || []).map((p, i) => ({
-    id: p.id || `cms-photo-${i}`,
-    src: p.src,
-    alt: p.alt || p.caption,
-    title: p.caption || "Dokumentasi Kegiatan",
-    caption: p.caption,
-    category:
-      ((p as Record<string, unknown>).category as string) ||
-      (i % 2 === 0 ? "Belajar & Kelas" : "Cooking Class"),
-  }));
+  const allPhotos: LightboxPhoto[] = (ft.photos || []).map((p, i) => {
+    const rawPhoto = p as {
+      id?: string;
+      src?: string;
+      imgUrl?: string;
+      alt?: string;
+      caption?: string;
+      title?: string;
+      category?: string;
+    };
+    return {
+      id: rawPhoto.id || `cms-photo-${i}`,
+      src: rawPhoto.imgUrl || rawPhoto.src || "/logo.png",
+      alt: rawPhoto.alt || rawPhoto.caption || rawPhoto.title || "Dokumentasi Kegiatan",
+      title: rawPhoto.title || rawPhoto.caption || "Dokumentasi Kegiatan",
+      caption: rawPhoto.caption,
+      category: rawPhoto.category?.trim() || "Kelas",
+    };
+  });
 
   const categories = [
     "Semua",
-    "Belajar & Kelas",
-    "Cooking Class",
-    "Gathering Siswa",
-    "Pelepasan & Wisuda",
-    "Kehidupan di Jerman",
+    ...Array.from(new Set(allPhotos.map((p) => p.category?.trim() || "Kelas").filter(Boolean))),
   ];
 
   const filteredPhotos =
     selectedCategory === "Semua"
       ? allPhotos
-      : allPhotos.filter((p) => p.category?.toLowerCase() === selectedCategory.toLowerCase());
+      : allPhotos.filter(
+          (p) => (p.category || "").trim().toLowerCase() === selectedCategory.trim().toLowerCase(),
+        );
 
   return (
     <main className="bg-slate-50/50">

@@ -53,23 +53,27 @@ export function RuanganKelas() {
 
   const allPhotos: LightboxPhoto[] = cmsPhotos.map((p, i) => ({
     id: p.id || `kelas-photo-${i}`,
-    src: p.imgUrl || (p as unknown as { src?: string }).src || "/assets/gallery-class.jpg",
+    src: p.imgUrl || (p as unknown as { src?: string }).src || "/logo.png",
     alt: p.caption || p.title || "Fasilitas Kelas",
     title: p.title || "Fasilitas Kelas",
     caption: p.caption,
-    category: p.category || "Fasilitas",
+    category: p.category?.trim() || "Ruang Kelas",
   }));
 
-  // Extract categories for filtering
+  // Extract categories for filtering dynamically
   const categories = [
     "Semua",
-    ...Array.from(new Set(allPhotos.map((p) => p.category || "Fasilitas"))),
+    ...Array.from(
+      new Set(allPhotos.map((p) => p.category?.trim() || "Ruang Kelas").filter(Boolean)),
+    ),
   ];
 
   const filteredPhotos =
     selectedCategory === "Semua"
       ? allPhotos
-      : allPhotos.filter((p) => p.category?.toLowerCase() === selectedCategory.toLowerCase());
+      : allPhotos.filter(
+          (p) => (p.category || "").trim().toLowerCase() === selectedCategory.trim().toLowerCase(),
+        );
 
   return (
     <main className="bg-slate-50/50">

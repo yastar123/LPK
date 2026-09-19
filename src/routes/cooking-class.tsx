@@ -47,14 +47,17 @@ export function CookingClass() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  const photos: LightboxPhoto[] = (cc.photos || []).map((p, i) => ({
-    id: p.id || `cc-photo-${i}`,
-    src: p.src,
-    alt: p.alt || p.caption,
-    title: p.caption || "Dokumentasi Cooking Class",
-    caption: p.caption,
-    category: "Cooking Class",
-  }));
+  const photos: LightboxPhoto[] = (cc.photos || []).map((p, i) => {
+    const raw = p as { id?: string; src?: string; imgUrl?: string; alt?: string; caption?: string };
+    return {
+      id: raw.id || `cc-photo-${i}`,
+      src: raw.imgUrl || raw.src || "/logo.png",
+      alt: raw.alt || raw.caption || "Dokumentasi Cooking Class",
+      title: raw.caption || "Dokumentasi Cooking Class",
+      caption: raw.caption,
+      category: "Cooking Class",
+    };
+  });
 
   return (
     <main className="bg-slate-50/50">

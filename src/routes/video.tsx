@@ -69,7 +69,10 @@ export function Video() {
       }
   )[] = vid.videos || [];
 
-  const categories = ["Semua", "Testimoni Alumni", "Profil & Kelas", "Cooking Class", "Gathering"];
+  const categories = [
+    "Semua",
+    ...Array.from(new Set(allVideos.map((v) => v.category?.trim()).filter(Boolean) as string[])),
+  ];
 
   const filteredVideos =
     selectedCategory === "Semua"

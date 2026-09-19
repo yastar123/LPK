@@ -2317,13 +2317,16 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         });
         if (res.ok) {
           setDbConnected(true);
+          setLastUpdated(`Tersinkronisasi PostgreSQL (${new Date().toLocaleTimeString("id-ID")})`);
+        } else {
+          console.warn("[PostgreSQL Sync] Server returned status:", res.status);
         }
       } catch (err) {
         console.warn("[PostgreSQL Sync] Error saving to DB:", err);
       } finally {
         setIsSyncing(false);
       }
-    }, 350);
+    }, 750);
   };
 
   const saveState = (newState: SiteCmsData) => {

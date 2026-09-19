@@ -16,8 +16,8 @@ import {
  */
 export async function compressAndReadFile(
   file: File,
-  maxDim = 1600,
-  quality = 0.85,
+  maxDim = 1000,
+  quality = 0.75,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     // If SVG, just read as data URL directly
@@ -64,6 +64,16 @@ export async function compressAndReadFile(
         } catch {
           dataUrl = canvas.toDataURL("image/jpeg", quality);
         }
+
+        // If dataUrl is still larger than 200KB (~270,000 characters), compress further
+        if (dataUrl.length > 270000) {
+          try {
+            dataUrl = canvas.toDataURL("image/jpeg", 0.6);
+          } catch {
+            // Keep current dataUrl
+          }
+        }
+
         resolve(dataUrl);
       };
       img.onerror = () => resolve(e.target?.result as string);
@@ -108,7 +118,7 @@ export function ImageUploader({
   placeholderText = "Klik atau geser foto dari perangkat Anda (HP / Laptop)",
   className = "",
   helperText,
-  maxDimension = 1600,
+  maxDimension = 1000,
 }: ImageUploaderProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -324,7 +334,7 @@ export function BulkImageUploader({
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         if (file.type.startsWith("image/")) {
-          const dataUrl = await compressAndReadFile(file, 1600);
+          const dataUrl = await compressAndReadFile(file, 1000);
           const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
           results.push({
             imgUrl: dataUrl,

@@ -34,6 +34,7 @@ import {
   Activity,
   BookOpen,
   LogOut,
+  X,
 } from "lucide-react";
 import {
   useCms,
@@ -2156,12 +2157,45 @@ function FotoAlumniCrudTab({
   const [newCategory, setNewCategory] = useState("Berlin");
   const [newUrl, setNewUrl] = useState("");
   const [newCaption, setNewCaption] = useState("");
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<GalleryPhotoItem | null>(null);
+
+  const cityPresets = [
+    "Berlin",
+    "Hamburg",
+    "München",
+    "Frankfurt",
+    "Köln",
+    "Stuttgart",
+    "Düsseldorf",
+    "Leipzig",
+    "Hannover",
+    "Dresden",
+  ];
+
+  const handleBulkUpload = (uploaded: { imgUrl: string; title: string; category?: string }[]) => {
+    const newItems: GalleryPhotoItem[] = uploaded.map((item, index) => ({
+      id: `alumni-${Date.now()}-${index}`,
+      title: item.title || "Alumni di Jerman",
+      category: (item.category || newCategory || "Jerman") as GalleryPhotoItem["category"],
+      date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
+      imgUrl: item.imgUrl,
+      caption: "Dokumentasi kehidupan dan studi alumni Ich Liebe Deutsch Medan di Jerman",
+    }));
+
+    const updatedPhotos = [...newItems, ...photos];
+    cmsStore.updateSection("fotoAlumni", {
+      ...config,
+      photos: updatedPhotos,
+    });
+    showToast(`${uploaded.length} foto alumni berhasil ditambahkan!`);
+  };
 
   const handleAddPhoto = () => {
     const newPhoto: GalleryPhotoItem = {
       id: `alumni-${Date.now()}`,
-      title: newTitle.trim(),
-      category: (newCategory.trim() || "Jerman") as GalleryPhotoItem["category"],
+      title: newTitle.trim() || "Foto Alumni di Jerman",
+      category: (newCategory.trim() || "Berlin") as GalleryPhotoItem["category"],
       date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
       imgUrl: newUrl.trim() || "/logo.png",
       caption: newCaption.trim(),
@@ -2179,6 +2213,17 @@ function FotoAlumniCrudTab({
     setNewCaption("");
   };
 
+  const handleSaveEdit = () => {
+    if (!editingPhoto) return;
+    const updatedPhotos = photos.map((p) => (p.id === editingPhoto.id ? editingPhoto : p));
+    cmsStore.updateSection("fotoAlumni", {
+      ...config,
+      photos: updatedPhotos,
+    });
+    showToast("Perubahan foto alumni berhasil disimpan!");
+    setEditingPhoto(null);
+  };
+
   const handleDeletePhoto = (id: string) => {
     const updatedPhotos = photos.filter((p) => p.id !== id);
     cmsStore.updateSection("fotoAlumni", {
@@ -2188,20 +2233,56 @@ function FotoAlumniCrudTab({
     showToast("Foto alumni berhasil dihapus!");
   };
 
+  const handleManualSave = () => {
+    cmsStore.updateSection("fotoAlumni", config);
+    showToast("Data Foto Alumni berhasil disimpan ke database!");
+  };
+
   return (
     <div className="space-y-6 animate-fade-in w-full">
-      <div className="border-b border-slate-200 pb-4">
-        <h2 className="text-xl font-bold text-slate-900">Kelola Halaman Foto Alumni</h2>
-        <p className="text-xs text-slate-500">
-          Tambahkan dan hapus foto para alumni Ich Liebe Deutsch yang sedang berada di Jerman.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">Kelola Halaman Foto Alumni</h2>
+          <p className="text-xs text-slate-500">
+            Tambahkan, ubah, dan kelola foto alumni yang sedang menempuh studi dan karier di Jerman.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowBulkUpload(!showBulkUpload)}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-3.5 py-2 text-xs font-bold text-sky-700 hover:bg-sky-100 transition-colors"
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            <span>{showBulkUpload ? "Tutup Upload Massal" : "Upload Massal"}</span>
+          </button>
+          <button
+            onClick={handleManualSave}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs transition-colors"
+          >
+            <Save className="h-3.5 w-3.5" />
+            <span>Simpan ke Database</span>
+          </button>
+        </div>
       </div>
+
+      {/* Bulk Upload Section */}
+      {showBulkUpload && (
+        <div className="rounded-2xl border border-sky-100 bg-sky-50/50 p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-sky-900">
+              Upload Beberapa Foto Alumni Sekaligus
+            </h4>
+            <span className="text-[11px] text-sky-600">Foto otomatis terkompresi aman</span>
+          </div>
+          <BulkImageUploader onAddPhotos={handleBulkUpload} defaultCategory={newCategory} />
+        </div>
+      )}
 
       {/* Header Config */}
       <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
           <Edit2 className="h-4 w-4 text-sky-600" />
-          <span>Konfigurasi Teks Halaman (Opsional)</span>
+          <span>Konfigurasi Teks Header Halaman (Opsional)</span>
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
@@ -2215,7 +2296,7 @@ function FotoAlumniCrudTab({
                 cmsStore.updateSection("fotoAlumni", { ...config, heroBadge: e.target.value })
               }
               placeholder="Badge Atas (Opsional)"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
             />
           </div>
           <div className="space-y-1">
@@ -2229,7 +2310,7 @@ function FotoAlumniCrudTab({
                 cmsStore.updateSection("fotoAlumni", { ...config, title: e.target.value })
               }
               placeholder="Judul Utama (Opsional)"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
             />
           </div>
         </div>
@@ -2244,101 +2325,251 @@ function FotoAlumniCrudTab({
               cmsStore.updateSection("fotoAlumni", { ...config, subtitle: e.target.value })
             }
             placeholder="Deskripsi Singkat (Opsional)"
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
           />
         </div>
       </div>
 
+      {/* Add New Photo */}
       <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
           <Plus className="h-4 w-4 text-sky-600" />
           <span>Tambah Foto Alumni Baru</span>
         </h3>
         <p className="text-[11px] text-slate-400 -mt-2">
-          Semua kolom di bawah ini bersifat opsional. Anda dapat mengisi judul, kota, foto, atau
-          keterangan sesuai kebutuhan.
+          Isi detail foto alumni di bawah ini. Anda dapat memilih foto dari galeri HP atau laptop.
         </p>
+
         <div className="grid gap-3 sm:grid-cols-2">
-          <input
-            type="text"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Nama Alumni / Aktivitas (Opsional)"
-            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
-          />
-          <input
-            type="text"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Kota / Wilayah Jerman (Opsional, contoh: Berlin)"
-            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
-          />
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Nama / Keterangan Singkat
+            </label>
+            <input
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="Contoh: Rian - Mahasiswa di Berlin"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Kota / Wilayah Jerman
+            </label>
+            <input
+              type="text"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="Contoh: Berlin, Hamburg, München"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+            />
+          </div>
+        </div>
+
+        {/* Quick Presets */}
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold text-slate-400 uppercase">
+            Pilihan Cepat Kota:
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {cityPresets.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setNewCategory(c)}
+                className={`rounded-lg px-2.5 py-1 text-[10px] font-bold transition-colors ${
+                  newCategory === c
+                    ? "bg-sky-500 text-white shadow-xs"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
 
         <ImageUploader
-          label="File Foto Alumni (Opsional)"
+          label="File Foto Alumni (Unggah dari HP/Laptop)"
           value={newUrl}
           onChange={setNewUrl}
           aspectRatio="wide"
-          placeholderText="Klik untuk Memilih Foto dari HP/Laptop (Opsional)"
+          placeholderText="Klik untuk Memilih Foto Alumni dari HP/Laptop"
         />
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             value={newCaption}
             onChange={(e) => setNewCaption(e.target.value)}
             placeholder="Keterangan singkat / testimoni alumni (Opsional)..."
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
           />
           <button
             onClick={handleAddPhoto}
-            className="rounded-xl bg-sky-500 px-5 py-2 text-xs font-bold text-white hover:bg-sky-600 shrink-0"
+            className="rounded-xl bg-sky-500 px-5 py-2 text-xs font-bold text-white hover:bg-sky-600 shrink-0 transition-colors"
           >
             Tambah Foto Alumni
           </button>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {photos.map((photo, idx) => (
-          <div
-            key={photo.id || idx}
-            className="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-xs"
-          >
-            <div className="h-32 bg-slate-100 relative">
-              <img
-                src={photo.imgUrl}
-                alt={photo.title || "Foto Alumni"}
-                className="h-full w-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/logo.png";
-                }}
-              />
-              <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
-                {photo.category || "Jerman"}
-              </span>
-            </div>
-            <div className="p-3 space-y-1">
-              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">
-                {photo.title || "(Tanpa Judul)"}
-              </h5>
-              {photo.caption ? (
-                <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
-              ) : (
-                <p className="text-[11px] text-slate-400 italic">Tanpa keterangan</p>
-              )}
-            </div>
-            <div className="p-2 border-t border-slate-100 flex justify-end">
+      {/* Edit Photo Modal */}
+      {editingPhoto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs animate-fade-in">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Edit2 className="h-4 w-4 text-sky-600" />
+                <span>Edit Foto Alumni</span>
+              </h4>
               <button
-                onClick={() => handleDeletePhoto(photo.id)}
-                className="p-1 text-rose-600 hover:text-rose-700"
+                onClick={() => setEditingPhoto(null)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">
+                  Nama / Judul
+                </label>
+                <input
+                  type="text"
+                  value={editingPhoto.title || ""}
+                  onChange={(e) => setEditingPhoto({ ...editingPhoto, title: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">
+                  Kota / Wilayah
+                </label>
+                <input
+                  type="text"
+                  value={editingPhoto.category || ""}
+                  onChange={(e) =>
+                    setEditingPhoto({
+                      ...editingPhoto,
+                      category: e.target.value as GalleryPhotoItem["category"],
+                    })
+                  }
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+                />
+              </div>
+
+              <ImageUploader
+                label="Ganti Foto"
+                value={editingPhoto.imgUrl}
+                onChange={(url) => setEditingPhoto({ ...editingPhoto, imgUrl: url })}
+                aspectRatio="wide"
+                placeholderText="Klik untuk Ganti Foto dari HP/Laptop"
+              />
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">
+                  Keterangan / Testimoni
+                </label>
+                <textarea
+                  rows={2}
+                  value={editingPhoto.caption || ""}
+                  onChange={(e) => setEditingPhoto({ ...editingPhoto, caption: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                onClick={() => setEditingPhoto(null)}
+                className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="rounded-xl bg-sky-500 px-4 py-2 text-xs font-bold text-white hover:bg-sky-600"
+              >
+                Simpan Perubahan
               </button>
             </div>
           </div>
-        ))}
+        </div>
+      )}
+
+      {/* Photos List */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Daftar Foto Alumni ({photos.length})
+          </h4>
+        </div>
+
+        {photos.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center">
+            <span className="text-3xl">📸</span>
+            <h4 className="mt-2 text-xs font-bold text-slate-700">Belum Ada Foto Alumni</h4>
+            <p className="text-[11px] text-slate-400 mt-1">
+              Gunakan form di atas untuk menambahkan foto dokumentasi alumni di Jerman.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {photos.map((photo, idx) => (
+              <div
+                key={photo.id || idx}
+                className="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-xs hover:border-sky-300 transition-colors group"
+              >
+                <div className="h-36 bg-slate-100 relative overflow-hidden">
+                  <img
+                    src={photo.imgUrl}
+                    alt={photo.title || "Foto Alumni"}
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/logo.png";
+                    }}
+                  />
+                  <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
+                    {photo.category || "Jerman"}
+                  </span>
+                </div>
+                <div className="p-3 space-y-1">
+                  <h5 className="text-xs font-bold text-slate-900 line-clamp-1">
+                    {photo.title || "(Tanpa Judul)"}
+                  </h5>
+                  {photo.caption ? (
+                    <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+                  ) : (
+                    <p className="text-[11px] text-slate-400 italic">Tanpa keterangan</p>
+                  )}
+                </div>
+                <div className="p-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400">{photo.date || "Alumni"}</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setEditingPhoto(photo)}
+                      className="p-1.5 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 transition-colors"
+                      title="Edit Foto"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeletePhoto(photo.id)}
+                      className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors"
+                      title="Hapus Foto"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -2367,11 +2598,41 @@ function RuanganKelasCrudTab({
   const [newCategory, setNewCategory] = useState("Ruang Kelas");
   const [newUrl, setNewUrl] = useState("");
   const [newCaption, setNewCaption] = useState("");
+  const [showBulkUpload, setShowBulkUpload] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<GalleryPhotoItem | null>(null);
+
+  const categoryPresets = [
+    "Ruang Kelas",
+    "Ruang Teori",
+    "Simulasi Ujian",
+    "Cooking Class",
+    "Laboratorium",
+    "Area Diskusi",
+    "Perpustakaan",
+  ];
+
+  const handleBulkUpload = (uploaded: { imgUrl: string; title: string; category?: string }[]) => {
+    const newItems: GalleryPhotoItem[] = uploaded.map((item, index) => ({
+      id: `kelas-${Date.now()}-${index}`,
+      title: item.title || "Fasilitas Kelas",
+      category: (item.category || newCategory || "Ruang Kelas") as GalleryPhotoItem["category"],
+      date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
+      imgUrl: item.imgUrl,
+      caption: "Fasilitas penunjang belajar bahasa Jerman intensif di ILD Medan",
+    }));
+
+    const updatedPhotos = [...newItems, ...photos];
+    cmsStore.updateSection("ruanganKelas", {
+      ...config,
+      photos: updatedPhotos,
+    });
+    showToast(`${uploaded.length} foto fasilitas kelas berhasil ditambahkan!`);
+  };
 
   const handleAddPhoto = () => {
     const newPhoto: GalleryPhotoItem = {
       id: `kelas-${Date.now()}`,
-      title: newTitle.trim(),
+      title: newTitle.trim() || "Fasilitas Kelas ILD Medan",
       category: (newCategory.trim() || "Ruang Kelas") as GalleryPhotoItem["category"],
       date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
       imgUrl: newUrl.trim() || "/logo.png",
@@ -2390,6 +2651,17 @@ function RuanganKelasCrudTab({
     setNewCaption("");
   };
 
+  const handleSaveEdit = () => {
+    if (!editingPhoto) return;
+    const updatedPhotos = photos.map((p) => (p.id === editingPhoto.id ? editingPhoto : p));
+    cmsStore.updateSection("ruanganKelas", {
+      ...config,
+      photos: updatedPhotos,
+    });
+    showToast("Perubahan foto fasilitas kelas berhasil disimpan!");
+    setEditingPhoto(null);
+  };
+
   const handleDeletePhoto = (id: string) => {
     const updatedPhotos = photos.filter((p) => p.id !== id);
     cmsStore.updateSection("ruanganKelas", {
@@ -2399,20 +2671,57 @@ function RuanganKelasCrudTab({
     showToast("Foto ruangan kelas berhasil dihapus!");
   };
 
+  const handleManualSave = () => {
+    cmsStore.updateSection("ruanganKelas", config);
+    showToast("Data Ruangan Kelas berhasil disimpan ke database!");
+  };
+
   return (
     <div className="space-y-6 animate-fade-in w-full">
-      <div className="border-b border-slate-200 pb-4">
-        <h2 className="text-xl font-bold text-slate-900">Kelola Halaman Ruangan Kelas</h2>
-        <p className="text-xs text-slate-500">
-          Tambahkan dan kelola foto ruangan kelas serta fasilitas pendukung belajar di ILD Medan.
-        </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 pb-4">
+        <div>
+          <h2 className="text-xl font-bold text-slate-900">Kelola Halaman Ruangan Kelas</h2>
+          <p className="text-xs text-slate-500">
+            Tambahkan, ubah, dan kelola foto ruangan kelas serta fasilitas pendukung belajar di ILD
+            Medan.
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setShowBulkUpload(!showBulkUpload)}
+            className="inline-flex items-center gap-1.5 rounded-xl border border-sky-200 bg-sky-50 px-3.5 py-2 text-xs font-bold text-sky-700 hover:bg-sky-100 transition-colors"
+          >
+            <ImageIcon className="h-3.5 w-3.5" />
+            <span>{showBulkUpload ? "Tutup Upload Massal" : "Upload Massal"}</span>
+          </button>
+          <button
+            onClick={handleManualSave}
+            className="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-700 shadow-xs transition-colors"
+          >
+            <Save className="h-3.5 w-3.5" />
+            <span>Simpan ke Database</span>
+          </button>
+        </div>
       </div>
+
+      {/* Bulk Upload Section */}
+      {showBulkUpload && (
+        <div className="rounded-2xl border border-sky-100 bg-sky-50/50 p-4 space-y-2">
+          <div className="flex items-center justify-between">
+            <h4 className="text-xs font-bold text-sky-900">
+              Upload Beberapa Foto Fasilitas Sekaligus
+            </h4>
+            <span className="text-[11px] text-sky-600">Foto otomatis terkompresi aman</span>
+          </div>
+          <BulkImageUploader onAddPhotos={handleBulkUpload} defaultCategory={newCategory} />
+        </div>
+      )}
 
       {/* Header Config */}
       <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
           <Edit2 className="h-4 w-4 text-sky-600" />
-          <span>Konfigurasi Teks Halaman (Opsional)</span>
+          <span>Konfigurasi Teks Header Halaman (Opsional)</span>
         </h3>
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="space-y-1">
@@ -2426,7 +2735,7 @@ function RuanganKelasCrudTab({
                 cmsStore.updateSection("ruanganKelas", { ...config, heroBadge: e.target.value })
               }
               placeholder="Badge Atas (Opsional)"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
             />
           </div>
           <div className="space-y-1">
@@ -2440,7 +2749,7 @@ function RuanganKelasCrudTab({
                 cmsStore.updateSection("ruanganKelas", { ...config, title: e.target.value })
               }
               placeholder="Judul Utama (Opsional)"
-              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
             />
           </div>
         </div>
@@ -2455,101 +2764,252 @@ function RuanganKelasCrudTab({
               cmsStore.updateSection("ruanganKelas", { ...config, subtitle: e.target.value })
             }
             placeholder="Deskripsi Singkat (Opsional)"
-            className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
           />
         </div>
       </div>
 
+      {/* Add New Photo */}
       <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
         <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
           <Plus className="h-4 w-4 text-sky-600" />
           <span>Tambah Foto Fasilitas/Kelas Baru</span>
         </h3>
         <p className="text-[11px] text-slate-400 -mt-2">
-          Semua kolom di bawah ini bersifat opsional. Anda dapat mengisi judul, kategori, foto, atau
-          keterangan sesuai kebutuhan.
+          Isi detail fasilitas atau ruangan kelas di bawah ini. Anda dapat memilih foto dari galeri
+          HP atau laptop.
         </p>
+
         <div className="grid gap-3 sm:grid-cols-2">
-          <input
-            type="text"
-            value={newTitle}
-            onChange={(e) => setNewTitle(e.target.value)}
-            placeholder="Judul Fasilitas (Opsional, contoh: Ruangan Kelas B1)"
-            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
-          />
-          <input
-            type="text"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
-            placeholder="Kategori Fasilitas (Opsional, contoh: Ruang Kelas)"
-            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
-          />
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Nama Fasilitas / Kelas
+            </label>
+            <input
+              type="text"
+              value={newTitle}
+              onChange={(e) => setNewTitle(e.target.value)}
+              placeholder="Contoh: Ruangan Kelas B1 Intensif"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">
+              Kategori Fasilitas
+            </label>
+            <input
+              type="text"
+              value={newCategory}
+              onChange={(e) => setNewCategory(e.target.value)}
+              placeholder="Contoh: Ruang Kelas, Simulasi Ujian"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+            />
+          </div>
+        </div>
+
+        {/* Quick Presets */}
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold text-slate-400 uppercase">
+            Pilihan Cepat Kategori:
+          </label>
+          <div className="flex flex-wrap gap-1.5">
+            {categoryPresets.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setNewCategory(c)}
+                className={`rounded-lg px-2.5 py-1 text-[10px] font-bold transition-colors ${
+                  newCategory === c
+                    ? "bg-sky-500 text-white shadow-xs"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
         </div>
 
         <ImageUploader
-          label="File Foto Fasilitas/Kelas (Opsional)"
+          label="File Foto Fasilitas/Kelas (Unggah dari HP/Laptop)"
           value={newUrl}
           onChange={setNewUrl}
           aspectRatio="wide"
-          placeholderText="Klik untuk Memilih Foto dari HP/Laptop (Opsional)"
+          placeholderText="Klik untuk Memilih Foto Fasilitas dari HP/Laptop"
         />
 
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="text"
             value={newCaption}
             onChange={(e) => setNewCaption(e.target.value)}
             placeholder="Keterangan singkat mengenai fasilitas ini (Opsional)..."
-            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
           />
           <button
             onClick={handleAddPhoto}
-            className="rounded-xl bg-sky-500 px-5 py-2 text-xs font-bold text-white hover:bg-sky-600 shrink-0"
+            className="rounded-xl bg-sky-500 px-5 py-2 text-xs font-bold text-white hover:bg-sky-600 shrink-0 transition-colors"
           >
             Tambah Foto Kelas
           </button>
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {photos.map((photo, idx) => (
-          <div
-            key={photo.id || idx}
-            className="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-xs"
-          >
-            <div className="h-32 bg-slate-100 relative">
-              <img
-                src={photo.imgUrl}
-                alt={photo.title || "Foto Fasilitas"}
-                className="h-full w-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = "/logo.png";
-                }}
-              />
-              <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
-                {photo.category || "Fasilitas"}
-              </span>
-            </div>
-            <div className="p-3 space-y-1">
-              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">
-                {photo.title || "(Tanpa Judul)"}
-              </h5>
-              {photo.caption ? (
-                <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
-              ) : (
-                <p className="text-[11px] text-slate-400 italic">Tanpa keterangan</p>
-              )}
-            </div>
-            <div className="p-2 border-t border-slate-100 flex justify-end">
+      {/* Edit Photo Modal */}
+      {editingPhoto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 p-4 backdrop-blur-xs animate-fade-in">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-100 space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                <Edit2 className="h-4 w-4 text-sky-600" />
+                <span>Edit Foto Fasilitas / Ruang Kelas</span>
+              </h4>
               <button
-                onClick={() => handleDeletePhoto(photo.id)}
-                className="p-1 text-rose-600 hover:text-rose-700"
+                onClick={() => setEditingPhoto(null)}
+                className="rounded-lg p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
               >
-                <Trash2 className="h-3.5 w-3.5" />
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">
+                  Nama Fasilitas
+                </label>
+                <input
+                  type="text"
+                  value={editingPhoto.title || ""}
+                  onChange={(e) => setEditingPhoto({ ...editingPhoto, title: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">
+                  Kategori Fasilitas
+                </label>
+                <input
+                  type="text"
+                  value={editingPhoto.category || ""}
+                  onChange={(e) =>
+                    setEditingPhoto({
+                      ...editingPhoto,
+                      category: e.target.value as GalleryPhotoItem["category"],
+                    })
+                  }
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500"
+                />
+              </div>
+
+              <ImageUploader
+                label="Ganti Foto"
+                value={editingPhoto.imgUrl}
+                onChange={(url) => setEditingPhoto({ ...editingPhoto, imgUrl: url })}
+                aspectRatio="wide"
+                placeholderText="Klik untuk Ganti Foto dari HP/Laptop"
+              />
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-bold text-slate-500 uppercase">
+                  Keterangan Singkat
+                </label>
+                <textarea
+                  rows={2}
+                  value={editingPhoto.caption || ""}
+                  onChange={(e) => setEditingPhoto({ ...editingPhoto, caption: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-900 focus:outline-none focus:border-sky-500 resize-none"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2 pt-2 border-t border-slate-100">
+              <button
+                onClick={() => setEditingPhoto(null)}
+                className="rounded-xl border border-slate-200 px-4 py-2 text-xs font-bold text-slate-600 hover:bg-slate-50"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleSaveEdit}
+                className="rounded-xl bg-sky-500 px-4 py-2 text-xs font-bold text-white hover:bg-sky-600"
+              >
+                Simpan Perubahan
               </button>
             </div>
           </div>
-        ))}
+        </div>
+      )}
+
+      {/* Photos List */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-xs font-bold text-slate-700 uppercase tracking-wider">
+            Daftar Foto Fasilitas Kelas ({photos.length})
+          </h4>
+        </div>
+
+        {photos.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-slate-200 bg-white p-8 text-center">
+            <span className="text-3xl">🏫</span>
+            <h4 className="mt-2 text-xs font-bold text-slate-700">Belum Ada Foto Ruangan Kelas</h4>
+            <p className="text-[11px] text-slate-400 mt-1">
+              Gunakan form di atas untuk menambahkan foto ruangan kelas atau fasilitas belajar.
+            </p>
+          </div>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {photos.map((photo, idx) => (
+              <div
+                key={photo.id || idx}
+                className="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-xs hover:border-sky-300 transition-colors group"
+              >
+                <div className="h-36 bg-slate-100 relative overflow-hidden">
+                  <img
+                    src={photo.imgUrl}
+                    alt={photo.title || "Foto Fasilitas"}
+                    className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = "/logo.png";
+                    }}
+                  />
+                  <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
+                    {photo.category || "Fasilitas"}
+                  </span>
+                </div>
+                <div className="p-3 space-y-1">
+                  <h5 className="text-xs font-bold text-slate-900 line-clamp-1">
+                    {photo.title || "(Tanpa Judul)"}
+                  </h5>
+                  {photo.caption ? (
+                    <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+                  ) : (
+                    <p className="text-[11px] text-slate-400 italic">Tanpa keterangan</p>
+                  )}
+                </div>
+                <div className="p-2 border-t border-slate-100 flex items-center justify-between">
+                  <span className="text-[10px] text-slate-400">{photo.date || "Fasilitas"}</span>
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setEditingPhoto(photo)}
+                      className="p-1.5 rounded-lg text-slate-500 hover:text-sky-600 hover:bg-sky-50 transition-colors"
+                      title="Edit Foto"
+                    >
+                      <Edit2 className="h-3.5 w-3.5" />
+                    </button>
+                    <button
+                      onClick={() => handleDeletePhoto(photo.id)}
+                      className="p-1.5 rounded-lg text-rose-500 hover:text-rose-700 hover:bg-rose-50 transition-colors"
+                      title="Hapus Foto"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

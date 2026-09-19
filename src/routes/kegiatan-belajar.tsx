@@ -49,14 +49,17 @@ export function KegiatanBelajar() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  const photos: LightboxPhoto[] = (kb.photos || []).map((p, i) => ({
-    id: p.id || `kb-photo-${i}`,
-    src: p.src,
-    alt: p.alt || p.caption,
-    title: p.caption || "Dokumentasi Belajar",
-    caption: p.caption,
-    category: "Belajar & Kelas",
-  }));
+  const photos: LightboxPhoto[] = (kb.photos || []).map((p, i) => {
+    const raw = p as { id?: string; src?: string; imgUrl?: string; alt?: string; caption?: string };
+    return {
+      id: raw.id || `kb-photo-${i}`,
+      src: raw.imgUrl || raw.src || "/logo.png",
+      alt: raw.alt || raw.caption || "Dokumentasi Belajar",
+      title: raw.caption || "Dokumentasi Belajar",
+      caption: raw.caption,
+      category: "Belajar & Kelas",
+    };
+  });
 
   return (
     <main className="bg-slate-50/50">

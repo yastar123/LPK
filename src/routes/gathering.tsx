@@ -39,14 +39,17 @@ export function Gathering() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  const photos: LightboxPhoto[] = (gth.photos || []).map((p, i) => ({
-    id: p.id || `gth-photo-${i}`,
-    src: p.src,
-    alt: p.alt || p.caption,
-    title: p.caption || "Dokumentasi Gathering",
-    caption: p.caption,
-    category: "Gathering Siswa",
-  }));
+  const photos: LightboxPhoto[] = (gth.photos || []).map((p, i) => {
+    const raw = p as { id?: string; src?: string; imgUrl?: string; alt?: string; caption?: string };
+    return {
+      id: raw.id || `gth-photo-${i}`,
+      src: raw.imgUrl || raw.src || "/logo.png",
+      alt: raw.alt || raw.caption || "Dokumentasi Gathering",
+      title: raw.caption || "Dokumentasi Gathering",
+      caption: raw.caption,
+      category: "Gathering Siswa",
+    };
+  });
 
   return (
     <main className="bg-slate-50/50">

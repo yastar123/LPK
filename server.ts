@@ -13,6 +13,14 @@ if (fs.existsSync(".env.example")) {
   dotenv.config({ path: ".env.example" });
 }
 
+// Global crash protection for robust reverse-proxy (Nginx) stability
+process.on("uncaughtException", (err) => {
+  console.error("[Process Uncaught Exception]", err);
+});
+process.on("unhandledRejection", (reason) => {
+  console.error("[Process Unhandled Rejection]", reason);
+});
+
 // Normalize credentials in process.env
 if (process.env.ADMIN_EMAIL) {
   process.env.ADMIN_EMAIL = process.env.ADMIN_EMAIL.replace(/^["']|["']$/g, "").trim();
@@ -134,6 +142,20 @@ async function startServer() {
     res.status(404).end();
   });
 
+  // Serve public static assets (favicons, icons, manifest, logos) with proper headers
+  app.use(
+    express.static(path.join(process.cwd(), "public"), {
+      maxAge: "1d",
+      setHeaders: (res, filePath) => {
+        if (filePath.endsWith(".ico")) {
+          res.setHeader("Content-Type", "image/x-icon");
+        } else if (filePath.endsWith(".webmanifest") || filePath.endsWith("manifest.json")) {
+          res.setHeader("Content-Type", "application/manifest+json; charset=utf-8");
+        }
+      },
+    }),
+  );
+
   // Mount API endpoints
   app.use("/api", apiRouter);
 
@@ -196,9 +218,13 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, HOST, () => {
+  const server = app.listen(PORT, HOST, () => {
     console.log(`[Express + PostgreSQL] Server running on http://${HOST}:${PORT}`);
   });
+
+  // Ensure keep-alive timeout is higher than reverse-proxy (Nginx) to prevent 502 Bad Gateway
+  server.keepAliveTimeout = 65000;
+  server.headersTimeout = 66000;
 }
 
 startServer().catch((err) => {

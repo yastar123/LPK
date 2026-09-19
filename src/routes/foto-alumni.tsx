@@ -53,46 +53,18 @@ export function FotoAlumni() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  // Default seed photos if empty
-  const defaultPhotos: LightboxPhoto[] = [
-    {
-      id: "alumni-seed-1",
-      src: "/assets/gallery-city.jpg",
-      title: "Alumni Ausbildung di Hamburg",
-      caption:
-        "Bagas, alumni ILD Medan yang saat ini menempuh Ausbildung bidang Perhotelan di Hamburg.",
-      category: "Hamburg",
-    },
-    {
-      id: "alumni-seed-2",
-      src: "/assets/gallery-graduation.jpg",
-      title: "Peserta Au Pair di Berlin",
-      caption:
-        "Alya, menjalani program Au Pair dengan keluarga asuh ramah di pinggiran kota Berlin.",
-      category: "Berlin",
-    },
-    {
-      id: "alumni-seed-3",
-      src: "/assets/gallery-study.jpg",
-      title: "Alumni Program FSJ Keperawatan di Munchen",
-      caption:
-        "Siti, sedang aktif bertugas sebagai relawan sosial FSJ di salah satu klinik kesehatan di Munchen.",
-      category: "Munchen",
-    },
-  ];
+  // 100% Synced directly from CMS Store / Database
+  const cmsPhotos =
+    alumniConfig.photos && alumniConfig.photos.length > 0 ? alumniConfig.photos : [];
 
-  // Merge with CMS photos if provided
-  const allPhotos: LightboxPhoto[] =
-    alumniConfig.photos && alumniConfig.photos.length > 0
-      ? alumniConfig.photos.map((p, i) => ({
-          id: p.id || `alumni-photo-${i}`,
-          src: p.imgUrl || p.src,
-          alt: p.caption || p.title,
-          title: p.title || "Foto Alumni",
-          caption: p.caption,
-          category: p.category || "Alumni",
-        }))
-      : defaultPhotos;
+  const allPhotos: LightboxPhoto[] = cmsPhotos.map((p, i) => ({
+    id: p.id || `alumni-photo-${i}`,
+    src: p.imgUrl || (p as unknown as { src?: string }).src || "/assets/gallery-city.jpg",
+    alt: p.caption || p.title || "Foto Alumni",
+    title: p.title || "Foto Alumni",
+    caption: p.caption,
+    category: p.category || "Jerman",
+  }));
 
   // Extract cities/categories for filtering
   const cities = ["Semua", ...Array.from(new Set(allPhotos.map((p) => p.category || "Alumni")))];

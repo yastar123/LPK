@@ -48,46 +48,17 @@ export function RuanganKelas() {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
 
-  // Default seed photos if empty
-  const defaultPhotos: LightboxPhoto[] = [
-    {
-      id: "kelas-seed-1",
-      src: "/assets/gallery-class.jpg",
-      title: "Ruang Kelas Teori Modern",
-      caption:
-        "Dilengkapi dengan proyektor interaktif, AC, dan tata meja diskusi lingkaran untuk interaksi aktif.",
-      category: "Ruang Kelas",
-    },
-    {
-      id: "kelas-seed-2",
-      src: "/assets/gallery-study.jpg",
-      title: "Ruang Belajar Mandiri & Perpustakaan",
-      caption:
-        "Area tenang dengan koleksi modul latihan Goethe, kamus Jerman-Indonesia, dan akses Wi-Fi berkecepatan tinggi.",
-      category: "Perpustakaan",
-    },
-    {
-      id: "kelas-seed-3",
-      src: "/assets/gallery-cooking.jpg",
-      title: "Dapur Pembelajaran Praktik",
-      caption:
-        "Fasilitas dapur terintegrasi untuk kegiatan Cooking Class masakan khas Jerman secara langsung.",
-      category: "Dapur Praktik",
-    },
-  ];
+  // 100% Synced directly from CMS Store / Database
+  const cmsPhotos = kelasConfig.photos && kelasConfig.photos.length > 0 ? kelasConfig.photos : [];
 
-  // Merge with CMS photos if provided
-  const allPhotos: LightboxPhoto[] =
-    kelasConfig.photos && kelasConfig.photos.length > 0
-      ? kelasConfig.photos.map((p, i) => ({
-          id: p.id || `kelas-photo-${i}`,
-          src: p.imgUrl || p.src,
-          alt: p.caption || p.title,
-          title: p.title || "Fasilitas Kelas",
-          caption: p.caption,
-          category: p.category || "Fasilitas",
-        }))
-      : defaultPhotos;
+  const allPhotos: LightboxPhoto[] = cmsPhotos.map((p, i) => ({
+    id: p.id || `kelas-photo-${i}`,
+    src: p.imgUrl || (p as unknown as { src?: string }).src || "/assets/gallery-class.jpg",
+    alt: p.caption || p.title || "Fasilitas Kelas",
+    title: p.title || "Fasilitas Kelas",
+    caption: p.caption,
+    category: p.category || "Fasilitas",
+  }));
 
   // Extract categories for filtering
   const categories = [

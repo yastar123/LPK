@@ -444,6 +444,12 @@ export async function handleApiRequest(request: Request): Promise<Response | nul
     const key = pathname.replace("/api/cms/", "");
     const data = await getCmsData(key);
     if (!data) {
+      if (key === "main_cms_config") {
+        return new Response(JSON.stringify({ success: true, key, data: {} }), {
+          status: 200,
+          headers: jsonHeaders,
+        });
+      }
       return new Response(JSON.stringify({ error: "Data CMS tidak ditemukan" }), {
         status: 404,
         headers: jsonHeaders,

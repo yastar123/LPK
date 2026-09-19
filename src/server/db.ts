@@ -141,16 +141,23 @@ export async function initPostgres(): Promise<boolean> {
       (process.env.NODE_ENV === "production" && !connectionString?.includes("sslmode=disable")));
 
   try {
-    pool = new Pool({
-      connectionString: connectionString || undefined,
-      host: process.env.SQL_HOST || process.env.PGHOST,
-      user: process.env.SQL_USER || process.env.PGUSER || "postgres",
-      password: process.env.SQL_PASSWORD || process.env.PGPASSWORD,
-      database: process.env.SQL_DB_NAME || process.env.PGDATABASE || "postgres",
-      port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
-      connectionTimeoutMillis: 5000,
-      ssl: useSsl ? { rejectUnauthorized: false } : undefined,
-    });
+    const poolConfig: pg.PoolConfig = connectionString
+      ? {
+          connectionString,
+          connectionTimeoutMillis: 5000,
+          ssl: useSsl ? { rejectUnauthorized: false } : undefined,
+        }
+      : {
+          host: process.env.SQL_HOST || process.env.PGHOST || "localhost",
+          user: process.env.SQL_USER || process.env.PGUSER || "postgres",
+          password: process.env.SQL_PASSWORD || process.env.PGPASSWORD,
+          database: process.env.SQL_DB_NAME || process.env.PGDATABASE || "LPK",
+          port: process.env.PGPORT ? Number(process.env.PGPORT) : 5432,
+          connectionTimeoutMillis: 5000,
+          ssl: useSsl ? { rejectUnauthorized: false } : undefined,
+        };
+
+    pool = new Pool(poolConfig);
 
     pool.on("error", (err) => {
       console.warn("[PostgreSQL Pool Warning]", err.message);
@@ -600,7 +607,6 @@ function sanitizeCmsPayload(key: string, rawData: unknown): unknown {
     const navbar = (d.navbar || {}) as Record<string, unknown>;
 
     d.kontak = {
-      ...kontak,
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       hotlineWA: "082127324453",
       phoneLandline: "082127324453",
@@ -608,24 +614,25 @@ function sanitizeCmsPayload(key: string, rawData: unknown): unknown {
       mapsEmbedUrl:
         "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
       operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
+      ...kontak,
     };
 
     d.footer = {
-      ...footer,
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       phone: "082127324453",
       whatsapp: "082127324453",
       email: "Ichliebedeutschmedan@gmail.com",
+      ...footer,
     };
 
     d.navbar = {
-      ...navbar,
       brandTitle: "ICH LIEBE DEUTSCH MEDAN",
       ctaButton: {
         label: "Konsultasi WA",
         href: "https://wa.me/6282127324453?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.",
         isExternal: true,
       },
+      ...navbar,
     };
 
     const home = (d.home || {}) as Record<string, unknown>;

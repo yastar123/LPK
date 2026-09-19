@@ -390,6 +390,9 @@ apiRouter.get("/cms/:key", async (req, res) => {
   try {
     const data = await getCmsData(req.params.key);
     if (!data) {
+      if (req.params.key === "main_cms_config") {
+        return res.json({ success: true, key: req.params.key, data: {} });
+      }
       return res.status(404).json({ error: "Data CMS tidak ditemukan" });
     }
     return res.json({ success: true, key: req.params.key, data });

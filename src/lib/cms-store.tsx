@@ -1928,7 +1928,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       {
         id: "alumni-1",
         title: "Alumni Ausbildung di Hamburg",
-        category: "Alumni",
+        category: "Hamburg",
         date: "Januari 2026",
         imgUrl: "/assets/gallery-city.jpg",
         caption:
@@ -1937,11 +1937,20 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       {
         id: "alumni-2",
         title: "Peserta Au Pair di Berlin",
-        category: "Alumni",
+        category: "Berlin",
         date: "November 2025",
         imgUrl: "/assets/gallery-graduation.jpg",
         caption:
           "Alya, menjalani program Au Pair dengan keluarga asuh ramah di pinggiran kota Berlin.",
+      },
+      {
+        id: "alumni-3",
+        title: "Alumni Program FSJ Keperawatan di Munchen",
+        category: "Munchen",
+        date: "Desember 2025",
+        imgUrl: "/assets/gallery-study.jpg",
+        caption:
+          "Siti, sedang aktif bertugas sebagai relawan sosial FSJ di salah satu klinik kesehatan di Munchen.",
       },
     ],
   },
@@ -1954,7 +1963,7 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       {
         id: "kelas-1",
         title: "Ruang Kelas Teori Modern",
-        category: "Kelas",
+        category: "Ruang Kelas",
         date: "Februari 2026",
         imgUrl: "/assets/gallery-class.jpg",
         caption:
@@ -1963,11 +1972,20 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       {
         id: "kelas-2",
         title: "Ruang Belajar Mandiri & Perpustakaan",
-        category: "Kelas",
+        category: "Perpustakaan",
         date: "Desember 2025",
         imgUrl: "/assets/gallery-study.jpg",
         caption:
           "Area tenang dengan koleksi modul latihan Goethe, kamus Jerman-Indonesia, dan akses Wi-Fi berkecepatan tinggi.",
+      },
+      {
+        id: "kelas-3",
+        title: "Dapur Pembelajaran Praktik",
+        category: "Dapur Praktik",
+        date: "Januari 2026",
+        imgUrl: "/assets/gallery-cooking.jpg",
+        caption:
+          "Fasilitas dapur terintegrasi untuk kegiatan Cooking Class masakan khas Jerman secara langsung.",
       },
     ],
   },
@@ -1979,7 +1997,6 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
   const sanitized = {
     ...raw,
     kontak: {
-      ...raw.kontak,
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       hotlineWA: "082127324453",
       phoneLandline: "082127324453",
@@ -1987,22 +2004,23 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
       mapsEmbedUrl:
         "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
       operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
+      ...(raw.kontak || {}),
     },
     footer: {
-      ...raw.footer,
       officeAddress: "Jl. Ternak II No. 39, Medan Polonia",
       phone: "082127324453",
       whatsapp: "082127324453",
       email: "Ichliebedeutschmedan@gmail.com",
+      ...(raw.footer || {}),
     },
     navbar: {
-      ...raw.navbar,
       brandTitle: "ICH LIEBE DEUTSCH MEDAN",
       ctaButton: {
         label: "Konsultasi WA",
         href: "https://wa.me/6282127324453?text=Halo%20ICH%20LIEBE%20DEUTSCH%20MEDAN%2C%20saya%20ingin%20konsultasi%20program%20ke%20Jerman.",
         isExternal: true,
       },
+      ...(raw.navbar || {}),
     },
   };
 
@@ -2025,12 +2043,54 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
     });
   }
 
-  // Ensure fotoAlumni and ruanganKelas default objects exist
-  if (!sanitized.fotoAlumni || !Array.isArray(sanitized.fotoAlumni.photos)) {
-    sanitized.fotoAlumni = DEFAULT_CMS_DATA.fotoAlumni;
+  // Ensure fotoAlumni default objects and photos exist if empty
+  if (
+    !sanitized.fotoAlumni ||
+    !Array.isArray(sanitized.fotoAlumni.photos) ||
+    sanitized.fotoAlumni.photos.length === 0
+  ) {
+    sanitized.fotoAlumni = {
+      heroBadge: sanitized.fotoAlumni?.heroBadge?.trim() || DEFAULT_CMS_DATA.fotoAlumni.heroBadge,
+      title: sanitized.fotoAlumni?.title?.trim() || DEFAULT_CMS_DATA.fotoAlumni.title,
+      subtitle: sanitized.fotoAlumni?.subtitle?.trim() || DEFAULT_CMS_DATA.fotoAlumni.subtitle,
+      photos:
+        sanitized.fotoAlumni?.photos && sanitized.fotoAlumni.photos.length > 0
+          ? sanitized.fotoAlumni.photos
+          : DEFAULT_CMS_DATA.fotoAlumni.photos,
+    };
+  } else {
+    sanitized.fotoAlumni = {
+      heroBadge: sanitized.fotoAlumni.heroBadge?.trim() || DEFAULT_CMS_DATA.fotoAlumni.heroBadge,
+      title: sanitized.fotoAlumni.title?.trim() || DEFAULT_CMS_DATA.fotoAlumni.title,
+      subtitle: sanitized.fotoAlumni.subtitle?.trim() || DEFAULT_CMS_DATA.fotoAlumni.subtitle,
+      photos: sanitized.fotoAlumni.photos,
+    };
   }
-  if (!sanitized.ruanganKelas || !Array.isArray(sanitized.ruanganKelas.photos)) {
-    sanitized.ruanganKelas = DEFAULT_CMS_DATA.ruanganKelas;
+
+  // Ensure ruanganKelas default objects and photos exist if empty
+  if (
+    !sanitized.ruanganKelas ||
+    !Array.isArray(sanitized.ruanganKelas.photos) ||
+    sanitized.ruanganKelas.photos.length === 0
+  ) {
+    sanitized.ruanganKelas = {
+      heroBadge:
+        sanitized.ruanganKelas?.heroBadge?.trim() || DEFAULT_CMS_DATA.ruanganKelas.heroBadge,
+      title: sanitized.ruanganKelas?.title?.trim() || DEFAULT_CMS_DATA.ruanganKelas.title,
+      subtitle: sanitized.ruanganKelas?.subtitle?.trim() || DEFAULT_CMS_DATA.ruanganKelas.subtitle,
+      photos:
+        sanitized.ruanganKelas?.photos && sanitized.ruanganKelas.photos.length > 0
+          ? sanitized.ruanganKelas.photos
+          : DEFAULT_CMS_DATA.ruanganKelas.photos,
+    };
+  } else {
+    sanitized.ruanganKelas = {
+      heroBadge:
+        sanitized.ruanganKelas.heroBadge?.trim() || DEFAULT_CMS_DATA.ruanganKelas.heroBadge,
+      title: sanitized.ruanganKelas.title?.trim() || DEFAULT_CMS_DATA.ruanganKelas.title,
+      subtitle: sanitized.ruanganKelas.subtitle?.trim() || DEFAULT_CMS_DATA.ruanganKelas.subtitle,
+      photos: sanitized.ruanganKelas.photos,
+    };
   }
 
   // Ensure Layanan & Galeri navbar contains Foto Alumni and Ruangan Kelas

@@ -2292,6 +2292,27 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
       } catch (e) {
         console.warn("[CMS Store] Local storage read error", e);
       }
+      // Check preloaded SSR data in window
+      const windowInitial = (window as unknown as { __ILD_CMS_DATA?: SiteCmsData }).__ILD_CMS_DATA;
+      if (
+        windowInitial &&
+        typeof windowInitial === "object" &&
+        Object.keys(windowInitial).length > 0
+      ) {
+        return sanitizeSiteCmsData({
+          ...DEFAULT_CMS_DATA,
+          ...windowInitial,
+        });
+      }
+    } else if (
+      typeof globalThis !== "undefined" &&
+      (globalThis as unknown as { __ILD_CMS_DATA?: SiteCmsData }).__ILD_CMS_DATA
+    ) {
+      // Server-side SSR execution
+      return sanitizeSiteCmsData({
+        ...DEFAULT_CMS_DATA,
+        ...(globalThis as unknown as { __ILD_CMS_DATA: SiteCmsData }).__ILD_CMS_DATA,
+      });
     }
     return DEFAULT_CMS_DATA;
   });
@@ -2318,6 +2339,11 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         if (res.ok) {
           setDbConnected(true);
           setLastUpdated(`Tersinkronisasi PostgreSQL (${new Date().toLocaleTimeString("id-ID")})`);
+        } else if (res.status === 413) {
+          console.error("[PostgreSQL Sync] 413 Request Entity Too Large");
+          alert(
+            "Peringatan: Ukuran data CMS terlalu besar untuk disimpan sekaligus (Error 413). Sistem telah menyediakan fitur kompresi otomatis untuk foto.",
+          );
         } else {
           console.warn("[PostgreSQL Sync] Server returned status:", res.status);
         }
@@ -2351,17 +2377,15 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
         .then((payload) => {
           if (
             payload?.data &&
+            Object.keys(payload.data).length > 0 &&
             (payload.data.navbar ||
               payload.data.fotoAlumni ||
               payload.data.foto ||
               payload.data.home)
           ) {
             setCms(() => {
-              const merged = {
-                ...DEFAULT_CMS_DATA,
-                ...payload.data,
-              };
-              return sanitizeSiteCmsData(merged);
+              const clean = sanitizeSiteCmsData(payload.data);
+              return clean;
             });
             setLastUpdated("Tersinkronisasi PostgreSQL");
             setDbConnected(true);

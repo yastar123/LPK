@@ -247,6 +247,20 @@ export async function initPostgres(): Promise<boolean> {
     drizzleDb = drizzle(pool, { schema });
     isConnectedToPostgres = true;
     dbInitializationError = null;
+
+    // Pre-warm SSR cache with latest CMS data from PostgreSQL
+    try {
+      const cmsRes = await pool.query("SELECT data FROM cms_content WHERE key = 'main_cms_config'");
+      if (cmsRes.rows.length > 0 && cmsRes.rows[0].data) {
+        (globalThis as unknown as { __ILD_CMS_DATA?: unknown }).__ILD_CMS_DATA = sanitizeCmsPayload(
+          "main_cms_config",
+          cmsRes.rows[0].data,
+        );
+      }
+    } catch {
+      // Non-blocking
+    }
+
     return true;
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
@@ -673,6 +687,9 @@ function sanitizeCmsPayload(key: string, rawData: unknown): unknown {
 // CMS Persistence in PostgreSQL
 export async function saveCmsData(key: string, data: unknown): Promise<boolean> {
   const cleanData = sanitizeCmsPayload(key, data);
+  if (key === "main_cms_config") {
+    (globalThis as unknown as { __ILD_CMS_DATA?: unknown }).__ILD_CMS_DATA = cleanData;
+  }
   if (isConnectedToPostgres && pool) {
     try {
       await pool.query(

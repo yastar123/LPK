@@ -15,6 +15,7 @@ import {
   subscribeNewsletter,
 } from "./db";
 import { BLOG_POSTS, getPostBySlug } from "../lib/blog-posts";
+import { saveBase64Image, extractBase64FromCmsData } from "./upload";
 
 export async function handleApiRequest(request: Request): Promise<Response | null> {
   const url = new URL(request.url);
@@ -461,6 +462,52 @@ export async function handleApiRequest(request: Request): Promise<Response | nul
     });
   }
 
+  // POST /api/upload
+  if (pathname === "/api/upload" && request.method === "POST") {
+    try {
+      const body = (await request.json()) as { fileData?: string; fileName?: string };
+      if (
+        !body.fileData ||
+        typeof body.fileData !== "string" ||
+        !body.fileData.startsWith("data:")
+      ) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Payload gambar tidak valid. Harus berformat base64 data URL.",
+          }),
+          { status: 400, headers: jsonHeaders },
+        );
+      }
+
+      const savedUrl = saveBase64Image(body.fileData, body.fileName);
+      if (!savedUrl) {
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: "Gagal menyimpan file media ke server.",
+          }),
+          { status: 500, headers: jsonHeaders },
+        );
+      }
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          url: savedUrl,
+          message: "File media berhasil disimpan ke server!",
+        }),
+        { status: 201, headers: jsonHeaders },
+      );
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      return new Response(JSON.stringify({ success: false, error: message }), {
+        status: 500,
+        headers: jsonHeaders,
+      });
+    }
+  }
+
   // POST /api/cms/:key
   if (pathname.startsWith("/api/cms/") && request.method === "POST") {
     try {
@@ -472,7 +519,16 @@ export async function handleApiRequest(request: Request): Promise<Response | nul
           headers: jsonHeaders,
         });
       }
-      await saveCmsData(key, body.data);
+
+      // Auto-extract embedded base64 images into physical files
+      const cleanData = extractBase64FromCmsData(body.data);
+      await saveCmsData(key, cleanData);
+
+      // Keep SSR cache warm
+      if (key === "main_cms_config") {
+        (globalThis as unknown as { __ILD_CMS_DATA?: unknown }).__ILD_CMS_DATA = cleanData;
+      }
+
       return new Response(
         JSON.stringify({
           success: true,

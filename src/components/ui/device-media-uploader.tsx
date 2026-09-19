@@ -96,6 +96,38 @@ export async function readVideoFile(file: File): Promise<string> {
   });
 }
 
+/**
+ * Uploads compressed dataUrl to server /api/upload to convert base64 into a light static file URL.
+ * Falls back to the compressed dataUrl if offline or preview.
+ */
+export async function uploadImageToServer(dataUrl: string, originalName?: string): Promise<string> {
+  if (!dataUrl || !dataUrl.startsWith("data:image/")) {
+    return dataUrl;
+  }
+  try {
+    const res = await fetch("/api/upload", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        fileData: dataUrl,
+        fileName: originalName || "photo",
+      }),
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data?.url) {
+        return data.url;
+      }
+    }
+  } catch (err) {
+    console.warn(
+      "[Media Upload] Direct upload to /api/upload failed, using compressed fallback:",
+      err,
+    );
+  }
+  return dataUrl;
+}
+
 /* =========================================================================
    SINGLE IMAGE UPLOADER COMPONENT
    ========================================================================= */
@@ -136,7 +168,8 @@ export function ImageUploader({
     try {
       setIsProcessing(true);
       const dataUrl = await compressAndReadFile(file, maxDimension);
-      onChange(dataUrl);
+      const finalUrl = await uploadImageToServer(dataUrl, file.name);
+      onChange(finalUrl);
     } catch (err) {
       console.error("Gagal membaca file gambar:", err);
       alert("Terjadi kesalahan saat memproses gambar.");
@@ -335,9 +368,10 @@ export function BulkImageUploader({
         const file = files[i];
         if (file.type.startsWith("image/")) {
           const dataUrl = await compressAndReadFile(file, 1000);
+          const finalUrl = await uploadImageToServer(dataUrl, file.name);
           const cleanName = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, " ");
           results.push({
-            imgUrl: dataUrl,
+            imgUrl: finalUrl,
             title: cleanName.charAt(0).toUpperCase() + cleanName.slice(1),
             category: defaultCategory,
           });

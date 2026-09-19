@@ -16,6 +16,7 @@ import {
   getCmsData,
 } from "./db";
 import { BLOG_POSTS, getPostBySlug } from "../lib/blog-posts";
+import { saveBase64Image, extractBase64FromCmsData } from "./upload";
 
 export const apiRouter = Router();
 
@@ -385,6 +386,36 @@ apiRouter.get("/newsletter", async (_req, res) => {
   }
 });
 
+// Media Upload API (Stores images directly into public/uploads/)
+apiRouter.post("/upload", async (req, res) => {
+  try {
+    const { fileData, fileName } = req.body || {};
+    if (!fileData || typeof fileData !== "string" || !fileData.startsWith("data:")) {
+      return res.status(400).json({
+        success: false,
+        error: "Payload gambar tidak valid. Harus berformat base64 data URL.",
+      });
+    }
+
+    const savedUrl = saveBase64Image(fileData, fileName);
+    if (!savedUrl) {
+      return res.status(500).json({
+        success: false,
+        error: "Gagal menyimpan file media ke server.",
+      });
+    }
+
+    return res.status(201).json({
+      success: true,
+      url: savedUrl,
+      message: "File media berhasil disimpan ke server!",
+    });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return res.status(500).json({ success: false, error: message });
+  }
+});
+
 // CMS Content Management (PostgreSQL Direct Sync)
 apiRouter.get("/cms/:key", async (req, res) => {
   try {
@@ -409,7 +440,18 @@ apiRouter.post("/cms/:key", async (req, res) => {
     if (!data) {
       return res.status(400).json({ error: "Data payload diperlukan." });
     }
-    await saveCmsData(key, data);
+
+    // Auto-extract any embedded base64 strings into physical files in public/uploads/
+    // This reduces multi-megabyte JSON payloads to ~25KB lightweight structures
+    const cleanData = extractBase64FromCmsData(data);
+
+    await saveCmsData(key, cleanData);
+
+    // Keep memory cache for instant SSR rendering without seeder/dummy flash
+    if (key === "main_cms_config") {
+      (globalThis as unknown as { __ILD_CMS_DATA?: unknown }).__ILD_CMS_DATA = cleanData;
+    }
+
     return res.json({
       success: true,
       message: `Konten CMS '${key}' berhasil disimpan ke database PostgreSQL!`,

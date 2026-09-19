@@ -411,6 +411,18 @@ export interface SiteCmsData {
     mapsEmbedUrl: string;
     operatingHoursText: string;
   };
+  fotoAlumni: {
+    heroBadge: string;
+    title: string;
+    subtitle: string;
+    photos: GalleryPhotoItem[];
+  };
+  ruanganKelas: {
+    heroBadge: string;
+    title: string;
+    subtitle: string;
+    photos: GalleryPhotoItem[];
+  };
 }
 
 /* =========================================================================
@@ -460,6 +472,8 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
           { label: "Cooking Class", href: "/cooking-class" },
           { label: "Gathering Siswa", href: "/gathering" },
           { label: "Galeri Foto", href: "/foto" },
+          { label: "Foto Alumni", href: "/foto-alumni" },
+          { label: "Ruangan Kelas", href: "/ruangan-kelas" },
           { label: "Video Dokumentasi", href: "/video" },
         ],
       },
@@ -1905,6 +1919,58 @@ export const DEFAULT_CMS_DATA: SiteCmsData = {
       "https://maps.google.com/maps?q=Jl.+Ternak+II+No.+39+Medan+Polonia&t=&z=16&ie=UTF8&iwloc=&output=embed",
     operatingHoursText: "Senin – Sabtu: 08:30 – 17:30 WIB (Minggu & Hari Libur Nasional Tutup)",
   },
+  fotoAlumni: {
+    heroBadge: "Kisah Sukses & Testimoni Alumni",
+    title: "Foto Alumni di Jerman",
+    subtitle:
+      "Inspirasi nyata dari para alumni Ich Liebe Deutsch Medan yang saat ini telah sukses belajar dan berkarier di Jerman.",
+    photos: [
+      {
+        id: "alumni-1",
+        title: "Alumni Ausbildung di Hamburg",
+        category: "Alumni",
+        date: "Januari 2026",
+        imgUrl: "/assets/gallery-city.jpg",
+        caption:
+          "Bagas, alumni ILD Medan yang saat ini menempuh Ausbildung bidang Perhotelan di Hamburg.",
+      },
+      {
+        id: "alumni-2",
+        title: "Peserta Au Pair di Berlin",
+        category: "Alumni",
+        date: "November 2025",
+        imgUrl: "/assets/gallery-graduation.jpg",
+        caption:
+          "Alya, menjalani program Au Pair dengan keluarga asuh ramah di pinggiran kota Berlin.",
+      },
+    ],
+  },
+  ruanganKelas: {
+    heroBadge: "Fasilitas Belajar Representatif",
+    title: "Ruangan Kelas ILD Medan",
+    subtitle:
+      "Dukung kenyamanan belajar bahasa Jerman intensif dengan suasana kelas modern, interaktif, dan berfasilitas lengkap.",
+    photos: [
+      {
+        id: "kelas-1",
+        title: "Ruang Kelas Teori Modern",
+        category: "Kelas",
+        date: "Februari 2026",
+        imgUrl: "/assets/gallery-class.jpg",
+        caption:
+          "Dilengkapi dengan proyektor interaktif, AC, dan tata meja diskusi lingkaran untuk interaksi aktif.",
+      },
+      {
+        id: "kelas-2",
+        title: "Ruang Belajar Mandiri & Perpustakaan",
+        category: "Kelas",
+        date: "Desember 2025",
+        imgUrl: "/assets/gallery-study.jpg",
+        caption:
+          "Area tenang dengan koleksi modul latihan Goethe, kamus Jerman-Indonesia, dan akses Wi-Fi berkecepatan tinggi.",
+      },
+    ],
+  },
 };
 
 const STORAGE_KEY = "ild_cms_config_v6";
@@ -1956,6 +2022,42 @@ export function sanitizeSiteCmsData(raw: SiteCmsData): SiteCmsData {
         };
       }
       return s;
+    });
+  }
+
+  // Ensure fotoAlumni and ruanganKelas default objects exist
+  if (!sanitized.fotoAlumni || !Array.isArray(sanitized.fotoAlumni.photos)) {
+    sanitized.fotoAlumni = DEFAULT_CMS_DATA.fotoAlumni;
+  }
+  if (!sanitized.ruanganKelas || !Array.isArray(sanitized.ruanganKelas.photos)) {
+    sanitized.ruanganKelas = DEFAULT_CMS_DATA.ruanganKelas;
+  }
+
+  // Ensure Layanan & Galeri navbar contains Foto Alumni and Ruangan Kelas
+  if (sanitized.navbar?.navItems && Array.isArray(sanitized.navbar.navItems)) {
+    sanitized.navbar.navItems = sanitized.navbar.navItems.map((item) => {
+      if (item.id === "nav-layanan" || item.label?.toLowerCase().includes("layanan")) {
+        const currentChildren = item.children || [];
+        const hasFotoAlumni = currentChildren.some(
+          (c) => c.href === "/foto-alumni" || c.label?.toLowerCase().includes("foto alumni"),
+        );
+        const hasRuanganKelas = currentChildren.some(
+          (c) => c.href === "/ruangan-kelas" || c.label?.toLowerCase().includes("ruangan kelas"),
+        );
+
+        const updatedChildren = [...currentChildren];
+        if (!hasFotoAlumni) {
+          updatedChildren.push({ label: "Foto Alumni", href: "/foto-alumni" });
+        }
+        if (!hasRuanganKelas) {
+          updatedChildren.push({ label: "Ruangan Kelas", href: "/ruangan-kelas" });
+        }
+        return {
+          ...item,
+          children: updatedChildren,
+        };
+      }
+      return item;
     });
   }
 
@@ -2069,6 +2171,8 @@ export function CmsProvider({ children }: { children: React.ReactNode }) {
             foto: { ...DEFAULT_CMS_DATA.foto, ...(parsed.foto || {}) },
             video: { ...DEFAULT_CMS_DATA.video, ...(parsed.video || {}) },
             kontak: { ...DEFAULT_CMS_DATA.kontak, ...(parsed.kontak || {}) },
+            fotoAlumni: { ...DEFAULT_CMS_DATA.fotoAlumni, ...(parsed.fotoAlumni || {}) },
+            ruanganKelas: { ...DEFAULT_CMS_DATA.ruanganKelas, ...(parsed.ruanganKelas || {}) },
           });
         }
       } catch (e) {

@@ -324,6 +324,20 @@ export function OverviewTab({
             onClick={() => onSelectTab("foto")}
           />
           <ModuleCard
+            icon={<Image className="h-4 w-4" />}
+            title="19b. Foto Alumni"
+            desc="Galeri dokumentasi & kehidupan para alumni yang telah di Jerman"
+            badge={`${cms.fotoAlumni?.photos?.length || 0} Foto`}
+            onClick={() => onSelectTab("foto_alumni")}
+          />
+          <ModuleCard
+            icon={<Image className="h-4 w-4" />}
+            title="19c. Ruangan Kelas"
+            desc="Foto fasilitas belajar, ruang kelas modern, & sarana bimbingan"
+            badge={`${cms.ruanganKelas?.photos?.length || 0} Foto`}
+            onClick={() => onSelectTab("ruangan_kelas")}
+          />
+          <ModuleCard
             icon={<Video className="h-4 w-4" />}
             title="20. Galeri Video"
             desc="Video testimoni alumni di Jerman, cuplikan klip & tips"

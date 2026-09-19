@@ -95,6 +95,8 @@ export type TabKey =
   | "team"
   | "legalitas"
   | "foto"
+  | "foto_alumni"
+  | "ruangan_kelas"
   | "video"
   | "blog";
 
@@ -394,6 +396,22 @@ function AdminDashboard() {
             />
 
             <SidebarButton
+              icon={<ImageIcon className="h-4 w-4" />}
+              label="19b. Foto Alumni"
+              badge={`${cms.fotoAlumni?.photos?.length || 0} Foto`}
+              isActive={activeTab === "foto_alumni"}
+              onClick={() => setActiveTab("foto_alumni")}
+            />
+
+            <SidebarButton
+              icon={<ImageIcon className="h-4 w-4" />}
+              label="19c. Ruangan Kelas"
+              badge={`${cms.ruanganKelas?.photos?.length || 0} Foto`}
+              isActive={activeTab === "ruangan_kelas"}
+              onClick={() => setActiveTab("ruangan_kelas")}
+            />
+
+            <SidebarButton
               icon={<Video className="h-4 w-4" />}
               label="20. Galeri Video"
               badge={`${cms.video.videos.length} Video`}
@@ -506,6 +524,14 @@ function AdminDashboard() {
           )}
 
           {activeTab === "foto" && <GaleriFotoCrudTab cmsStore={cmsStore} showToast={showToast} />}
+
+          {activeTab === "foto_alumni" && (
+            <FotoAlumniCrudTab cmsStore={cmsStore} showToast={showToast} />
+          )}
+
+          {activeTab === "ruangan_kelas" && (
+            <RuanganKelasCrudTab cmsStore={cmsStore} showToast={showToast} />
+          )}
 
           {activeTab === "video" && <VideoCrudTab cmsStore={cmsStore} showToast={showToast} />}
 
@@ -2095,6 +2121,408 @@ function GaleriFotoCrudTab({
                   cmsStore.deleteGalleryPhoto(photo.id);
                   showToast("Foto dihapus!");
                 }}
+                className="p-1 text-rose-600 hover:text-rose-700"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   TAB: FOTO ALUMNI CRUD
+   ========================================================================= */
+function FotoAlumniCrudTab({
+  cmsStore,
+  showToast,
+}: {
+  cmsStore: CmsContextValue;
+  showToast: (m: string) => void;
+}) {
+  const config = cmsStore.cms.fotoAlumni || {
+    heroBadge: "Kisah Sukses & Testimoni Alumni",
+    title: "Foto Alumni di Jerman",
+    subtitle:
+      "Inspirasi nyata dari para alumni Ich Liebe Deutsch Medan yang saat ini telah sukses belajar dan berkarier di Jerman.",
+    photos: [],
+  };
+  const photos = config.photos || [];
+
+  const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("Berlin");
+  const [newUrl, setNewUrl] = useState("");
+  const [newCaption, setNewCaption] = useState("");
+
+  const handleAddPhoto = () => {
+    if (!newTitle.trim()) {
+      showToast("Judul foto wajib diisi!");
+      return;
+    }
+    const newPhoto: GalleryPhotoItem = {
+      id: `alumni-${Date.now()}`,
+      title: newTitle.trim(),
+      category: newCategory as GalleryPhotoItem["category"],
+      date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
+      imgUrl: newUrl.trim() || "/logo.png",
+      caption: newCaption.trim(),
+    };
+
+    const updatedPhotos = [newPhoto, ...photos];
+    cmsStore.updateSection("fotoAlumni", {
+      ...config,
+      photos: updatedPhotos,
+    });
+
+    showToast("Foto alumni berhasil ditambahkan!");
+    setNewTitle("");
+    setNewUrl("");
+    setNewCaption("");
+  };
+
+  const handleDeletePhoto = (id: string) => {
+    const updatedPhotos = photos.filter((p) => p.id !== id);
+    cmsStore.updateSection("fotoAlumni", {
+      ...config,
+      photos: updatedPhotos,
+    });
+    showToast("Foto alumni berhasil dihapus!");
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in w-full">
+      <div className="border-b border-slate-200 pb-4">
+        <h2 className="text-xl font-bold text-slate-900">Kelola Halaman Foto Alumni</h2>
+        <p className="text-xs text-slate-500">
+          Tambahkan dan hapus foto para alumni Ich Liebe Deutsch yang sedang berada di Jerman.
+        </p>
+      </div>
+
+      {/* Header Config */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <Edit2 className="h-4 w-4 text-sky-600" />
+          <span>Konfigurasi Teks Halaman</span>
+        </h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Badge Atas</label>
+            <input
+              type="text"
+              value={config.heroBadge}
+              onChange={(e) =>
+                cmsStore.updateSection("fotoAlumni", { ...config, heroBadge: e.target.value })
+              }
+              placeholder="Badge Atas"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Judul Utama</label>
+            <input
+              type="text"
+              value={config.title}
+              onChange={(e) =>
+                cmsStore.updateSection("fotoAlumni", { ...config, title: e.target.value })
+              }
+              placeholder="Judul Utama"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold text-slate-500 uppercase">
+            Sub-judul / Deskripsi Singkat
+          </label>
+          <input
+            type="text"
+            value={config.subtitle}
+            onChange={(e) =>
+              cmsStore.updateSection("fotoAlumni", { ...config, subtitle: e.target.value })
+            }
+            placeholder="Deskripsi Singkat"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <Plus className="h-4 w-4 text-sky-600" />
+          <span>Tambah Foto Alumni Baru</span>
+        </h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            placeholder="Nama Alumni / Aktivitas (Contoh: Bagas di Hamburg)"
+            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="Kota / Wilayah Jerman (Contoh: Hamburg, Berlin, Munchen)"
+            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+        </div>
+
+        <ImageUploader
+          label="File Foto Alumni"
+          value={newUrl}
+          onChange={setNewUrl}
+          aspectRatio="wide"
+          placeholderText="Klik untuk Memilih Foto dari HP/Laptop"
+        />
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newCaption}
+            onChange={(e) => setNewCaption(e.target.value)}
+            placeholder="Keterangan singkat / testimoni alumni..."
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+          <button
+            onClick={handleAddPhoto}
+            className="rounded-xl bg-sky-500 px-5 py-2 text-xs font-bold text-white hover:bg-sky-600 shrink-0"
+          >
+            Tambah Foto Alumni
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {photos.map((photo, idx) => (
+          <div
+            key={photo.id || idx}
+            className="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-xs"
+          >
+            <div className="h-32 bg-slate-100 relative">
+              <img
+                src={photo.imgUrl}
+                alt={photo.title}
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/logo.png";
+                }}
+              />
+              <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
+                {photo.category}
+              </span>
+            </div>
+            <div className="p-3 space-y-1">
+              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">{photo.title}</h5>
+              <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+            </div>
+            <div className="p-2 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => handleDeletePhoto(photo.id)}
+                className="p-1 text-rose-600 hover:text-rose-700"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* =========================================================================
+   TAB: RUANGAN KELAS CRUD
+   ========================================================================= */
+function RuanganKelasCrudTab({
+  cmsStore,
+  showToast,
+}: {
+  cmsStore: CmsContextValue;
+  showToast: (m: string) => void;
+}) {
+  const config = cmsStore.cms.ruanganKelas || {
+    heroBadge: "Fasilitas Belajar Representatif",
+    title: "Ruangan Kelas ILD Medan",
+    subtitle:
+      "Dukung kenyamanan belajar bahasa Jerman intensif dengan suasana kelas modern, interaktif, dan berfasilitas lengkap.",
+    photos: [],
+  };
+  const photos = config.photos || [];
+
+  const [newTitle, setNewTitle] = useState("");
+  const [newCategory, setNewCategory] = useState("Ruang Kelas");
+  const [newUrl, setNewUrl] = useState("");
+  const [newCaption, setNewCaption] = useState("");
+
+  const handleAddPhoto = () => {
+    if (!newTitle.trim()) {
+      showToast("Judul foto wajib diisi!");
+      return;
+    }
+    const newPhoto: GalleryPhotoItem = {
+      id: `kelas-${Date.now()}`,
+      title: newTitle.trim(),
+      category: newCategory as GalleryPhotoItem["category"],
+      date: new Date().toLocaleDateString("id-ID", { month: "long", year: "numeric" }),
+      imgUrl: newUrl.trim() || "/logo.png",
+      caption: newCaption.trim(),
+    };
+
+    const updatedPhotos = [newPhoto, ...photos];
+    cmsStore.updateSection("ruanganKelas", {
+      ...config,
+      photos: updatedPhotos,
+    });
+
+    showToast("Foto ruangan kelas berhasil ditambahkan!");
+    setNewTitle("");
+    setNewUrl("");
+    setNewCaption("");
+  };
+
+  const handleDeletePhoto = (id: string) => {
+    const updatedPhotos = photos.filter((p) => p.id !== id);
+    cmsStore.updateSection("ruanganKelas", {
+      ...config,
+      photos: updatedPhotos,
+    });
+    showToast("Foto ruangan kelas berhasil dihapus!");
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in w-full">
+      <div className="border-b border-slate-200 pb-4">
+        <h2 className="text-xl font-bold text-slate-900">Kelola Halaman Ruangan Kelas</h2>
+        <p className="text-xs text-slate-500">
+          Tambahkan dan kelola foto ruangan kelas serta fasilitas pendukung belajar di ILD Medan.
+        </p>
+      </div>
+
+      {/* Header Config */}
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <Edit2 className="h-4 w-4 text-sky-600" />
+          <span>Konfigurasi Teks Halaman</span>
+        </h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Badge Atas</label>
+            <input
+              type="text"
+              value={config.heroBadge}
+              onChange={(e) =>
+                cmsStore.updateSection("ruanganKelas", { ...config, heroBadge: e.target.value })
+              }
+              placeholder="Badge Atas"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            />
+          </div>
+          <div className="space-y-1">
+            <label className="text-[10px] font-bold text-slate-500 uppercase">Judul Utama</label>
+            <input
+              type="text"
+              value={config.title}
+              onChange={(e) =>
+                cmsStore.updateSection("ruanganKelas", { ...config, title: e.target.value })
+              }
+              placeholder="Judul Utama"
+              className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+            />
+          </div>
+        </div>
+        <div className="space-y-1">
+          <label className="text-[10px] font-bold text-slate-500 uppercase">
+            Sub-judul / Deskripsi Singkat
+          </label>
+          <input
+            type="text"
+            value={config.subtitle}
+            onChange={(e) =>
+              cmsStore.updateSection("ruanganKelas", { ...config, subtitle: e.target.value })
+            }
+            placeholder="Deskripsi Singkat"
+            className="w-full rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+        </div>
+      </div>
+
+      <div className="rounded-2xl border border-slate-200 bg-white p-5 space-y-4 shadow-xs">
+        <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+          <Plus className="h-4 w-4 text-sky-600" />
+          <span>Tambah Foto Fasilitas/Kelas Baru</span>
+        </h3>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <input
+            type="text"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            placeholder="Judul Fasilitas (Contoh: Ruangan Kelas B1, Perpustakaan)"
+            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+          <input
+            type="text"
+            value={newCategory}
+            onChange={(e) => setNewCategory(e.target.value)}
+            placeholder="Kategori Fasilitas (Contoh: Ruang Kelas, Perpustakaan, Dapur Praktik)"
+            className="rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+        </div>
+
+        <ImageUploader
+          label="File Foto Fasilitas/Kelas"
+          value={newUrl}
+          onChange={setNewUrl}
+          aspectRatio="wide"
+          placeholderText="Klik untuk Memilih Foto dari HP/Laptop"
+        />
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newCaption}
+            onChange={(e) => setNewCaption(e.target.value)}
+            placeholder="Keterangan singkat mengenai fasilitas ini..."
+            className="flex-1 rounded-xl border border-slate-200 bg-slate-50/80 px-3 py-2 text-xs text-slate-900 focus:outline-none"
+          />
+          <button
+            onClick={handleAddPhoto}
+            className="rounded-xl bg-sky-500 px-5 py-2 text-xs font-bold text-white hover:bg-sky-600 shrink-0"
+          >
+            Tambah Foto Kelas
+          </button>
+        </div>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {photos.map((photo, idx) => (
+          <div
+            key={photo.id || idx}
+            className="rounded-xl border border-slate-200 bg-white overflow-hidden flex flex-col justify-between shadow-xs"
+          >
+            <div className="h-32 bg-slate-100 relative">
+              <img
+                src={photo.imgUrl}
+                alt={photo.title}
+                className="h-full w-full object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = "/logo.png";
+                }}
+              />
+              <span className="absolute top-2 left-2 rounded-md bg-white/90 backdrop-blur-xs px-2 py-0.5 text-[10px] font-bold text-sky-700 shadow-xs border border-slate-200">
+                {photo.category}
+              </span>
+            </div>
+            <div className="p-3 space-y-1">
+              <h5 className="text-xs font-bold text-slate-900 line-clamp-1">{photo.title}</h5>
+              <p className="text-[11px] text-slate-500 line-clamp-2">{photo.caption}</p>
+            </div>
+            <div className="p-2 border-t border-slate-100 flex justify-end">
+              <button
+                onClick={() => handleDeletePhoto(photo.id)}
                 className="p-1 text-rose-600 hover:text-rose-700"
               >
                 <Trash2 className="h-3.5 w-3.5" />

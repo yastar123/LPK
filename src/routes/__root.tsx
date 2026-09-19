@@ -130,7 +130,10 @@ function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="id">
       <head>
-        <meta name="google-site-verification" content="M8aMApoMF6guhrl7e4RjHYaTm3toe1nAZf-7teM0iIg" />
+        <meta
+          name="google-site-verification"
+          content="M8aMApoMF6guhrl7e4RjHYaTm3toe1nAZf-7teM0iIg"
+        />
         <link rel="canonical" href="https://ichliebedeutschmedan.or.id/" id="primary-canonical" />
         <script
           id="fetch-getter-guard"

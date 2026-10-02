@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { ArrowRight, ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
-import { useCms } from "@/lib/cms-store";
-import { AlumniInfiniteCarousel } from "@/components/alumni-infinite-carousel";
+import { useCms, DEFAULT_CMS_DATA } from "@/lib/cms-store";
 
 export function HeroSlider() {
   const { cms } = useCms();
-  const slides = cms.home?.heroSlides || [];
+  const rawSlides = cms.home?.heroSlides;
+  const slides = rawSlides && rawSlides.length > 0 ? rawSlides : DEFAULT_CMS_DATA.home.heroSlides;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef<number | null>(null);
@@ -55,7 +55,7 @@ export function HeroSlider() {
   return (
     <section
       id="hero-slider"
-      className="relative min-h-[750px] lg:min-h-[100dvh] w-full overflow-hidden flex flex-col justify-between select-none bg-slate-950 pt-20 sm:pt-24 pb-0"
+      className="relative min-h-[640px] h-[92vh] sm:h-[95vh] lg:h-[100dvh] w-full overflow-hidden flex flex-col items-center justify-center select-none bg-slate-950"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
@@ -94,7 +94,7 @@ export function HeroSlider() {
       </div>
 
       {/* Main Content Area */}
-      <div className="relative z-10 mx-auto max-w-5xl px-5 sm:px-6 my-auto text-center py-8">
+      <div className="relative z-10 mx-auto max-w-5xl px-5 sm:px-6 pt-24 pb-20 text-center">
         <div key={safeIndex} className="animate-fade-up">
           {/* Subheading Pill Badge */}
           <div className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 backdrop-blur-md text-[11px] sm:text-xs font-bold uppercase tracking-widest text-sky-300 shadow-md mb-4 sm:mb-5">
@@ -116,7 +116,7 @@ export function HeroSlider() {
           </p>
 
           {/* Action Buttons */}
-          <div className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <div className="mt-7 sm:mt-9 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             {currentSlide.button1 && (
               <a
                 href={currentSlide.button1.href}
@@ -164,9 +164,9 @@ export function HeroSlider() {
         </>
       )}
 
-      {/* Slider Indicators / Dot Progression */}
+      {/* Bottom Slider Indicators / Dot Progression */}
       {slides.length > 1 && (
-        <div className="relative z-20 flex items-center justify-center gap-2.5 mb-2">
+        <div className="absolute bottom-6 sm:bottom-8 z-20 flex items-center gap-2.5">
           {slides.map((_, idx) => {
             const isActive = idx === safeIndex;
             return (
@@ -185,11 +185,6 @@ export function HeroSlider() {
           })}
         </div>
       )}
-
-      {/* Integrated Infinite Alumni Photo Carousel */}
-      <div className="relative z-20 w-full mt-2">
-        <AlumniInfiniteCarousel variant="embedded-hero" />
-      </div>
     </section>
   );
 }

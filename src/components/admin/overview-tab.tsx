@@ -119,15 +119,15 @@ export function OverviewTab({
   return (
     <div className="space-y-8 animate-fade-in w-full">
       {/* Hero Welcome Banner */}
-      <div className="rounded-3xl border border-sky-200 bg-gradient-to-r from-sky-600 via-sky-700 to-indigo-800 p-6 sm:p-8 text-white shadow-lg relative overflow-hidden">
+      <div className="rounded-3xl border border-sky-200 bg-gradient-to-r from-sky-600 via-sky-700 to-indigo-800 p-5 sm:p-7 text-white shadow-lg relative overflow-hidden">
         <div className="absolute right-0 top-0 h-full w-1/3 bg-white/5 transform skew-x-12 pointer-events-none" />
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+          <div className="flex-1 min-w-0">
             <div className="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-xs font-semibold text-sky-100 backdrop-blur-xs mb-3 border border-white/20">
               <Sparkles className="h-3.5 w-3.5" />
               <span>Pusat Kendali Konten Website Resmi</span>
             </div>
-            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+            <h2 className="text-xl sm:text-2xl lg:text-3xl font-black text-white tracking-tight">
               Ich Liebe Deutsch Medan — Live Admin CMS
             </h2>
             <p className="mt-2 max-w-2xl text-xs sm:text-sm leading-relaxed text-sky-100/90">
@@ -136,7 +136,7 @@ export function OverviewTab({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               onClick={handleManualSync}
               disabled={isSyncing}
@@ -168,14 +168,14 @@ export function OverviewTab({
         </div>
 
         {/* PostgreSQL Live Badge */}
-        <div className="mt-6 pt-5 border-t border-white/15 flex flex-wrap items-center justify-between gap-4 text-xs">
+        <div className="mt-6 pt-4 border-t border-white/15 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs relative z-10">
           <div className="flex items-center gap-2">
-            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <span className="font-semibold text-sky-100">
               Database Backend: PostgreSQL (Drizzle ORM & REST API)
             </span>
           </div>
-          <div className="flex items-center gap-4 text-sky-200 text-[11px]">
+          <div className="flex flex-wrap items-center gap-3 text-sky-200 text-[11px]">
             <span>19 Menu Modul Aktif</span>
             <span>•</span>
             <span>Real-time Sync</span>
@@ -187,7 +187,7 @@ export function OverviewTab({
 
       {/* Grid of 19 Module Quick-Access Cards */}
       <div>
-        <div className="mb-4 flex items-center justify-between">
+        <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-1">
           <h3 className="text-base font-bold text-slate-900">
             Daftar 19 Menu & Halaman Website untuk Dikelola
           </h3>
@@ -196,7 +196,7 @@ export function OverviewTab({
           </span>
         </div>
 
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <div className="grid gap-3.5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
           <ModuleCard
             icon={<Compass className="h-4 w-4" />}
             title="2. Navbar & Header"
@@ -373,18 +373,18 @@ function ModuleCard({
   return (
     <button
       onClick={onClick}
-      className="group text-left rounded-2xl border border-slate-200 bg-white p-4 flex flex-col justify-between hover:border-sky-400 hover:shadow-md transition-all active:scale-[0.99] shadow-xs"
+      className="group text-left rounded-2xl border border-slate-200 bg-white p-4 flex flex-col justify-between hover:border-sky-400 hover:shadow-md transition-all active:scale-[0.99] shadow-xs min-w-0"
     >
       <div>
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-50 text-sky-600 group-hover:bg-sky-500 group-hover:text-white transition-colors">
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-sky-50 text-sky-600 group-hover:bg-sky-500 group-hover:text-white transition-colors shrink-0">
             {icon}
           </div>
-          <span className="rounded-full bg-slate-100 border border-slate-200 px-2 py-0.5 text-[10px] font-bold text-slate-600">
+          <span className="shrink-0 rounded-full bg-slate-100 border border-slate-200 px-2.5 py-0.5 text-[10px] font-bold text-slate-600 whitespace-nowrap">
             {badge}
           </span>
         </div>
-        <h4 className="text-xs font-bold text-slate-900 group-hover:text-sky-600 transition-colors">
+        <h4 className="text-xs font-bold text-slate-900 group-hover:text-sky-600 transition-colors line-clamp-1">
           {title}
         </h4>
         <p className="mt-1 text-[11px] text-slate-500 line-clamp-2 leading-relaxed">{desc}</p>

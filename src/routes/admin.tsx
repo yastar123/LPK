@@ -431,7 +431,7 @@ function AdminDashboard() {
         )}
 
         {/* Dynamic Full-Width Content Container */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto no-scrollbar w-full min-w-0">
+        <main className="flex-1 p-3 sm:p-5 lg:p-8 overflow-y-auto overflow-x-hidden no-scrollbar w-full min-w-0">
           <div className="mb-4 flex items-center justify-between gap-3">
             <button
               onClick={() => setIsSidebarOpen((prev) => !prev)}
@@ -562,19 +562,19 @@ function SidebarButton({
   return (
     <button
       onClick={onClick}
-      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all whitespace-nowrap md:whitespace-normal ${
+      className={`w-full flex items-center justify-between px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs font-semibold transition-all ${
         isActive
           ? "bg-sky-500 text-white font-bold shadow-md shadow-sky-500/20"
           : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
       }`}
     >
-      <div className="flex items-center gap-2.5">
-        <span className={isActive ? "text-white" : "text-sky-600"}>{icon}</span>
-        <span>{label}</span>
+      <div className="flex items-center gap-2.5 min-w-0 flex-1 mr-1.5">
+        <span className={`shrink-0 ${isActive ? "text-white" : "text-sky-600"}`}>{icon}</span>
+        <span className="truncate text-left">{label}</span>
       </div>
       {badge && (
         <span
-          className={`ml-2 px-2 py-0.5 rounded-full text-[10px] font-bold ${
+          className={`shrink-0 px-2 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${
             isActive
               ? "bg-white/20 text-white"
               : "bg-slate-100 text-slate-600 border border-slate-200"

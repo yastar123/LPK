@@ -30,6 +30,7 @@ import {
 import { useState } from "react";
 
 import { HeroSlider } from "@/components/hero-slider";
+import { AlumniInfiniteCarousel } from "@/components/alumni-infinite-carousel";
 import { PhotoLightbox, type LightboxPhoto } from "@/components/ui/photo-lightbox";
 import { useCms } from "@/lib/cms-store";
 
@@ -333,6 +334,11 @@ export function Index() {
           </div>
         </div>
       </section>
+
+      {/* 2b. Infinite Alumni Photo Carousel (Live from Admin CMS) */}
+      <div className="mt-8 sm:mt-10">
+        <AlumniInfiniteCarousel variant="standalone-section" />
+      </div>
 
       {/* 3. Tentang Kami & Founder Profile */}
       <section id="tentang" className="scroll-mt-24 py-20 bg-white mt-12 sm:mt-16">

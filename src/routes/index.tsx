@@ -277,8 +277,8 @@ export function Index() {
       <HeroSlider />
 
       {/* 2. Trust Credentials & Key Stats Bar */}
-      <section className="relative z-20 -mt-8 sm:-mt-10 mx-auto max-w-6xl px-4 sm:px-6">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 rounded-3xl bg-white p-4 sm:p-6 shadow-xl border border-sky-100 backdrop-blur-md">
+      <section className="relative z-30 -mt-10 sm:-mt-14 mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 rounded-3xl bg-white p-4 sm:p-6 shadow-2xl border border-sky-100 backdrop-blur-md">
           <div className="flex items-center gap-3.5 p-2 sm:p-3">
             <div className="flex h-11 w-11 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl bg-sky-50 text-sky-600 border border-sky-100">
               <ShieldCheck className="h-6 w-6" />
@@ -336,7 +336,7 @@ export function Index() {
       </section>
 
       {/* 2b. Infinite Alumni Photo Carousel (Live from Admin CMS) */}
-      <div className="mt-8 sm:mt-10">
+      <div className="relative z-10 pt-8 sm:pt-12 pb-2">
         <AlumniInfiniteCarousel variant="standalone-section" />
       </div>
 
